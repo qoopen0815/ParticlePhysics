@@ -1,68 +1,85 @@
-name: Release
+name: Release Unity Package
 
-on: 
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version: eg. v1.0.2"
-        required: true
+on:
+  workflow_run:
+    workflows:
+      - "Update package.json"
+    types:
+      - completed
 
 env:
-  FILE_NAME: "ParticleSimulator_${{ github.event.inputs.version }}.unitypackage"
-  VERSION_NAME: ${{ github.event.inputs.version }}
-  # Expoterから出力されるファイルパス
-  EXPORT_FILE: "./ParticleSimulator.unitypackage"
+  FILE_NAME: "ParticleSimulator"
+  BUILD_METHOD: "PackageExporter.Export"
 
 jobs:
-
-  # パッケージ出力
-  create-package:
+  release:
+    name: Create Release
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    strategy:
+      fail-fast: false
     steps:
-      - name: Checkout
+      # Checkout
+      - name: Checkout repository
         uses: actions/checkout@v2
-
-      # キャッシュ設定
-      - uses: actions/cache@v2
+        with:
+          lfs: true
+      # Cache
+      - name: Cache
+        uses: actions/cache@v2
         with:
           path: Library
-          key: Library-UnityPackageTest-StandaloneLinux64
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
-            Library-UnityPackageTest-
             Library-
-            
-      # 関数を叩いてUnityPackage作成
-      - name: Export unitypackage
-        uses: game-ci/unity-builder@v2.0-alpha-6
+      # Build
+      - name: Build package
+        id: build
+        uses: game-ci/unity-builder@v2
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          projectPath: .
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          unityVersion: 2021.3.16f1
+          buildName: ${{ env.FILE_NAME }}.unitypackage
           targetPlatform: StandaloneLinux64
-          buildMethod: PackageExporter.Export
-
-      # Releaseを切る
+          buildMethod: ${{ env.BUILD_METHOD }}
+          versioning: None
+      # Check .meta
+      - name: Check all .meta is commited
+        run: |
+          if git ls-files --others --exclude-standard -t | grep --regexp='[.]meta$'; then
+            echo "Detected .meta file generated. Do you forgot commit a .meta file?"
+            exit 1
+          else
+            echo "Great, all .meta files are commited."
+          fi
+        working-directory: Assets
+      # Versioning
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      # Create Release
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "${{ env.VERSION_NAME }}"
-          release_name: "${{ env.VERSION_NAME }}"
-          body: "https://github.com/kameffee/UnityPackageTest.git#${{ env.VERSION_NAME }}"
-          draft: true
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          release_name: ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+          draft: false
           prerelease: false
-
-      # アップロード
-      - name: Upload UnityPackage
+      # Upload Assets
+      - name: Upload Release Asset
+        id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "${{ env.EXPORT_FILE }}"
-          asset_name: "${{ env.FILE_NAME }}"
-          asset_content_type: application/octet-stream
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: build/${{ env.FILE_NAME }}.unitypackage
+          asset_name: ${{ env.FILE_NAME }}_${{ steps.tag_version.outputs.new_tag }}.unitypackage
+          asset_content_type: application/zip
