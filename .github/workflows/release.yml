@@ -1,11 +1,11 @@
 name: Release Unity Package
 
 on:
-  workflow_run:
-    workflows:
-      - "Update package.json"
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version: eg. v1.0.2"
+        required: true
 
 env:
   FILE_NAME: "ParticleSimulator"
@@ -67,8 +67,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tag_version.outputs.new_tag }}
-          release_name: ${{ steps.tag_version.outputs.new_tag }}
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: ${{ github.event.inputs.version }}
           body: ${{ steps.tag_version.outputs.changelog }}
           draft: false
           prerelease: false
@@ -81,5 +81,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
           asset_path: ./${{ env.FILE_NAME }}.unitypackage
-          asset_name: ${{ env.FILE_NAME }}_${{ steps.tag_version.outputs.new_tag }}.unitypackage
+          asset_name: ${{ env.FILE_NAME }}-${{ github.event.inputs.version }}.unitypackage
           asset_content_type: application/zip
