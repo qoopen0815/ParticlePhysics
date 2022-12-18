@@ -1,0 +1,68 @@
+name: Release
+
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version: eg. v1.0.2"
+        required: true
+
+env:
+  FILE_NAME: "ParticleSimulator_${{ github.event.inputs.version }}.unitypackage"
+  VERSION_NAME: ${{ github.event.inputs.version }}
+  # Expoterから出力されるファイルパス
+  EXPORT_FILE: "./ParticleSimulator.unitypackage"
+
+jobs:
+
+  # パッケージ出力
+  create-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # キャッシュ設定
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-UnityPackageTest-StandaloneLinux64
+          restore-keys: |
+            Library-UnityPackageTest-
+            Library-
+            
+      # 関数を叩いてUnityPackage作成
+      - name: Export unitypackage
+        uses: game-ci/unity-builder@v2.0-alpha-6
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: .
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: 2021.3.16f1
+          targetPlatform: StandaloneLinux64
+          buildMethod: PackageExporter.Export
+
+      # Releaseを切る
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "${{ env.VERSION_NAME }}"
+          release_name: "${{ env.VERSION_NAME }}"
+          body: "https://github.com/kameffee/UnityPackageTest.git#${{ env.VERSION_NAME }}"
+          draft: true
+          prerelease: false
+
+      # アップロード
+      - name: Upload UnityPackage
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: "${{ env.EXPORT_FILE }}"
+          asset_name: "${{ env.FILE_NAME }}"
+          asset_content_type: application/octet-stream
