@@ -4,8 +4,8 @@ ParticleSimulator simulates the dynamics of sand-like particles in real time.
 It is implemented in full scratch based on this paper.
 
 ## DEMO
- 
-![]()
+
+https://user-images.githubusercontent.com/26988372/208661206-ab6d3797-6200-469d-a267-9c9eb774dd1c.mp4
  
 ## Features
  
