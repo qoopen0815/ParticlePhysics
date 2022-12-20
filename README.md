@@ -1,6 +1,6 @@
 # ParticleSimulator
 
-ParticleSimulator simulates the dynamics of sand-like particles in real time.
+ParticleSimulator simulates the dynamics of sand-like particles in real time.  
 It is implemented in full scratch based on this paper.
 
 ## DEMO
@@ -17,12 +17,12 @@ https://user-images.githubusercontent.com/26988372/208661206-ab6d3797-6200-469d-
 
 ## Requirement
  
-There are no dependent packages.
+There are no dependent packages.  
 We will add more packages as needed.
  
 ## Installation
 
-Please install the unitpackage distributed from the release page into your project.
+Please install the ```.unitypackage``` distributed from [the release page](https://github.com/qoopen0815/ParticleSimulator/releases) into your project.
 
 ## Note
 
