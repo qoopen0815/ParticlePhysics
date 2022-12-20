@@ -2,32 +2,32 @@
 
 namespace ParticleSimulator.Substance
 {
-    public class CubeGranular : BasicGranular
+    public class CubeElement : BasicParticle
     {
-        private static new uint _granularParticleNum = 9;
-        private static new float _particleRatio = 0.3f;
+        private static new uint _elementNum = 9;
+        private static new float _elementRatio = 0.3f;
 
-        public CubeGranular(float radius = 0.04f, float density = 2000.0f) : base(_granularParticleNum)
+        public CubeElement(float radius = 0.04f, float density = 2000.0f) : base(_elementNum)
         {
-            particles = InitializeParticle(radius, density);
-            totalMass = CalculateTotalParticleMass(particles, density);
-            centerOfMass = CalculateCenterOfMass(particles);
-            inertialMoment = CalculateInverseInertialMoment(particles);
+            elements = SetElements(radius, density);
+            totalMass = CalculateTotalMass(elements, density);
+            centerOfMass = CalculateCenterOfMass(elements);
+            inertialMoment = CalculateInverseInertialMoment(elements);
         }
 
-        protected override Particle[] InitializeParticle(float particleRadius, float particleDensity)
+        protected override Element[] SetElements(float particleRadius, float particleDensity)
         {
             float CORNER = 1.0f / math.sqrt(3.0f);
-            Particle[] p = new Particle[_granularParticleNum];
-            p[0] = new Particle(particleRadius, CalculateParticleMass(particleRadius, particleDensity), new float3(0.0f, 0.0f, 0.0f) * particleRadius);
-            p[1] = new Particle(particleRadius * _particleRatio, CalculateParticleMass(particleRadius * _particleRatio, particleDensity), new float3(CORNER, CORNER, CORNER) * particleRadius * (1.0f + _particleRatio));
-            p[2] = new Particle(particleRadius * _particleRatio, CalculateParticleMass(particleRadius * _particleRatio, particleDensity), new float3(CORNER, CORNER, -CORNER) * particleRadius * (1.0f + _particleRatio));
-            p[3] = new Particle(particleRadius * _particleRatio, CalculateParticleMass(particleRadius * _particleRatio, particleDensity), new float3(-CORNER, CORNER, -CORNER) * particleRadius * (1.0f + _particleRatio));
-            p[4] = new Particle(particleRadius * _particleRatio, CalculateParticleMass(particleRadius * _particleRatio, particleDensity), new float3(-CORNER, CORNER, CORNER) * particleRadius * (1.0f + _particleRatio));
-            p[5] = new Particle(particleRadius * _particleRatio, CalculateParticleMass(particleRadius * _particleRatio, particleDensity), new float3(CORNER, -CORNER, CORNER) * particleRadius * (1.0f + _particleRatio));
-            p[6] = new Particle(particleRadius * _particleRatio, CalculateParticleMass(particleRadius * _particleRatio, particleDensity), new float3(CORNER, -CORNER, -CORNER) * particleRadius * (1.0f + _particleRatio));
-            p[7] = new Particle(particleRadius * _particleRatio, CalculateParticleMass(particleRadius * _particleRatio, particleDensity), new float3(-CORNER, -CORNER, -CORNER) * particleRadius * (1.0f + _particleRatio));
-            p[8] = new Particle(particleRadius * _particleRatio, CalculateParticleMass(particleRadius * _particleRatio, particleDensity), new float3(-CORNER, -CORNER, CORNER) * particleRadius * (1.0f + _particleRatio));
+            Element[] p = new Element[_elementNum];
+            p[0] = new Element(particleRadius, CalculateElementMass(particleRadius, particleDensity), new float3(0.0f, 0.0f, 0.0f) * particleRadius);
+            p[1] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(CORNER, CORNER, CORNER) * particleRadius * (1.0f + _elementRatio));
+            p[2] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(CORNER, CORNER, -CORNER) * particleRadius * (1.0f + _elementRatio));
+            p[3] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(-CORNER, CORNER, -CORNER) * particleRadius * (1.0f + _elementRatio));
+            p[4] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(-CORNER, CORNER, CORNER) * particleRadius * (1.0f + _elementRatio));
+            p[5] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(CORNER, -CORNER, CORNER) * particleRadius * (1.0f + _elementRatio));
+            p[6] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(CORNER, -CORNER, -CORNER) * particleRadius * (1.0f + _elementRatio));
+            p[7] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(-CORNER, -CORNER, -CORNER) * particleRadius * (1.0f + _elementRatio));
+            p[8] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(-CORNER, -CORNER, CORNER) * particleRadius * (1.0f + _elementRatio));
             return p;
         }
     }
