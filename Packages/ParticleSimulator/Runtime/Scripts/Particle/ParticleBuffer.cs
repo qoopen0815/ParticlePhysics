@@ -10,19 +10,19 @@ namespace ParticleSimulator
         public GraphicsBuffer substances;
 
         public ParticleBuffer(
-            ParticleData[] particleDatas, 
-            Element[] elementSubstances)
+            ParticleType[] particleDatas,
+            ElementType[] elementSubstances)
         {
             datas = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particleDatas.Length,
-                Marshal.SizeOf(typeof(ParticleData)));
+                Marshal.SizeOf(typeof(ParticleType)));
             datas.SetData(particleDatas);
 
             substances = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 elementSubstances.Length,
-                Marshal.SizeOf(typeof(Element)));
+                Marshal.SizeOf(typeof(ElementType)));
             substances.SetData(elementSubstances);
         }
 
