@@ -36,7 +36,10 @@ namespace ParticleSimulator
         [SerializeField] private ParticleNumEnum _particleNum = ParticleNumEnum.NUM_8K;      // 粒子数
         [SerializeField] private float _particleRadius = 0.1f;                               // 粒子半径
         [SerializeField] private float _particleDensity = 2000.0f;                           // 粒子密度
-        [SerializeField] private Material _renderParticleMat;
+        [SerializeField] private Material _particleRenderMat;
+
+        // Terrain Data
+        [SerializeField] private Terrain _terrain;
 
         // Simulation
         [SerializeField] private float _maxAllowableTimestep = 0.0005f;     // 最大時間刻み幅
@@ -46,8 +49,10 @@ namespace ParticleSimulator
         // ComputeShader
         private ComputeShader _solver;
         private ParticleBuffer _particleBuffer;
+        private ParticleBuffer _terrainParticleBuffer;
+        private ParticleBuffer _objectParticleBuffer;
         private GraphicsBuffer _particleCollisionForce;
-        private GraphicsBuffer _groundCollisionForce;
+        private GraphicsBuffer _terrainCollisionForce;
         private GraphicsBuffer _objectCollisionForce;
 
         // GPU
@@ -75,31 +80,44 @@ namespace ParticleSimulator
 
         private void OnRenderObject()
         {
-            _renderParticleMat.SetPass(0);
-            _renderParticleMat.SetBuffer("_ParticleBuffer", _particleBuffer.datas);
+            _particleRenderMat.SetPass(0);
+            _particleRenderMat.SetBuffer("_ParticleBuffer", _particleBuffer.datas);
             Graphics.DrawProceduralNow(MeshTopology.Points, (int)_particleNum);
         }
 
         private void OnDestroy()
         {
             _particleBuffer.Release();
+            _terrainParticleBuffer.Release();
+            _objectParticleBuffer.Release();
             _particleCollisionForce.Release();
-            _groundCollisionForce.Release();
+            _terrainCollisionForce.Release();
             _objectCollisionForce.Release();
         }
         #endregion
 
         private void InitBuffer()
         {
-            ParticleData[] p = ParticleData.GenerateSphere((int)_particleNum, new Vector3(0, 0, 0), 30);
-            Substance.ParticleSubstance ps = new Substance.TetrahedronParticle();
-            this._particleBuffer = new ParticleBuffer(p, ps.Elements);
+            // Particle
+            var p = ParticleData.GenerateSphere((int)_particleNum, new Vector3(0, 0, 0), 30);
+            var ps = new Substance.TetrahedronParticle();
+            _particleBuffer = new ParticleBuffer(p, ps.Elements);
+
+            // Terrain
+            var t = ParticleData.GenerateFromTerrain((int)_particleNum, _terrain);
+            var ts = new Substance.TetrahedronParticle();
+            _terrainParticleBuffer = new ParticleBuffer(t, ts.Elements);
+
+            // Object
+            var o = ParticleData.GenerateFromMesh((int)_particleNum);
+            var os = new Substance.TetrahedronParticle();
+            _terrainParticleBuffer = new ParticleBuffer(o, os.Elements);
 
             _particleCollisionForce = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 (int)_particleNum,
                 Marshal.SizeOf(typeof(ParticleCollisionForce)));
-            _groundCollisionForce = new GraphicsBuffer(
+            _terrainCollisionForce = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 (int)_particleNum,
                 Marshal.SizeOf(typeof(GroundCollisionForce)));
@@ -107,11 +125,13 @@ namespace ParticleSimulator
                 GraphicsBuffer.Target.Structured,
                 (int)_particleNum,
                 Marshal.SizeOf(typeof(ObjectCollisionForce)));
-    }
+        }
 
         public void UpdateParticle(ref GraphicsBuffer particles)
         {
-
+            CalculateParticleCollisionForce(ref _particleBuffer);
+            CalculateGroundCollision(ref _particleBuffer, _terrainParticleBuffer);
+            CalculateObjectCollision(ref _particleBuffer, _objectParticleBuffer);
         }
 
         private void SetupShader()
@@ -125,17 +145,17 @@ namespace ParticleSimulator
             _solver.SetMatrix(Shader.PropertyToID("_GranularInertialMoment"), Matrix4x4.identity);
         }
 
-        private void CalculateParticleCollisionForce(ref GraphicsBuffer particles, GraphicsBuffer substances)
+        private void CalculateParticleCollisionForce(ref ParticleBuffer particleBuffer)
         {
 
         }
 
-        private void CalculateGroundCollision(ref GraphicsBuffer particles, GraphicsBuffer groundData)
+        private void CalculateGroundCollision(ref ParticleBuffer particleBuffer, ParticleBuffer groundBuffer)
         {
 
         }
 
-        private void CalculateObjectCollision(ref GraphicsBuffer particles, GraphicsBuffer objectData)
+        private void CalculateObjectCollision(ref ParticleBuffer particleBuffer, ParticleBuffer objectBuffer)
         {
 
         }
