@@ -36,6 +36,7 @@ namespace ParticleSimulator
         [SerializeField] private ParticleNumEnum _particleNum = ParticleNumEnum.NUM_8K;      // 粒子数
         [SerializeField] private float _particleRadius = 0.1f;                               // 粒子半径
         [SerializeField] private float _particleDensity = 2000.0f;                           // 粒子密度
+        [SerializeField] private Material _renderParticleMat;
 
         // Simulation
         [SerializeField] private float _maxAllowableTimestep = 0.0005f;     // 最大時間刻み幅
@@ -70,6 +71,13 @@ namespace ParticleSimulator
         private void FixedUpdate()
         {
             UpdateParticle(ref _particleBuffer.datas);
+        }
+
+        private void OnRenderObject()
+        {
+            _renderParticleMat.SetPass(0);
+            _renderParticleMat.SetBuffer("_ParticleBuffer", _particleBuffer.datas);
+            Graphics.DrawProceduralNow(MeshTopology.Points, (int)_particleNum);
         }
 
         private void OnDestroy()
