@@ -155,12 +155,12 @@ namespace ParticleSimulator
 
         }
 
-        private void CalculateTerrainCollision(ref ParticleBuffer particleBuffer, GraphicsBuffer terrainBuffer)
+        private void CalculateObjectCollision(ref ParticleBuffer particleBuffer, ParticleBuffer objectBuffer)
         {
 
         }
 
-        private void CalculateObjectCollision(ref ParticleBuffer particleBuffer, ParticleBuffer objectBuffer)
+        private void CalculateTerrainCollision(ref ParticleBuffer particleBuffer, GraphicsBuffer terrainBuffer)
         {
 
         }
