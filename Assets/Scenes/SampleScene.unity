@@ -452,7 +452,6 @@ MonoBehaviour:
   _particleNum: 32768
   _particleRadius: 0.1
   _particleDensity: 2000
+  _renderParticleMat: {fileID: 2100000, guid: 48e8317f90ff45c4f92c4e2de9ec720d, type: 2}
   _maxAllowableTimestep: 0.0005
   _gravity: {x: 0, y: 0, z: 0}
-  _solver: {fileID: 7200000, guid: bb399b6ee1431a34ab49089341af898a, type: 3}
-  _threadSize: 32
