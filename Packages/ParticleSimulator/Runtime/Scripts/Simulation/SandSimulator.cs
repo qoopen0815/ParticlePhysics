@@ -116,6 +116,7 @@ namespace ParticleSimulator
                 GraphicsBuffer.Target.Structured,
                 (int)_particleNum,
                 Marshal.SizeOf(typeof(TerrainType)));
+            _terrainBuffer.SetData(TerrainType.GenerateFromTerrain(_terrain));
 
             // Init Force Bufer
             _particleCollisionForce = new GraphicsBuffer(
