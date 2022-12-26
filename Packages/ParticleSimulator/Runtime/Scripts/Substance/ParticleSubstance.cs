@@ -3,25 +3,22 @@ using UnityEngine;
 
 namespace ParticleSimulator.Substance
 {
-    public class BasicParticle
+    public abstract class ParticleSubstance
     {
         protected Element[] elements;
-        protected static uint _elementNum = 1;
-        protected static float _elementRatio = 1.0f;
 
         protected float totalMass;
         protected float3 centerOfMass;
         protected float3x3 inertialMoment;
 
         #region Accessor
-        public uint ElementNum => _elementNum;
         public Element[] Elements => elements;
         public float TotalMass => totalMass;
         public Vector3 CenterOfMass => centerOfMass;
         public float3x3 InertialMoment => inertialMoment;
         #endregion
 
-        protected BasicParticle(float radius = 0.04f, float density = 2000.0f)
+        protected ParticleSubstance(float radius = 0.04f, float density = 2000.0f)
         {
             this.elements = SetElements(radius, density);
             totalMass = CalculateTotalMass(elements, density);
@@ -74,11 +71,6 @@ namespace ParticleSimulator.Substance
             return centerOfMass / (float)this.elements.Length;
         }
 
-        protected virtual Element[] SetElements(float particleRadius, float particleDensity)
-        {
-            Element[] e = new Element[_elementNum];
-            e[0] = new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(1.0f, 0.0f, -1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio);
-            return e;
-        }
+        protected abstract Element[] SetElements(float particleRadius, float particleDensity);
     }
 }
