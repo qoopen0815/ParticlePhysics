@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ParticleSimulator
 {
@@ -35,34 +34,17 @@ namespace ParticleSimulator
             }
             return particles;
         }
+    
+        public static ParticleData[] GenerateFromMesh(int particleNum)
+        {
+            var particles = new ParticleData[particleNum];
+            return particles;
+        }
+
+        public static ParticleData[] GenerateFromTerrain(int particleNum, Terrain terrain)
+        {
+            var particles = new ParticleData[particleNum];
+            return particles;
+        }
     };
-
-    public class ParticleBuffer
-    {
-        public GraphicsBuffer datas;
-        public GraphicsBuffer substances;
-
-        public ParticleBuffer(
-            ParticleData[] particleDatas, 
-            Substance.Element[] elementSubstances)
-        {
-            datas = new GraphicsBuffer(
-                GraphicsBuffer.Target.Structured,
-                particleDatas.Length,
-                Marshal.SizeOf(typeof(ParticleData)));
-            datas.SetData(particleDatas);
-
-            substances = new GraphicsBuffer(
-                GraphicsBuffer.Target.Structured,
-                elementSubstances.Length,
-                Marshal.SizeOf(typeof(Substance.Element)));
-            substances.SetData(elementSubstances);
-        }
-
-        public void Release()
-        {
-            datas.Release();
-            substances.Release();
-        }
-    }
 }
