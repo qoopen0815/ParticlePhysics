@@ -532,5 +532,6 @@ MonoBehaviour:
   _particleDensity: 2000
   _particleRenderMat: {fileID: 2100000, guid: 48e8317f90ff45c4f92c4e2de9ec720d, type: 2}
   _terrain: {fileID: 510845133}
+  _mesh: {fileID: -8803937527578110353, guid: 471893bf3545a0140b0c1a9850a4f7d4, type: 3}
   _maxAllowableTimestep: 0.0005
   _gravity: {x: 0, y: -9.81, z: 0}
