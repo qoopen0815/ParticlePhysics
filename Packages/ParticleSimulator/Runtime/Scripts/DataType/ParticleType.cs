@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.VFX;
 
 namespace ParticleSimulator
 {
+    [VFXType(VFXTypeAttribute.Usage.GraphicsBuffer)]
     public struct ParticleType
     {
         public Vector3 position;

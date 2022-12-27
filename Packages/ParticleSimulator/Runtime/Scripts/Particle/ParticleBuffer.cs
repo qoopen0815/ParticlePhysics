@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.VFX;
 using ParticleSimulator.Substance;
 
 namespace ParticleSimulator
