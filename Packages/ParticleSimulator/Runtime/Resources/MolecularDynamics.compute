@@ -42,7 +42,7 @@ cbuffer MolecularDynamicsCB
 //--------------------------------------------------------------------------------------
 // Update particle state
 //--------------------------------------------------------------------------------------
-[numthreads(THREAD_SIZE_X, THREAD_SIZE_X, 1)]
+[numthreads(THREAD_SIZE_X, 1, 1)]
 void IntegrateCS(uint3 DTid : SV_DispatchThreadID)
 {
 	const unsigned int P_ID = DTid.x; // 現在処理しているパーティクルID

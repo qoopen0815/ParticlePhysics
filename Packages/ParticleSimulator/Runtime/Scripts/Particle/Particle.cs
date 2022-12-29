@@ -5,7 +5,7 @@ using ParticleSimulator.Substance;
 
 namespace ParticleSimulator
 {
-    public struct Particle
+    public class Particle
     {
         // Buffer for status
         public GraphicsBuffer status;
@@ -22,7 +22,7 @@ namespace ParticleSimulator
 
         public static Particle SetAsSimpleParticle(ParticleType[] particles)
         {
-            Particle p;
+            Particle p = new Particle();
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,
@@ -41,7 +41,7 @@ namespace ParticleSimulator
 
         public static Particle SetAsTetrahedronParticle(ParticleType[] particles)
         {
-            Particle p;
+            Particle p = new Particle();
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,
@@ -60,7 +60,7 @@ namespace ParticleSimulator
 
         public static Particle SetAsCubeParticle(ParticleType[] particles)
         {
-            Particle p;
+            Particle p = new Particle();
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,

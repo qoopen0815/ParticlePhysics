@@ -201,7 +201,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 50, y: 50, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -590,7 +590,7 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 0.2
+      - m_Value: 0.1
         m_Name: ParticleSize
         m_Overridden: 1
     m_Vector2f:
@@ -650,8 +650,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _particleNum: 16384
-  _particleRadius: 0.1
-  _particleDensity: 2000
   _particleRenderMat: {fileID: 2100000, guid: 48e8317f90ff45c4f92c4e2de9ec720d, type: 2}
   _terrain: {fileID: 510845133}
   _mesh: {fileID: -8803937527578110353, guid: 471893bf3545a0140b0c1a9850a4f7d4, type: 3}

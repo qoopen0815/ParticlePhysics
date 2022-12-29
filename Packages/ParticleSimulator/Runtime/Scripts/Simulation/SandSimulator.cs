@@ -19,8 +19,8 @@ namespace ParticleSimulator
     {
         // Particle Data
         [SerializeField] private ParticleNumEnum _particleNum = ParticleNumEnum.NUM_8K;      // 粒子数
-        [SerializeField] private float _particleRadius = 0.1f;                               // 粒子半径
-        [SerializeField] private float _particleDensity = 2000.0f;                           // 粒子密度
+        //[SerializeField] private float _particleRadius = 0.1f;                               // 粒子半径
+        //[SerializeField] private float _particleDensity = 2000.0f;                           // 粒子密度
         [SerializeField] private Material _particleRenderMat;
 
         // Terrain Data
@@ -42,9 +42,6 @@ namespace ParticleSimulator
         private GraphicsBuffer _objectCollisionForce;
         private GraphicsBuffer _terrainCollisionForce;
         private GraphicsBuffer _tempBufferWrite;
-
-        // GPU
-        private int THREAD_SIZE_X = 32;     // コンピュートシェーダ側のスレッド数
 
         #region Accessor
         #endregion
@@ -101,7 +98,7 @@ namespace ParticleSimulator
         {
             // Init Particle Buffer
             _particleBuffer = Particle.SetAsTetrahedronParticle(
-                ParticleType.GenerateSphere((int)_particleNum, new Vector3(50, 50, 50), 20));
+                ParticleType.GenerateSphere((int)_particleNum, new Vector3(50, 50, 50), 10));
 
             // Init Object Particle Buffer
             _objectParticleBuffer = Particle.SetAsSimpleParticle(
