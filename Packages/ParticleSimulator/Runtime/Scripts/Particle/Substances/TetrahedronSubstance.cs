@@ -2,12 +2,12 @@
 
 namespace ParticleSimulator.Substance
 {
-    public class TetrahedronParticle : ParticleSubstance
+    public class TetrahedronSubstance : ParticleSubstance
     {
         private static uint _elementNum = 4;
         private static float _elementRatio = 0.5f;
 
-        public TetrahedronParticle(float radius = 0.04f, float density = 2000.0f) : base(_elementNum)
+        public TetrahedronSubstance(float radius = 0.04f, float density = 2000.0f) : base(_elementNum)
         {
             elements = SetElements(radius, density);
             totalMass = CalculateTotalMass(elements, density);

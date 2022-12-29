@@ -2,12 +2,12 @@
 
 namespace ParticleSimulator.Substance
 {
-    public class CubeParticle : ParticleSubstance
+    public class CubeSubstance : ParticleSubstance
     {
         private static uint _elementNum = 9;
         private static float _elementRatio = 0.3f;
 
-        public CubeParticle(float radius = 0.04f, float density = 2000.0f) : base(_elementNum)
+        public CubeSubstance(float radius = 0.04f, float density = 2000.0f) : base(_elementNum)
         {
             elements = SetElements(radius, density);
             totalMass = CalculateTotalMass(elements, density);

@@ -2,11 +2,11 @@
 
 namespace ParticleSimulator.Substance
 {
-    public class SimpleParticle : ParticleSubstance
+    public class SimpleSubstance : ParticleSubstance
     {
         private static uint _elementNum = 1;
 
-        public SimpleParticle(float radius = 0.04f, float density = 2000.0f) : base(_elementNum)
+        public SimpleSubstance(float radius = 0.04f, float density = 2000.0f) : base(_elementNum)
         {
             elements = SetElements(radius, density);
             totalMass = CalculateTotalMass(elements, density);
