@@ -33,6 +33,9 @@ namespace ParticleSimulator
         [SerializeField] private float _maxAllowableTimestep = 0.0005f;     // ç≈ëÂéûä‘çèÇ›ïù
         [SerializeField] private Vector3 _gravity = Physics.gravity;        // èdóÕ
 
+        // Render(VFX)
+        [SerializeField] private VisualEffect _effect;
+
         // ComputeShader
         private ComputeShader _solver;
         private Particle _particleBuffer;
@@ -57,9 +60,8 @@ namespace ParticleSimulator
             InitBuffer();
             SetupShader();
 
-            var vfx = GetComponent<VisualEffect>();
-            vfx.SetGraphicsBuffer("ParticlesBuffer", _particleBuffer.status);
-            vfx.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
+            _effect.SetGraphicsBuffer("ParticlesBuffer", _particleBuffer.status);
+            _effect.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
         }
 
         private void Update()
@@ -98,7 +100,7 @@ namespace ParticleSimulator
         {
             // Init Particle Buffer
             _particleBuffer = Particle.SetAsTetrahedronParticle(
-                ParticleType.GenerateSphere((int)_particleNum, new Vector3(50, 50, 50), 10));
+                ParticleType.GenerateSphere((int)_particleNum, new Vector3(20, 1, 20), 1));
 
             // Init Object Particle Buffer
             _objectParticleBuffer = Particle.SetAsSimpleParticle(
