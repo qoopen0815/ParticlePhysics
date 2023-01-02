@@ -65,7 +65,8 @@ namespace ParticleSimulator
             InitBuffer();
             SetupShader();
 
-            _effect.SetGraphicsBuffer("ParticlesBuffer", _particleBuffer.status);
+            _nearestNeighbor = new NearestNeighbor.NearestNeighbor<ParticleType>((int)_particleNum, _gridSize, _gridResolution);
+            _effect.SetGraphicsBuffer("ParticleBuffer", _particleBuffer.status);
             _effect.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
         }
 
@@ -90,6 +91,7 @@ namespace ParticleSimulator
             _terrainCollisionForce.Release();
             _objectCollisionForce.Release();
             _tempBufferWrite.Release();
+            _nearestNeighbor.Release();
         }
         #endregion
 
@@ -97,8 +99,8 @@ namespace ParticleSimulator
         {
             _nearestNeighbor.GridSort(ref _particleBuffer.status);
             CalculateParticleCollisionForce(ref _particleCollisionForce, _particleBuffer);
-            //CalculateTerrainCollision(ref _terrainCollisionForce, _particleBuffer, _terrainBuffer);
-            CalculateObjectCollision(ref _objectCollisionForce, _particleBuffer, _objectParticleBuffer);
+            ////CalculateTerrainCollision(ref _terrainCollisionForce, _particleBuffer, _terrainBuffer);
+            //CalculateObjectCollision(ref _objectCollisionForce, _particleBuffer, _objectParticleBuffer);
             Integrate(ref _particleBuffer, _particleCollisionForce, _objectCollisionForce, _terrainCollisionForce);
         }
 
@@ -146,6 +148,7 @@ namespace ParticleSimulator
             _solver.SetVector("_Gravity", _gravity);
             //_solver.SetVector("_GridResolution", gridResolution);
             //_solver.SetFloat("_GridCellSize", gridSize.x / gridResolution.x);
+            _solver.SetInt("_ElementNum", _particleBuffer.substance.Elements.Length);
             _solver.SetInt("_ParticleNum", (int)_particleNum);
             _solver.SetFloat("_ParticleMu", _particleBuffer.substance.Mu);
             _solver.SetFloat("_ParticleTotalMass", _particleBuffer.substance.TotalMass);
@@ -158,12 +161,12 @@ namespace ParticleSimulator
 
         private void CalculateParticleCollisionForce(ref GraphicsBuffer forceBuffer, Particle particleBuffer)
         {
-            int kernelID = _solver.FindKernel("ContactForceCS");
+            int kernelID = _solver.FindKernel("ParticleCollisionCS");
             _solver.SetVector("_GridCenter", _nearestNeighbor.GridCenter);
-            _solver.SetBuffer(kernelID, "_ParticleSubstancesBuffer", particleBuffer.elementSubstance);
-            _solver.SetBuffer(kernelID, "_GranularsBufferRead", particleBuffer.datas);
-            _solver.SetBuffer(kernelID, "_GranularsBufferWrite", _tempBufferWrite);
+            _solver.SetBuffer(kernelID, "_ElementBuffer", particleBuffer.elementSubstance);
+            _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer.status);
             _solver.SetBuffer(kernelID, "_GridIndicesBufferRead", _nearestNeighbor.GridIndicesBuffer);
+            _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
             _solver.GetKernelThreadGroupSizes(kernelID, out var x, out var y, out var z);
             _solver.Dispatch(kernelID, (int)(particleBuffer.status.count / x), 1, 1);
 

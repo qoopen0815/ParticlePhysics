@@ -52,7 +52,7 @@ namespace ParticleSimulator.NearestNeighbor
             #region GridOptimization
             // Build Grid
             kernel = NearestNeighborCS.FindKernel("BuildGridCS");
-            NearestNeighborCS.SetBuffer(kernel, "_GranularsBufferRead", objectsBufferInput);
+            NearestNeighborCS.SetBuffer(kernel, "_ParticleBufferRead", objectsBufferInput);
             NearestNeighborCS.SetBuffer(kernel, "_GridBufferWrite", gridBuffer);
             NearestNeighborCS.Dispatch(kernel, threadGroupSize, 1, 1);
 
@@ -72,8 +72,8 @@ namespace ParticleSimulator.NearestNeighbor
             // Rearrange
             kernel = NearestNeighborCS.FindKernel("RearrangeParticlesCS");
             NearestNeighborCS.SetBuffer(kernel, "_GridBufferRead", gridBuffer);
-            NearestNeighborCS.SetBuffer(kernel, "_GranularsBufferRead", objectsBufferInput);
-            NearestNeighborCS.SetBuffer(kernel, "_GranularsBufferWrite", sortedObjectsBufferOutput);
+            NearestNeighborCS.SetBuffer(kernel, "_ParticleBufferRead", objectsBufferInput);
+            NearestNeighborCS.SetBuffer(kernel, "_ParticleBufferWrite", sortedObjectsBufferOutput);
             NearestNeighborCS.Dispatch(kernel, threadGroupSize, 1, 1);
             #endregion GridOptimization
 
