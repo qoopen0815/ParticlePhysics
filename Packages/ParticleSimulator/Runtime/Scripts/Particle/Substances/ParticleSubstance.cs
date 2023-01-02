@@ -7,6 +7,7 @@ namespace ParticleSimulator.Substance
     {
         protected ElementType[] elements;
 
+        protected float mu;
         protected float totalMass;
         protected float3 centerOfMass;
         protected float3x3 inertialMoment;
@@ -14,16 +15,18 @@ namespace ParticleSimulator.Substance
         #region Accessor
         public ElementType[] Elements => elements;
         public float TotalMass => totalMass;
+        public float Mu => mu;
         public Vector3 CenterOfMass => centerOfMass;
         public float3x3 InertialMoment => inertialMoment;
         #endregion
 
-        protected ParticleSubstance(float radius = 0.04f, float density = 2000.0f)
+        protected ParticleSubstance(float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
+            this.mu = mu;
             this.elements = SetElements(radius, density);
-            totalMass = CalculateTotalMass(elements, density);
-            centerOfMass = CalculateCenterOfMass(elements);
-            inertialMoment = CalculateInverseInertialMoment(elements);
+            this.totalMass = CalculateTotalMass(elements, density);
+            this.centerOfMass = CalculateCenterOfMass(elements);
+            this.inertialMoment = CalculateInverseInertialMoment(elements);
         }
 
         protected float CalculateElementMass(float radius, float density)

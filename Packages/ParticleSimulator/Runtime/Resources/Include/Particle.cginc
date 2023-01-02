@@ -4,13 +4,12 @@
 // 粒状体を構成する粒子の物性
 struct ElementType
 {
-	float radius;
-	float mass;
-	float mu;
+	float  radius;
+	float  mass;
 	float3 offsetFromParticleCenter;
 };
 
-// 粒状態のステータス
+// 粒状体のステータス
 struct ParticleType
 {
 	float3 position;
@@ -22,10 +21,11 @@ struct ParticleType
 // 粒状体に関する定数
 cbuffer ParticleCB
 {
-	uint _ParticleNum; // 粒状体の数
-	uint _ElementNum; // 粒状体を構成する粒子の数
-	float _ParticleTotalMass; // 粒状体の総質量
-	float4x4 _ParticleInertialMoment; // 粒状体の慣性モーメント
+	uint  _ElementNum;
+	uint  _ParticleNum;
+	float _ParticleMu;
+	float _ParticleTotalMass;
+	float4x4 _ParticleInertialMoment;
 };
 
 // 物性値のバッファ

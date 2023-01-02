@@ -10,22 +10,22 @@ namespace ParticleSimulator.SortTool
 
         protected ComputeShader BitonicCS;
 
-        int numElements;
+        int _numElements;
 
         public BitonicSort(int numElements)
         {
-            this.BitonicCS = (ComputeShader)Resources.Load("ComputeShader/BitonicSortCS");
-            this.numElements = numElements;
+            this.BitonicCS = (ComputeShader)Resources.Load("BitonicSortCS");
+            this._numElements = numElements;
         }
 
-        public void Sort(ref ComputeBuffer inBuffer, ref ComputeBuffer tempBuffer)
+        public void Sort(ref GraphicsBuffer inBuffer, ref GraphicsBuffer tempBuffer)
         {
             ComputeShader sortCS = BitonicCS;
 
             int KERNEL_ID_BITONICSORT = sortCS.FindKernel("BitonicSort");
             int KERNEL_ID_TRANSPOSE = sortCS.FindKernel("MatrixTranspose");
 
-            uint NUM_ELEMENTS = (uint)numElements;
+            uint NUM_ELEMENTS = (uint)_numElements;
             uint MATRIX_WIDTH = BITONIC_BLOCK_SIZE;
             uint MATRIX_HEIGHT = (uint)NUM_ELEMENTS / BITONIC_BLOCK_SIZE;
 

@@ -4,10 +4,10 @@ namespace ParticleSimulator.NearestNeighbor
 {
     public abstract class NearestNeighborBase
     {
-        protected ComputeBuffer gridBuffer;
-        protected ComputeBuffer gridPingPongBuffer;
-        protected ComputeBuffer gridIndicesBuffer;
-        protected ComputeBuffer sortedObjectsBufferOutput;
+        protected GraphicsBuffer gridBuffer;
+        protected GraphicsBuffer gridPingPongBuffer;
+        protected GraphicsBuffer gridIndicesBuffer;
+        protected GraphicsBuffer sortedObjectsBufferOutput;
 
         protected int particleNum;
 
@@ -30,19 +30,19 @@ namespace ParticleSimulator.NearestNeighbor
         }
 
         #region Accessor
-        public ComputeBuffer GridIndicesBuffer => gridIndicesBuffer;
+        public GraphicsBuffer GridIndicesBuffer => gridIndicesBuffer;
         public Vector3 GridCenter { get => gridCenter; set => gridCenter = value; }
         #endregion
 
         public void Release()
         {
-            BufferUtils.ReleaseBuffer(gridBuffer);
-            BufferUtils.ReleaseBuffer(gridIndicesBuffer);
-            BufferUtils.ReleaseBuffer(gridPingPongBuffer);
-            BufferUtils.ReleaseBuffer(sortedObjectsBufferOutput);
+            gridBuffer.Release();
+            gridIndicesBuffer.Release();
+            gridPingPongBuffer.Release();
+            sortedObjectsBufferOutput.Release();
         }
 
-        public void GridSort(ref ComputeBuffer objectsBufferInput)
+        public void GridSort(ref GraphicsBuffer objectsBufferInput)
         {
             NearestNeighborCS.SetInt("_ParticleNum", this.particleNum);
             SetCSVariables();
@@ -77,7 +77,7 @@ namespace ParticleSimulator.NearestNeighbor
             NearestNeighborCS.Dispatch(kernel, threadGroupSize, 1, 1);
             #endregion GridOptimization
 
-            BufferUtils.SwapComputeBuffer(ref sortedObjectsBufferOutput, ref objectsBufferInput);
+            (sortedObjectsBufferOutput, objectsBufferInput) = (objectsBufferInput, sortedObjectsBufferOutput);
         }
 
         #region GPUSort

@@ -18,7 +18,7 @@ namespace ParticleSimulator.NearestNeighbor
             this.gridCenter = gridCellSize * gridResolution / 2;
             this.totalCellNum = (int)(gridResolution.x * gridResolution.y * gridResolution.z);
 
-            this.NearestNeighborCS = (ComputeShader)Resources.Load("ComputeShader/GridSearch", typeof(ComputeShader));
+            this.NearestNeighborCS = (ComputeShader)Resources.Load("GridSearch", typeof(ComputeShader));
 
             InitializeBuffer();
 
@@ -31,10 +31,10 @@ namespace ParticleSimulator.NearestNeighbor
 
         protected override void InitializeBuffer()
         {
-            gridBuffer = new ComputeBuffer(particleNum, Marshal.SizeOf(typeof(Uint2)));
-            gridPingPongBuffer = new ComputeBuffer(particleNum, Marshal.SizeOf(typeof(Uint2)));
-            gridIndicesBuffer = new ComputeBuffer(totalCellNum, Marshal.SizeOf(typeof(Uint2)));
-            sortedObjectsBufferOutput = new ComputeBuffer(particleNum, Marshal.SizeOf(typeof(T)));
+            gridBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, particleNum, Marshal.SizeOf(typeof(Uint2)));
+            gridPingPongBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, particleNum, Marshal.SizeOf(typeof(Uint2)));
+            gridIndicesBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, totalCellNum, Marshal.SizeOf(typeof(Uint2)));
+            sortedObjectsBufferOutput = new GraphicsBuffer(GraphicsBuffer.Target.Structured, particleNum, Marshal.SizeOf(typeof(T)));
         }
 
         protected override void SetCSVariables()
