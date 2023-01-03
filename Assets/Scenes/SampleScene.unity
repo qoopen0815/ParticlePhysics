@@ -480,10 +480,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _particleNum: 16384
   _particleRenderMat: {fileID: 2100000, guid: 48e8317f90ff45c4f92c4e2de9ec720d, type: 2}
+  _spornPos: {x: 20, y: 5, z: 20}
   _terrain: {fileID: 510845133}
   _mesh: {fileID: -8803937527578110353, guid: 471893bf3545a0140b0c1a9850a4f7d4, type: 3}
   _maxAllowableTimestep: 0.0005
   _gravity: {x: 0, y: -9.81, z: 0}
+  _gridSize: {x: 5, y: 10, z: 5}
+  _gridResolution: {x: 10, y: 20, z: 10}
   _effect: {fileID: 1358538621}
 --- !u!1 &832575517
 GameObject:
@@ -543,13 +546,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 903860620}
+  - component: {fileID: 903860621}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &903860620
 Transform:
   m_ObjectHideFlags: 0
@@ -565,6 +569,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &903860621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903860619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4746c39449ee14429c55e9c2f9411c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1358538619
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ namespace ParticleSimulator.NearestNeighbor
 
     public class NearestNeighbor<T> : NearestNeighborBase where T : struct
     {
-        public NearestNeighbor(int particleNum, Vector3 gridSize, Vector3 gridResolution) : base(particleNum)
+        public NearestNeighbor(int objectNum, Vector3 gridSize, Vector3 gridResolution) : base()
         {
             this.gridResolution = gridResolution;
             this.gridCellSize = gridSize.x / this.gridResolution.x;
@@ -20,21 +20,21 @@ namespace ParticleSimulator.NearestNeighbor
 
             this.NearestNeighborCS = (ComputeShader)Resources.Load("GridSearch", typeof(ComputeShader));
 
-            InitializeBuffer();
+            InitializeBuffer(objectNum);
 
-            //Debug.Log("=== Instantiated Grid Sort === \n" +
-            //          "Size of Search Area : \t" + searchArea + "\n" +
-            //          "Total number of cells in the grid : \t" + this.totalCellNum + "\n" +
-            //          "Number of grid cells for each axis : \t" + this.gridCellNum + "\n" +
-            //          "Size of each grid cells : \t" + this.gridCellSize);
+            Debug.Log("=== Instantiated Grid Sort === \n" +
+                      //"Size of Search Area : \t" + searchArea + "\n" +
+                      "Total number of cells in the grid : \t" + this.totalCellNum + "\n" +
+                      "Number of grid cells for each axis : \t" + this.gridResolution + "\n" +
+                      "Size of each grid cells : \t" + this.gridCellSize);
         }
 
-        protected override void InitializeBuffer()
+        protected override void InitializeBuffer(int objectNum)
         {
-            gridBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, particleNum, Marshal.SizeOf(typeof(Uint2)));
-            gridPingPongBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, particleNum, Marshal.SizeOf(typeof(Uint2)));
+            gridBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objectNum, Marshal.SizeOf(typeof(Uint2)));
+            gridPingPongBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objectNum, Marshal.SizeOf(typeof(Uint2)));
             gridIndicesBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, totalCellNum, Marshal.SizeOf(typeof(Uint2)));
-            sortedObjectsBufferOutput = new GraphicsBuffer(GraphicsBuffer.Target.Structured, particleNum, Marshal.SizeOf(typeof(T)));
+            sortedObjectsBufferOutput = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objectNum, Marshal.SizeOf(typeof(T)));
         }
 
         protected override void SetCSVariables()

@@ -22,6 +22,7 @@ namespace ParticleSimulator
         //[SerializeField] private float _particleRadius = 0.1f;                               // —±Žq”¼Œa
         //[SerializeField] private float _particleDensity = 2000.0f;                           // —±Žq–§“x
         [SerializeField] private Material _particleRenderMat;
+        [SerializeField] private Vector3 _spornPos;
 
         // Terrain Data
         [SerializeField] private Terrain _terrain;
@@ -66,6 +67,7 @@ namespace ParticleSimulator
             SetupShader();
 
             _nearestNeighbor = new NearestNeighbor.NearestNeighbor<ParticleType>((int)_particleNum, _gridSize, _gridResolution);
+            _nearestNeighbor.UpdateGridVariables(_spornPos, _gridSize, _gridResolution);
             _effect.SetGraphicsBuffer("ParticleBuffer", _particleBuffer.status);
             _effect.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
         }
@@ -108,7 +110,7 @@ namespace ParticleSimulator
         {
             // Init Particle Buffer
             _particleBuffer = Particle.SetAsTetrahedronParticle(
-                ParticleType.GenerateSphere((int)_particleNum, new Vector3(20, 1, 20), 1));
+                ParticleType.GenerateSphere((int)_particleNum, _spornPos, 1));
 
             // Init Object Particle Buffer
             _objectParticleBuffer = Particle.SetAsSimpleParticle(
@@ -146,8 +148,9 @@ namespace ParticleSimulator
         private void SetupShader()
         {
             _solver.SetVector("_Gravity", _gravity);
-            //_solver.SetVector("_GridResolution", gridResolution);
-            //_solver.SetFloat("_GridCellSize", gridSize.x / gridResolution.x);
+            _solver.SetFloat("_Friction", 0.995f);
+            _solver.SetVector("_GridResolution", _gridResolution);
+            _solver.SetFloat("_GridCellSize", _gridSize.x / _gridResolution.x);
             _solver.SetInt("_ElementNum", _particleBuffer.substance.Elements.Length);
             _solver.SetInt("_ParticleNum", (int)_particleNum);
             _solver.SetFloat("_ParticleMu", _particleBuffer.substance.Mu);
@@ -166,13 +169,9 @@ namespace ParticleSimulator
             _solver.SetBuffer(kernelID, "_ElementBuffer", particleBuffer.elementSubstance);
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer.status);
             _solver.SetBuffer(kernelID, "_GridIndicesBufferRead", _nearestNeighbor.GridIndicesBuffer);
-            _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
+            _solver.SetBuffer(kernelID, "_ParticleCollisionForce", forceBuffer);
             _solver.GetKernelThreadGroupSizes(kernelID, out var x, out var y, out var z);
             _solver.Dispatch(kernelID, (int)(particleBuffer.status.count / x), 1, 1);
-
-            var f = new ParticleCollisionForce[particleBuffer.status.count];
-            System.Array.Fill(f, new ParticleCollisionForce(Vector3.zero, Vector3.zero));
-            forceBuffer.SetData(f);
         }
 
         private void CalculateObjectCollision(ref GraphicsBuffer forceBuffer, Particle particleBuffer, Particle objectBuffer)
