@@ -99,8 +99,8 @@ namespace ParticleSimulator
 
         public void UpdateParticle(ref GraphicsBuffer particles)
         {
-            _nearestNeighbor.GridSort(ref _particleBuffer.status);
-            CalculateParticleCollisionForce(ref _particleCollisionForce, _particleBuffer);
+            //_nearestNeighbor.GridSort(ref _particleBuffer.status);
+            //CalculateParticleCollisionForce(ref _particleCollisionForce, _particleBuffer);
             ////CalculateTerrainCollision(ref _terrainCollisionForce, _particleBuffer, _terrainBuffer);
             //CalculateObjectCollision(ref _objectCollisionForce, _particleBuffer, _objectParticleBuffer);
             Integrate(ref _particleBuffer, _particleCollisionForce, _objectCollisionForce, _terrainCollisionForce);
