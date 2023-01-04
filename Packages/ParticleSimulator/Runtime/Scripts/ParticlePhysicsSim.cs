@@ -4,18 +4,7 @@ using UnityEngine.VFX;
 
 namespace ParticleSimulator
 {
-    public enum ParticleNumEnum
-    {
-        NUM_1K = 1024,
-        NUM_2K = 1024 * 2,
-        NUM_4K = 1024 * 4,
-        NUM_8K = 1024 * 8,
-        NUM_16K = 1024 * 16,
-        NUM_32K = 1024 * 32,
-        NUM_64K = 1024 * 64
-    };
-
-    public class SandSimulator : MonoBehaviour
+    public class ParticlePhysicsSim : MonoBehaviour
     {
         // Particle Data
         [SerializeField] private ParticleNumEnum _particleNum = ParticleNumEnum.NUM_8K;      // ó±éqêî
@@ -95,6 +84,12 @@ namespace ParticleSimulator
             _tempBufferWrite.Release();
             _nearestNeighbor.Release();
         }
+
+        private void OnDrawGizmos()
+        {
+            //_nearestNeighbor.ShowGridOnGizmo();
+        }
+
         #endregion
 
         public void UpdateParticle(ref GraphicsBuffer particles)

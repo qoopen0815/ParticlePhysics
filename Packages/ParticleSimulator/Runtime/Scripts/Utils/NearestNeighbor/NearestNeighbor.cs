@@ -44,10 +44,10 @@ namespace ParticleSimulator.NearestNeighbor
             NearestNeighborCS.SetVector("_GridResolution", gridResolution);
         }
 
-        public void ShowSearchAreaOnGizmo()
+        public void ShowGridOnGizmo(Vector3 gridCenter, float cellSize, Vector3Int gridResolution, Color gridColor)
         {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireCube(gridCenter, gridCellSize * gridResolution);
+            Gizmos.color = gridColor;
+            Gizmos.DrawWireCube(gridCenter, gridResolution);
         }
 
         public void UpdateGridVariables(Vector3 center, Vector3 size, Vector3 resolution)
