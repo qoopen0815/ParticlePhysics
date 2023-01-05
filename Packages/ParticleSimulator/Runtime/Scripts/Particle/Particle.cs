@@ -18,7 +18,7 @@ namespace ParticleSimulator
         public void Release()
         {
             status.Release();
-            substance.Elements.Release();
+            substance.Release();
         }
 
         public static Particle SetAsSimpleParticle(ParticleStatus[] particles)

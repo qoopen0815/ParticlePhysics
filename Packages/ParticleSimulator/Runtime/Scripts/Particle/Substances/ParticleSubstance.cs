@@ -21,6 +21,11 @@ namespace ParticleSimulator.Substance
 
         #endregion
 
+        public void Release()
+        {
+            elements.Release();
+        }
+
         protected float CalculateElementMass(float radius, float density)
         {
             float volume = (4.0f / 3.0f) * math.PI * math.pow(radius, 3);
