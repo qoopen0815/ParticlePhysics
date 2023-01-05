@@ -15,7 +15,7 @@ namespace ParticleSimulator
         private GraphicsBuffer _terrainCollisionForce;
         private GraphicsBuffer _tmpBufferWrite;
 
-        private NearestNeighbor.NearestNeighbor<ParticleType> _nearestNeighbor;
+        private NearestNeighbor.NearestNeighbor<ParticleStatus> _nearestNeighbor;
 
         public SandPhysicsSolver(Terrain terrain)
         {
@@ -28,11 +28,11 @@ namespace ParticleSimulator
             InitBuffer(objNum);
 
             // Particle
-            var p = Particle.SetAsSimpleParticle(ParticleType.GenerateSphere(objNum, new Vector3(50, 10, 50), 5));
+            var p = Particle.SetAsSimpleParticle(ParticleStatus.GenerateSphere(objNum, new Vector3(50, 10, 50), 5));
             SetParticleCSParams(p);
 
             // Grid Search
-            _nearestNeighbor = new NearestNeighbor.NearestNeighbor<ParticleType>(objNum);
+            _nearestNeighbor = new NearestNeighbor.NearestNeighbor<ParticleStatus>(objNum);
             SetGridSearchCSParams(new Vector3(50, 10, 50), _nearestNeighbor.GridCellSize * _nearestNeighbor.GridResolution, _nearestNeighbor.GridResolution);
 
             // Terrain
@@ -78,7 +78,7 @@ namespace ParticleSimulator
             _tmpBufferWrite = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 (int)objNum,
-                Marshal.SizeOf(typeof(ParticleType)));
+                Marshal.SizeOf(typeof(ParticleStatus)));
         }
 
         public void UpdateParticle(ref Particle particles, GraphicsBuffer terrain)

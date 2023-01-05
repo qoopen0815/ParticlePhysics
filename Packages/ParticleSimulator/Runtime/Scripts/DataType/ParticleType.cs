@@ -4,16 +4,16 @@ using UnityEngine.VFX;
 namespace ParticleSimulator
 {
     [VFXType(VFXTypeAttribute.Usage.GraphicsBuffer)]
-    public struct ParticleType
+    public struct ParticleStatus
     {
         public Vector3 position;
         public Vector3 velocity;
         public Vector4 orientation;
         public Vector3 angularVelocity;
 
-        public static ParticleType[] GeneratePoint(int particleNum, Vector3 centerPos)
+        public static ParticleStatus[] GeneratePoint(int particleNum, Vector3 centerPos)
         {
-            var particles = new ParticleType[particleNum];
+            var particles = new ParticleStatus[particleNum];
             var identityOrientation = Quaternion.identity;
             for (int i = 0; i < particleNum; i++)
             {
@@ -25,9 +25,9 @@ namespace ParticleSimulator
             return particles;
         }
 
-        public static ParticleType[] GenerateSphere(int particleNum, Vector3 centerPos, float radius)
+        public static ParticleStatus[] GenerateSphere(int particleNum, Vector3 centerPos, float radius)
         {
-            var particles = new ParticleType[particleNum];
+            var particles = new ParticleStatus[particleNum];
             var identityOrientation = Quaternion.identity;
             for (int i = 0; i < particleNum; i++)
             {
@@ -39,9 +39,9 @@ namespace ParticleSimulator
             return particles;
         }
     
-        public static ParticleType[] GenerateFromMesh(int particleNum, Mesh mesh)
+        public static ParticleStatus[] GenerateFromMesh(int particleNum, Mesh mesh)
         {
-            var particles = new ParticleType[particleNum];
+            var particles = new ParticleStatus[particleNum];
             return particles;
         }
     };

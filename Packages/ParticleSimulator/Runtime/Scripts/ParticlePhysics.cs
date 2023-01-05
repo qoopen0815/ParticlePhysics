@@ -42,11 +42,11 @@ namespace ParticleSimulator
         {
             // Init Particle Buffer
             _particle = Particle.SetAsTetrahedronParticle(
-                ParticleType.GenerateSphere((int)_particleNum, _spornPos, 5));
+                ParticleStatus.GenerateSphere((int)_particleNum, _spornPos, 5));
 
             // Init Object Particle Buffer
             _objectParticle = Particle.SetAsSimpleParticle(
-                ParticleType.GenerateFromMesh((int)_particleNum, _mesh));
+                ParticleStatus.GenerateFromMesh((int)_particleNum, _mesh));
 
             // Init Terrain Bufer
             var t = TerrainType.GenerateFromTerrain(_terrain);

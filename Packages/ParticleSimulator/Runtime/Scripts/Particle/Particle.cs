@@ -21,37 +21,37 @@ namespace ParticleSimulator
             substance.Elements.Release();
         }
 
-        public static Particle SetAsSimpleParticle(ParticleType[] particles)
+        public static Particle SetAsSimpleParticle(ParticleStatus[] particles)
         {
             Particle p = new Particle(particles.Length);
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,
-                Marshal.SizeOf(typeof(ParticleType)));
+                Marshal.SizeOf(typeof(ParticleStatus)));
             p.status.SetData(particles);
             p.substance = new SimpleSubstance();
             return p;
         }
 
-        public static Particle SetAsTetrahedronParticle(ParticleType[] particles)
+        public static Particle SetAsTetrahedronParticle(ParticleStatus[] particles)
         {
             Particle p = new Particle(particles.Length);
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,
-                Marshal.SizeOf(typeof(ParticleType)));
+                Marshal.SizeOf(typeof(ParticleStatus)));
             p.status.SetData(particles);
             p.substance = new TetrahedronSubstance();
             return p;
         }
 
-        public static Particle SetAsCubeParticle(ParticleType[] particles)
+        public static Particle SetAsCubeParticle(ParticleStatus[] particles)
         {
             Particle p = new Particle(particles.Length);
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,
-                Marshal.SizeOf(typeof(ParticleType)));
+                Marshal.SizeOf(typeof(ParticleStatus)));
             p.status.SetData(particles);
             p.substance = new CubeSubstance();
             return p;
