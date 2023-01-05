@@ -1,23 +1,24 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.VFX;
 
 namespace ParticleSimulator
 {
-    public class ParticlePhysicsSim : MonoBehaviour
+    public class ParticlePhysics : MonoBehaviour
     {
         // Particle Data
-        [SerializeField] private ParticleNumEnum _particleNum = ParticleNumEnum.NUM_8K;      // 粒子数
-        //[SerializeField] private float _particleRadius = 0.1f;                               // 粒子半径
-        //[SerializeField] private float _particleDensity = 2000.0f;                           // 粒子密度
-        [SerializeField] private Material _particleRenderMat;
-        [SerializeField] private Vector3 _spornPos;
+        [SerializeField] public ParticleNumEnum _particleNum;
+        [SerializeField] public Vector3 _spornPos;
+        [SerializeField] public VisualEffect _effect;
 
         // Terrain Data
-        [SerializeField] private Terrain _terrain;
+        [SerializeField] public Terrain _terrain;
 
         // Object Data
         [SerializeField] private Mesh _mesh;
+        [SerializeField] private List<GameObject> _objects;
 
         // Simulation
         [SerializeField] private float _maxAllowableTimestep = 0.0005f;     // 最大時間刻み幅
@@ -29,7 +30,6 @@ namespace ParticleSimulator
         [SerializeField] private Vector3 _gridResolution = new Vector3(100, 100, 100);
 
         // Render(VFX)
-        [SerializeField] private VisualEffect _effect;
 
         // ComputeShader
         private ComputeShader _solver;
