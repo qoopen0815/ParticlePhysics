@@ -26,6 +26,8 @@ namespace ParticleSimulator.NearestNeighbor
         #region Accessor
         public GraphicsBuffer GridIndicesBuffer => gridIndicesBuffer;
         public Vector3 GridCenter { get => gridCenter; set => gridCenter = value; }
+        public float GridCellSize => gridCellSize;
+        public Vector3 GridResolution => gridResolution;
         #endregion
 
         public void Release()

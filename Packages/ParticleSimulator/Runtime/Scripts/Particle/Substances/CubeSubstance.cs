@@ -1,19 +1,27 @@
-﻿using Unity.Mathematics;
+﻿using UnityEngine;
+using Unity.Mathematics;
+using System.Runtime.InteropServices;
 
 namespace ParticleSimulator.Substance
 {
     public class CubeSubstance : ParticleSubstance
     {
-        private static uint _elementNum = 9;
         private static float _elementRatio = 0.3f;
 
-        public CubeSubstance(float radius = 0.04f, float density = 2000.0f, float mu = 0.05f) : base(_elementNum)
+        public CubeSubstance(float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
             this.mu = mu;
-            this.elements = SetElements(radius, density);
-            this.totalMass = CalculateTotalMass(elements, density);
-            this.centerOfMass = CalculateCenterOfMass(elements);
-            this.inertialMoment = CalculateInverseInertialMoment(elements);
+
+            var e = SetElements(radius, density);
+            this.totalMass = CalculateTotalMass(e, density);
+            this.centerOfMass = CalculateCenterOfMass(e);
+            this.inertialMoment = CalculateInverseInertialMoment(e);
+
+            elements = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                e.Length,
+                Marshal.SizeOf(typeof(ElementType)));
+            elements.SetData(e);
         }
 
         protected override ElementType[] SetElements(float particleRadius, float particleDensity)
