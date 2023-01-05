@@ -8,28 +8,32 @@ namespace ParticleSimulator
 {
     public class ParticlePhysics : MonoBehaviour
     {
-        // Particle Data
-        [SerializeField] public ParticleNumEnum _particleNum;
-        [SerializeField] public Vector3 _spornPos;
-        [SerializeField] public VisualEffect _effect;
+        #region Inspector
+        [Header("Particle Setting")]
+        [SerializeField] private ParticleNumEnum _particleNum;
+        [SerializeField] private ParticleTypeEnum _particleType;
+        // Particle Type -> 粒子形状を選択できるようにする
+        [SerializeField, Range(0.02f, 0.1f)] private float _particleRadius;
+        [SerializeField] private Vector3 _spornPos; // いずれは消す。またはデバッグ用コンポーネントを別途用意する。
+        [SerializeField] private VisualEffect _effect;
 
-        // Terrain Data
-        [SerializeField] public Terrain _terrain;
-
-        // Object Data
-        [SerializeField] private Mesh _mesh;
-        [SerializeField] private List<GameObject> _objects;
-
-        // Simulation
-        [SerializeField] private float _maxAllowableTimestep = 0.0005f;     // 最大時間刻み幅
+        [Header("Physics Setting")]
         [SerializeField] private Vector3 _gravity = Physics.gravity;        // 重力
+        [SerializeField] private float _maxTimestep = 0.0005f;     // 最大時間刻み幅
 
-        // 近傍探索
-        private NearestNeighbor.NearestNeighbor<ParticleType> _nearestNeighbor;
+        [Header("Collision Objects")]
+        [SerializeField] private Terrain _terrain;
+        [SerializeField] private List<GameObject> _objects;
+        
+        [Header("Option Setting")] // ここもいずれは消したい。
         [SerializeField] private Vector3 _gridSize = new Vector3(64, 64, 64);
         [SerializeField] private Vector3 _gridResolution = new Vector3(100, 100, 100);
+        #endregion
 
-        // Render(VFX)
+        #region Variables
+        // Objects
+        private Mesh _mesh;
+        private NearestNeighbor.NearestNeighbor<ParticleType> _nearestNeighbor;
 
         // ComputeShader
         private ComputeShader _solver;
@@ -40,8 +44,6 @@ namespace ParticleSimulator
         private GraphicsBuffer _objectCollisionForce;
         private GraphicsBuffer _terrainCollisionForce;
         private GraphicsBuffer _tempBufferWrite;
-
-        #region Accessor
         #endregion
 
         #region Mono
@@ -193,7 +195,7 @@ namespace ParticleSimulator
         private void Integrate(ref Particle particleBuffer, GraphicsBuffer particleCollisionForce, GraphicsBuffer objectCollisionForce, GraphicsBuffer terrainCollisionForce)
         {
             int kernelID = _solver.FindKernel("IntegrateCS");
-            _solver.SetFloat("_TimeStep", Mathf.Min(_maxAllowableTimestep, Time.deltaTime));
+            _solver.SetFloat("_TimeStep", Mathf.Min(_maxTimestep, Time.deltaTime));
             _solver.SetBuffer(kernelID, "_ParticleCollisionForce", particleCollisionForce);
             _solver.SetBuffer(kernelID, "_ObjectCollisionForce", objectCollisionForce);
             _solver.SetBuffer(kernelID, "_TerrainCollisionForce", terrainCollisionForce);

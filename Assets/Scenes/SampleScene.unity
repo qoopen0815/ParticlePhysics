@@ -479,15 +479,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _particleNum: 16384
-  _particleRenderMat: {fileID: 2100000, guid: 48e8317f90ff45c4f92c4e2de9ec720d, type: 2}
-  _spornPos: {x: 20, y: 5, z: 20}
-  _terrain: {fileID: 510845133}
-  _mesh: {fileID: -8803937527578110353, guid: 471893bf3545a0140b0c1a9850a4f7d4, type: 3}
-  _maxAllowableTimestep: 0.0005
+  _particleType: 0
+  _particleRadius: 0.02
+  _spornPos: {x: 20, y: 5, z: 0}
+  _effect: {fileID: 1358538621}
   _gravity: {x: 0, y: -9.81, z: 0}
+  _maxTimestep: 0.0005
+  _terrain: {fileID: 510845133}
+  _objects:
+  - {fileID: 0}
   _gridSize: {x: 5, y: 10, z: 5}
   _gridResolution: {x: 10, y: 20, z: 10}
-  _effect: {fileID: 1358538621}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
