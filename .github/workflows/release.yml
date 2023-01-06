@@ -68,7 +68,8 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.version }}
           release_name: ${{ github.event.inputs.version }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+          body: ${{ github.event.inputs.version }}
+                # ${{ steps.tag_version.outputs.changelog }}
           draft: false
           prerelease: false
       # Upload Assets
