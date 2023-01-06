@@ -128,9 +128,6 @@ namespace ParticleSimulator
         private void CalculateParticleCollisionForce(GraphicsBuffer particleBuffer, GraphicsBuffer elementBuffer)
         {
             int kernelID = _solver.FindKernel("ParticleCollisionCS");
-            _solver.SetFloat("_GridCellSize", _gridCellSize);
-            _solver.SetVector("_GridResolution", _gridResolution);
-            _solver.SetVector("_GridCenter", _gridCenter);
             _solver.SetFloat("_ParticleMu", _particleMu);
             _solver.SetBuffer(kernelID, "_ElementBuffer", elementBuffer);
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
