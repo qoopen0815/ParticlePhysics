@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -478,7 +478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9191cb30d96eeb84f8623096ba9b4356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxParticle: 32768
+  _maxParticle: 8192
   _particleType: 1
   _particleRadius: 0.1
   _spornPos: {x: 50, y: 25, z: 50}
@@ -486,7 +486,7 @@ MonoBehaviour:
   _terrain: {fileID: 510845133}
   _objects: []
   _gridSize: {x: 40, y: 30, z: 40}
-  _gridCellSize: 0.5
+  _gridCellSize: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
