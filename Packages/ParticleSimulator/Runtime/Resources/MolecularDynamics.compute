@@ -42,11 +42,11 @@ groupshared ParticleCollisionForce sharedBuffer[PARTICLE_NUM];
 
 cbuffer MolecularDynamicsCB
 {
-	float _TimeStep;
 	float3 _Gravity;
+	float _TimeStep;
 };
 
-inline float3 CalculateNormalForce(float overlap, float normal_velocity,
+inline float CalculateNormalForce(float overlap, float normal_velocity,
 								   float alpha = 0.5f, float beta = 1.5f,
 								   float kd = 200.0f, float kr = 10000.0f, float kt = 10000.0f)
 {
@@ -56,36 +56,41 @@ inline float3 CalculateNormalForce(float overlap, float normal_velocity,
 inline float3 CalculateShearForce(float normal_force, float normal_vel, float3 normal_vec,
 								  float3 velocity_vec, float kt = 10000.0f)
 {
-	float3 tangent_vel_vec = velocity_vec - normal_vel * normal_vec; // Vt = V - E. * N
-	float tangent_vel = length(tangent_vel_vec); // vt = ||Vt||
-	if (tangent_vel > 0.f)
-		return -min(_ParticleMu * -normal_force, kt * tangent_vel) * tangent_vel_vec / tangent_vel;
+	float4 tangent_velocity = float4(0, 0, 0, 0);
+	tangent_velocity.xyz = velocity_vec - normal_vel * normal_vec; // Vt = V - E. * N
+	tangent_velocity.w = length(tangent_velocity.xyz); // vt = ||Vt||
+	if (tangent_velocity.w > 0.f)
+		return -min(_ParticleMu * -normal_force, kt * tangent_velocity.w) * tangent_velocity.xyz / tangent_velocity.w;
 	return float3(0, 0, 0);
 }
 
 inline float3 CalculateContactForce(float this_particle_radius, float3 this_particle_position, float3 this_particle_velocity,
 									float other_particle_radius, float3 other_particle_position, float3 other_particle_velocity)
 {
-	float3 vector_from_this_to_other = other_particle_position - this_particle_position;
-	float offset_length = length(vector_from_this_to_other); // 粒子の中心間距離
-	float overlap = max(0, this_particle_radius + other_particle_radius - offset_length); // 粒子の重なり
+	float4 from_this_to_other = float4(0, 0, 0, 0);
+	from_this_to_other.xyz = other_particle_position - this_particle_position;	// vector
+	from_this_to_other.w = length(from_this_to_other.xyz);						// length
 	
+	float overlap = max(0, this_particle_radius + other_particle_radius - from_this_to_other.w); // 粒子の重なり
 	if (overlap == 0)
 		return 0; // 粒子が重なっていなければ接触力ゼロ
 	
 	float3 velocity_vec = this_particle_velocity - other_particle_velocity; // V = v1 - v2
-	float3 normal_vec = vector_from_this_to_other / offset_length; // N = (x2 - x1) / (||x2 - x1||)
-	float normal_vel = dot(velocity_vec, normal_vec); // E. = V . N
+	
+	float4 normal = float4(0, 0, 0, 0);
+	normal.xyz = from_this_to_other.xyz / from_this_to_other.w;	// vector: N = (x2 - x1) / (||x2 - x1||)
+	normal.w = dot(velocity_vec, normal.xyz);					// velocity(normal): E. = V . N
 	
 	// Normal force vector
-	float normal_force = CalculateNormalForce(overlap, normal_vel);
-	float3 normal_force_vec = normal_force * normal_vec;
+	float4 normal_force = float4(0, 0, 0, 0);
+	normal_force.w = CalculateNormalForce(overlap, normal.w);	// normal force(scaler):
+	normal_force.xyz = normal_force.w * normal.xyz;				// normal force(vector :
 	
 	// Shear force vector
-	float3 shear_force_vec = CalculateShearForce(normal_force, normal_vel, normal_vec, velocity_vec);
+	float3 shear_force_vec = CalculateShearForce(normal_force.w, normal.w, normal.xyz, velocity_vec);
 	
 	// Return contact force vector
-	return shear_force_vec + normal_force_vec;
+	return shear_force_vec + normal_force.xyz;
 }
 
 [numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
@@ -99,10 +104,7 @@ void ParticleCollisionCS(uint3 groupID : SV_GroupID, uint3 threadID : SV_GroupTh
 	
 	if (threadID.y < _ElementNum | threadID.z < _ElementNum)
 	{
-		const float3 P_position = _ParticleBufferRead[P_ID].position;
-		const float3 P_velocity = _ParticleBufferRead[P_ID].velocity;
-		const float4 P_orientation = _ParticleBufferRead[P_ID].orientation;
-		const float3 P_angularVelocity = _ParticleBufferRead[P_ID].angularVelocity;
+		const ParticleType P_particle = _ParticleBufferRead[P_ID];
 
 	// 近傍探索
 	LOOP_AROUND_NEIGHBOR(_ParticleBufferRead[P_ID].position)
@@ -118,32 +120,29 @@ void ParticleCollisionCS(uint3 groupID : SV_GroupID, uint3 threadID : SV_GroupTh
 			// ▼ 接触力の計算
 			// https://github.com/WestRyanK/Particle-Simulator/blob/93da771838b3d02f45c3aec964ef4a04bbef6fd4/GranularSimulator/GranularSubstanceSimulator.cpp#L203-L214
 					
-						const float3 N_position = _ParticleBufferRead[N_ID].position;
-						const float3 N_velocity = _ParticleBufferRead[N_ID].velocity;
-						const float4 N_orientation = _ParticleBufferRead[N_ID].orientation;
-						const float3 N_angularVelocity = _ParticleBufferRead[N_ID].angularVelocity;
+						const ParticleType N_particle = _ParticleBufferRead[N_ID];
 					
-						const float3 offset = normalize(N_position - P_position);
+						const float3 offset = normalize(N_particle.position - P_particle.position);
 					
 						const uint P_elementIndice = threadID.y;
 					
-						const float3 P_particlePosition = P_position + RotateVector(_ElementBuffer[P_elementIndice].offsetFromParticleCenter, P_orientation);
+						const float3 P_particlePosition = P_particle.position + RotateVector(_ElementBuffer[P_elementIndice].offsetFromParticleCenter, P_particle.orientation);
 						const float3 P_contact_offset_from_center = _ElementBuffer[P_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[P_elementIndice].radius;
-						const float3 P_contact_velocity = P_velocity + cross(P_angularVelocity, P_contact_offset_from_center);
+						const float3 P_contact_velocity = P_particle.velocity + cross(P_particle.angularVelocity, P_contact_offset_from_center);
 					
 						const uint N_elementIndice = threadID.z;
 					
-						const float3 N_particlePosition = N_position + RotateVector(_ElementBuffer[N_elementIndice].offsetFromParticleCenter, N_orientation);
+						const float3 N_particlePosition = N_particle.position + RotateVector(_ElementBuffer[N_elementIndice].offsetFromParticleCenter, N_particle.orientation);
 						const float3 N_contact_offset_from_center = _ElementBuffer[N_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[N_elementIndice].radius;
-						const float3 N_contact_velocity = N_velocity + cross(N_angularVelocity, -N_contact_offset_from_center);
+						const float3 N_contact_velocity = N_particle.velocity + cross(N_particle.angularVelocity, -N_contact_offset_from_center);
 					
 					
 						const float3 contactForce = CalculateContactForce(_ElementBuffer[P_elementIndice].radius,
-																	  P_particlePosition,
-																	  P_contact_velocity,
-																	  _ElementBuffer[N_elementIndice].radius,
-																	  N_particlePosition,
-																	  N_contact_velocity);
+																		  P_particlePosition,
+																		  P_contact_velocity,
+																		  _ElementBuffer[N_elementIndice].radius,
+																		  N_particlePosition,
+																		  N_contact_velocity);
 						const float3 contactTorque = cross(P_contact_offset_from_center, contactForce);
 					
 					
