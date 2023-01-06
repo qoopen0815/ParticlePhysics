@@ -4,7 +4,7 @@
 ### Screenshot
 
 
-### Useful links (Github issues, JIRA tickets, ML-Agents forum threads etc.)
+### Useful links (Github issues, etc.)
 
 
 ### Types of change(s)
