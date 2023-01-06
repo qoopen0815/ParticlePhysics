@@ -102,6 +102,8 @@ void ParticleCollisionCS(uint3 groupID : SV_GroupID, uint3 threadID : SV_GroupTh
 	GroupMemoryBarrierWithGroupSync();
 	
 	const uint P_ID = groupID.x * PARTICLE_NUM + threadID.x; // 現在処理しているパーティクルID
+	_DebugBuffer[P_ID] = float3(0, 0, 1);
+	//_DebugBuffer[P_ID] = _GridCenter;
 	
 	if (threadID.y < _ElementNum | threadID.z < _ElementNum)
 	{

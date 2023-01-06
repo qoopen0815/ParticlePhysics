@@ -77,21 +77,13 @@ namespace ParticleSimulator.NearestNeighbor
             GridSearchCS.Dispatch(kernelID, threadGroupSize, 1, 1);
             #endregion GridOptimization
 
-            // Copy buffer
-            kernelID = GridSearchCS.FindKernel("CopyBuffer");
-            GridSearchCS.SetBuffer(kernelID, "_ParticleBufferRead", sortedObjectsBufferOutput);
-            GridSearchCS.SetBuffer(kernelID, "_ParticleBufferWrite", objectsBufferInput);
-            GridSearchCS.Dispatch(kernelID, threadGroupSize, 1, 1);
-            //(sortedObjectsBufferOutput, objectsBufferInput) = (objectsBufferInput, sortedObjectsBufferOutput);
+            (sortedObjectsBufferOutput, objectsBufferInput) = (objectsBufferInput, sortedObjectsBufferOutput);
         }
-
-        #region GPUSort
-
-        #endregion GPUSort 
 
         protected abstract void InitializeBuffer(int objectNum);
 
         protected abstract void SetCSVariables();
+
         internal abstract void SetCSVariables(ComputeShader otherShader);
     }
 }

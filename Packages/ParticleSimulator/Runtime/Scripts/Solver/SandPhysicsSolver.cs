@@ -77,6 +77,7 @@ namespace ParticleSimulator
             InitCSBuffer(_particleNum);
 
             _nearestNeighbor = new NearestNeighbor.GridSearch<ParticleStatus>(_particleNum, gridSize, gridCellSize);
+            _nearestNeighbor.GridCenter = gridCenter;
             _nearestNeighbor.SetCSVariables(_solver);
         }
 
@@ -150,7 +151,19 @@ namespace ParticleSimulator
             _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
 
-            //_debugger.DebugLog();
+            //ShaderDebug.DebugLog<Vector3>(_debugger, _particleNum);
+            //var result = new NearestNeighbor.Uint2[_particleNum];
+            //_nearestNeighbor.GridIndicesBuffer.GetData(result);
+            //foreach (var eachResult in result)
+            //{
+            //    if (eachResult.x != 0)
+            //    {
+            //        if (eachResult.y != 0)
+            //        {
+            //            Debug.Log(eachResult.x + "\t" + eachResult.y);
+            //        }
+            //    }
+            //}
         }
 
         private void CalculateObjectCollision(GraphicsBuffer particleBuffer, GraphicsBuffer objectBuffer)
