@@ -2,7 +2,7 @@
 
 namespace ParticleSimulator.SortTool
 {
-    public class BitonicSort
+    internal class BitonicSort
     {
 
         protected static readonly uint BITONIC_BLOCK_SIZE = 512;

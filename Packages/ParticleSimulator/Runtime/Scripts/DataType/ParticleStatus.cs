@@ -31,7 +31,7 @@ namespace ParticleSimulator
             var identityOrientation = Quaternion.identity;
             for (int i = 0; i < particleNum; i++)
             {
-                particles[i].position = centerPos + Random.insideUnitSphere * radius;   // 球形に粒子を初期化する
+                particles[i].position = centerPos + Random.insideUnitSphere * radius;
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
                 particles[i].angularVelocity = Vector3.zero;

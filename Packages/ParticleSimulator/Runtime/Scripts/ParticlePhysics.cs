@@ -25,7 +25,7 @@ namespace ParticleSimulator
         
         [Header("Option Setting")]  // Will be erased in the future.
         [SerializeField] private Vector3 _gridSize = new(64, 64, 64);
-        [SerializeField] private Vector3 _gridResolution = new(100, 100, 100);
+        [SerializeField] private float _gridCellSize = 0.5f;
 
 
         // Objects
@@ -59,7 +59,7 @@ namespace ParticleSimulator
             _solver = new SandPhysicsSolver(
                 particle: _particle,
                 gridSize: _gridSize,
-                gridResolution: _gridResolution,
+                gridCellSize: _gridCellSize,
                 gridCenter: _spornPos,
                 terrainResolution: _terrain.terrainData.heightmapResolution,
                 terrainRatio: new Vector3(_terrain.terrainData.heightmapResolution / _terrain.terrainData.size.x,
@@ -68,8 +68,10 @@ namespace ParticleSimulator
                 terrainFriction: 0.995f);
 
             _effect.SetGraphicsBuffer("ParticleBuffer", _particle.status);
+            _effect.SetGraphicsBuffer("debugBuffer", _solver._debugger);
             _effect.SetUInt("ParticleNum", (uint)_particle.status.count);
             _effect.SetFloat("ParticleSize", _particleRadius);
+
         }
 
         private void Update()
@@ -83,6 +85,13 @@ namespace ParticleSimulator
             _objectParticle.Release();
             _terrainBuffer.Release();
             _solver.Release();
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(_spornPos, 5);
+            Gizmos.DrawWireCube(_spornPos, _gridSize);
         }
     }
 }

@@ -16,7 +16,7 @@
 #include "./Include/Math.cginc"
 
 // デバッグ用バッファ
-RWStructuredBuffer<float4> _DebugBuffer;
+RWStructuredBuffer<float3> _DebugBuffer;
 
 struct ParticleCollisionForce
 {
@@ -110,6 +110,7 @@ void ParticleCollisionCS(uint3 groupID : SV_GroupID, uint3 threadID : SV_GroupTh
 	LOOP_AROUND_NEIGHBOR(_ParticleBufferRead[P_ID].position)
 				{
 					const unsigned int G_CELL = GridKey(uint3(X, Y, Z)); // Calculate Neighbor (or own) Cell ID
+					_DebugBuffer[P_ID] = float3(0, 1, 1);
 
 					const uint2 G_START_END = _GridIndicesBufferRead[G_CELL];
 					for (unsigned int N_ID = G_START_END.x; N_ID < G_START_END.y; N_ID++)
@@ -152,9 +153,6 @@ void ParticleCollisionCS(uint3 groupID : SV_GroupID, uint3 threadID : SV_GroupTh
 	
 	GroupMemoryBarrierWithGroupSync();
 	_ParticleCollisionForce[P_ID] = sharedBuffer[threadID.x];
-	
-	// Debug用の処理
-	_DebugBuffer[P_ID] = float4(_ParticleNum, _ParticleMu, _ParticleTotalMass, 0);
 }
 
 [numthreads(PARTICLE_NUM, 1, 1)]

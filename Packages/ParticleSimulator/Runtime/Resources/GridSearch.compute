@@ -2,6 +2,7 @@
 #pragma kernel ClearGridIndicesCS
 #pragma kernel BuildGridIndicesCS
 #pragma kernel RearrangeParticlesCS
+#pragma kernel CopyBuffer
 
 #pragma enable_d3d11_debug_symbols
 
@@ -77,4 +78,11 @@ void RearrangeParticlesCS(uint3 DTid : SV_DispatchThreadID) {
 	const unsigned int id = DTid.x; // Particle ID to operate on
 	const unsigned int P_ID = GridGetValue(_GridBufferRead[id]);
 	_ParticleBufferWrite[id] = _ParticleBufferRead[P_ID]; // ソート済みに並び替える
+}
+
+[numthreads(THREAD_SIZE_X, 1, 1)]
+void CopyBuffer(uint3 DTid : SV_DispatchThreadID)
+{
+	uint id = DTid.x;
+	_ParticleBufferWrite[id] = _ParticleBufferRead[id];
 }
