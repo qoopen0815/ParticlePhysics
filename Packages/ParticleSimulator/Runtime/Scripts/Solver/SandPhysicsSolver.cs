@@ -5,9 +5,27 @@ namespace ParticleSimulator
 {
     public class SandPhysicsSolver
     {
-        public Vector3 gravity = Physics.gravity;
-        public float maxTimestep = 0.0005f;
-        
+        // Simulation
+        private Vector3 _gravity = Physics.gravity;
+        //private float _timestep = 0.0005f;
+
+        // Particle
+        private int _elementNum;
+        private int _particleNum;
+        private float _particleMu;
+        private float _particleTotalMass;
+        private Matrix4x4 _particleInertialMoment;
+
+        // GridSearch
+        private float _gridCellSize; // Size of grid cell.
+        private Vector3 _gridResolution; // Number of grid cell.
+        private Vector3 _gridCenter;
+
+        // Terrain
+        private int _terrainResolution; // 地形の解像度
+        private Vector3 _terrainRatio; // 地形の解像度とサイズの比
+        private float _terrainFriction; // 壁の摩擦
+
         // ComputeShader
         private ComputeShader _solver;
         private GraphicsBuffer _particleCollisionForce;
@@ -17,29 +35,41 @@ namespace ParticleSimulator
 
         private NearestNeighbor.NearestNeighbor<ParticleStatus> _nearestNeighbor;
 
-        public SandPhysicsSolver(Terrain terrain)
+        public SandPhysicsSolver(
+            Particle particle,
+            Vector3 gridSize, Vector3 gridResolution, Vector3 gridCenter,
+            int terrainResolution, Vector3 terrainRatio, float terrainFriction)
         {
-            int objNum = 8 * 1024;
+            _elementNum = particle.substance.Elements.count;
+            _particleNum = particle.status.count;
+            _particleMu = particle.substance.Mu;
+            _particleTotalMass = particle.substance.TotalMass;
+            //_particleInertialMoment = particle.substance.InertialMoment;
+            _particleInertialMoment = Matrix4x4.identity;
+            _gridCellSize = gridSize.x / gridResolution.x;
+            _gridResolution = gridResolution;
+            _gridCenter = gridCenter;
+            _terrainResolution = terrainResolution;
+            _terrainRatio = terrainRatio;
+            _terrainFriction = terrainFriction;
 
-            // Simulation
             _solver = (ComputeShader)Resources.Load("MolecularDynamics");
-            _solver.SetVector("_Gravity", gravity);
-            _solver.SetFloat("_Friction", 0.995f);
-            InitBuffer(objNum);
+            _solver.SetVector("_Gravity", this._gravity);
+            _solver.SetInt("_ElementNum", _elementNum);
+            _solver.SetInt("_ParticleNum", _particleNum);
+            _solver.SetFloat("_ParticleMu", _particleMu);
+            _solver.SetFloat("_ParticleTotalMass", _particleTotalMass);
+            _solver.SetMatrix(Shader.PropertyToID("_ParticleInertialMoment"), _particleInertialMoment);
+            _solver.SetFloat("_GridCellSize", _gridCellSize);
+            _solver.SetVector("_GridResolution", _gridResolution);
+            _solver.SetInt("_Resolution", _terrainResolution);
+            _solver.SetVector("_Ratio", _terrainRatio);
+            _solver.SetFloat("_Friction", _terrainFriction);
 
-            // Particle
-            var p = Particle.SetAsSimpleParticle(ParticleStatus.GenerateSphere(objNum, new Vector3(50, 10, 50), 5));
-            SetParticleCSParams(p);
+            InitCSBuffer(_particleNum);
 
-            // Grid Search
-            _nearestNeighbor = new NearestNeighbor.NearestNeighbor<ParticleStatus>(objNum);
-            SetGridSearchCSParams(new Vector3(50, 10, 50), _nearestNeighbor.GridCellSize * _nearestNeighbor.GridResolution, _nearestNeighbor.GridResolution);
+            _nearestNeighbor = new NearestNeighbor.NearestNeighbor<ParticleStatus>(_particleNum);
 
-            // Terrain
-            _solver.SetInt("_Resolution", terrain.terrainData.heightmapResolution);
-            _solver.SetVector("_Ratio", new Vector3(terrain.terrainData.heightmapResolution / terrain.terrainData.size.x,
-                                    1 / terrain.terrainData.size.y,
-                                    terrain.terrainData.heightmapResolution / terrain.terrainData.size.z));
         }
 
         public void SetParticleCSParams(Particle particle)
@@ -58,7 +88,7 @@ namespace ParticleSimulator
             _solver.SetFloat("_GridCellSize", size.x / resolution.x);
         }
 
-        private void InitBuffer(int objNum)
+        private void InitCSBuffer(int objNum)
         {
             // Init Force Bufer
             _particleCollisionForce = new GraphicsBuffer(
@@ -98,12 +128,15 @@ namespace ParticleSimulator
         private void CalculateParticleCollisionForce(GraphicsBuffer particleBuffer, GraphicsBuffer elementBuffer)
         {
             int kernelID = _solver.FindKernel("ParticleCollisionCS");
-            _solver.SetVector("_GridCenter", _nearestNeighbor.GridCenter);
+            _solver.SetFloat("_GridCellSize", _gridCellSize);
+            _solver.SetVector("_GridResolution", _gridResolution);
+            _solver.SetVector("_GridCenter", _gridCenter);
+            _solver.SetFloat("_ParticleMu", _particleMu);
             _solver.SetBuffer(kernelID, "_ElementBuffer", elementBuffer);
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
             _solver.SetBuffer(kernelID, "_GridIndicesBufferRead", _nearestNeighbor.GridIndicesBuffer);
             _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
-            _solver.GetKernelThreadGroupSizes(kernelID, out var x, out var y, out var z);
+            _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
         }
 
@@ -120,7 +153,7 @@ namespace ParticleSimulator
             _solver.SetBuffer(kernelID, "_TerrainBuffer", terrainBuffer);
             _solver.SetBuffer(kernelID, "_TerrainCollisionForce", _terrainCollisionForce);
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
-            _solver.GetKernelThreadGroupSizes(kernelID, out var x, out var y, out var z);
+            _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
             (particleBuffer, _tmpBufferWrite) = (_tmpBufferWrite, particleBuffer);
             var f = new TerrainCollisionForce[particleBuffer.count];
@@ -131,14 +164,15 @@ namespace ParticleSimulator
         private void Integrate(ref GraphicsBuffer particleBuffer, GraphicsBuffer terrain)
         {
             int kernelID = _solver.FindKernel("IntegrateCS");
-            _solver.SetFloat("_TimeStep", Mathf.Min(maxTimestep, Time.deltaTime));
+            //_solver.SetFloat("_TimeStep", Mathf.Min(maxTimestep, Time.deltaTime));
+            _solver.SetFloat("_TimeStep", Time.deltaTime);
             _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
             _solver.SetBuffer(kernelID, "_ObjectCollisionForce", _objectCollisionForce);
             _solver.SetBuffer(kernelID, "_TerrainCollisionForce", _terrainCollisionForce);
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
             _solver.SetBuffer(kernelID, "_ParticleBufferWrite", _tmpBufferWrite);
             _solver.SetBuffer(kernelID, "_TerrainBuffer", terrain);
-            _solver.GetKernelThreadGroupSizes(kernelID, out var x, out var y, out var z);
+            _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
             (particleBuffer, _tmpBufferWrite) = (_tmpBufferWrite, particleBuffer);
         }

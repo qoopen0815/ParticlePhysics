@@ -13,8 +13,8 @@ namespace ParticleSimulator.NearestNeighbor
     {
         public NearestNeighbor(int objectNum) : base()
         {
-            Vector3 gridSize = new Vector3(64, 64, 64);
-            Vector3 gridResolution = new Vector3(100, 100, 100);
+            Vector3 gridSize = new(64, 64, 64);
+            Vector3 gridResolution = new(100, 100, 100);
             this.gridResolution = gridResolution;
             this.gridCellSize = gridSize.x / this.gridResolution.x;
             this.gridCenter = gridCellSize * gridResolution / 2;

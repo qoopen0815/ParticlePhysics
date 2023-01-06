@@ -478,18 +478,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9191cb30d96eeb84f8623096ba9b4356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _particleNum: 65536
+  _maxParticle: 32768
   _particleType: 0
   _particleRadius: 0.02
   _spornPos: {x: 50, y: 10, z: 50}
   _effect: {fileID: 1358538621}
-  _gravity: {x: 0, y: -9.81, z: 0}
   _maxTimestep: 0.0005
   _terrain: {fileID: 510845133}
   _objects:
   - {fileID: 0}
-  _gridSize: {x: 20, y: 20, z: 20}
-  _gridResolution: {x: 1000, y: 1000, z: 1000}
+  _gridSize: {x: 100, y: 20, z: 100}
+  _gridResolution: {x: 5000, y: 1000, z: 5000}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

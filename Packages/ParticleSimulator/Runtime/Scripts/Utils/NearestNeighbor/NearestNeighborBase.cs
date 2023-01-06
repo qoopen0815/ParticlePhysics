@@ -48,7 +48,7 @@ namespace ParticleSimulator.NearestNeighbor
             int kernelID = NearestNeighborCS.FindKernel("BuildGridCS");
             NearestNeighborCS.SetBuffer(kernelID, "_ParticleBufferRead", objectsBufferInput);
             NearestNeighborCS.SetBuffer(kernelID, "_GridBufferWrite", gridBuffer);
-            NearestNeighborCS.GetKernelThreadGroupSizes(kernelID, out var x, out var y, out var z);
+            NearestNeighborCS.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             NearestNeighborCS.Dispatch(kernelID, (int)(objectsBufferInput.count / x), 1, 1);
 
             // Sort Grid
@@ -57,13 +57,13 @@ namespace ParticleSimulator.NearestNeighbor
             // Build Grid Indices
             kernelID = NearestNeighborCS.FindKernel("ClearGridIndicesCS");
             NearestNeighborCS.SetBuffer(kernelID, "_GridIndicesBufferWrite", gridIndicesBuffer);
-            NearestNeighborCS.GetKernelThreadGroupSizes(kernelID, out x, out y, out z);
+            NearestNeighborCS.GetKernelThreadGroupSizes(kernelID, out x, out _, out _);
             NearestNeighborCS.Dispatch(kernelID, (int)(totalCellNum / x), 1, 1);
 
             kernelID = NearestNeighborCS.FindKernel("BuildGridIndicesCS");
             NearestNeighborCS.SetBuffer(kernelID, "_GridBufferRead", gridBuffer);
             NearestNeighborCS.SetBuffer(kernelID, "_GridIndicesBufferWrite", gridIndicesBuffer);
-            NearestNeighborCS.GetKernelThreadGroupSizes(kernelID, out x, out y, out z);
+            NearestNeighborCS.GetKernelThreadGroupSizes(kernelID, out x, out _, out _);
             NearestNeighborCS.Dispatch(kernelID, (int)(objectsBufferInput.count / x), 1, 1);
 
             // Rearrange
@@ -71,7 +71,7 @@ namespace ParticleSimulator.NearestNeighbor
             NearestNeighborCS.SetBuffer(kernelID, "_GridBufferRead", gridBuffer);
             NearestNeighborCS.SetBuffer(kernelID, "_ParticleBufferRead", objectsBufferInput);
             NearestNeighborCS.SetBuffer(kernelID, "_ParticleBufferWrite", sortedObjectsBufferOutput);
-            NearestNeighborCS.GetKernelThreadGroupSizes(kernelID, out x, out y, out z);
+            NearestNeighborCS.GetKernelThreadGroupSizes(kernelID, out x, out _, out _);
             NearestNeighborCS.Dispatch(kernelID, (int)(objectsBufferInput.count / x), 1, 1);
             #endregion GridOptimization
 
