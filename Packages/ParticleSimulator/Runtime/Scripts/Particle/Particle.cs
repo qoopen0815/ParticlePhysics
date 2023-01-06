@@ -1,68 +1,60 @@
 ﻿using System.Runtime.InteropServices;
 using UnityEngine;
+using ParticleSimulator.Substance;
 
 namespace ParticleSimulator
 {
-    public struct ParticleData
+    public class Particle
     {
-        public Vector3 position;
-        public Vector3 velocity;
-        public Quaternion orientation;
-        public Vector3 angularVelocity;
+        public readonly int num;
+        public GraphicsBuffer status;
+        public ParticleSubstance substance;
 
-        public static ParticleData[] GeneratePoint(int particleNum, Vector3 centerPos)
+        public Particle(int particleNum)
         {
-            var particles = new ParticleData[particleNum];
-            for (int i = 0; i < particleNum; i++)
-            {
-                particles[i].position = centerPos;
-                particles[i].velocity = Vector3.zero;
-                particles[i].orientation = Quaternion.identity;
-                particles[i].angularVelocity = Vector3.zero;
-            }
-            return particles;
-        }
-
-        public static ParticleData[] GenerateSphere(int particleNum, Vector3 centerPos, float radius)
-        {
-            var particles = new ParticleData[particleNum];
-            for (int i = 0; i < particleNum; i++)
-            {
-                particles[i].position = centerPos + Random.insideUnitSphere * radius;   // 球形に粒子を初期化する
-                particles[i].velocity = Vector3.zero;
-                particles[i].orientation = Quaternion.identity;
-                particles[i].angularVelocity = Vector3.zero;
-            }
-            return particles;
-        }
-    };
-
-    public class ParticleBuffer
-    {
-        public GraphicsBuffer datas;
-        public GraphicsBuffer substances;
-
-        public ParticleBuffer(
-            ParticleData[] particleDatas, 
-            Substance.Element[] elementSubstances)
-        {
-            datas = new GraphicsBuffer(
-                GraphicsBuffer.Target.Structured,
-                particleDatas.Length,
-                Marshal.SizeOf(typeof(ParticleData)));
-            datas.SetData(particleDatas);
-
-            substances = new GraphicsBuffer(
-                GraphicsBuffer.Target.Structured,
-                elementSubstances.Length,
-                Marshal.SizeOf(typeof(Substance.Element)));
-            substances.SetData(elementSubstances);
+            this.num = particleNum;
         }
 
         public void Release()
         {
-            datas.Release();
-            substances.Release();
+            status.Release();
+            substance.Release();
+        }
+
+        public static Particle SetAsSimpleParticle(ParticleStatus[] particles)
+        {
+            Particle p = new Particle(particles.Length);
+            p.status = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                particles.Length,
+                Marshal.SizeOf(typeof(ParticleStatus)));
+            p.status.SetData(particles);
+            p.substance = new SimpleSubstance();
+            return p;
+        }
+
+        public static Particle SetAsTetrahedronParticle(ParticleStatus[] particles)
+        {
+            Particle p = new Particle(particles.Length);
+            p.status = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                particles.Length,
+                Marshal.SizeOf(typeof(ParticleStatus)));
+            p.status.SetData(particles);
+            p.substance = new TetrahedronSubstance();
+            return p;
+        }
+
+        public static Particle SetAsCubeParticle(ParticleStatus[] particles)
+        {
+            Particle p = new Particle(particles.Length);
+            p.status = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                particles.Length,
+                Marshal.SizeOf(typeof(ParticleStatus)));
+            p.status.SetData(particles);
+            p.substance = new CubeSubstance();
+            return p;
         }
     }
 }

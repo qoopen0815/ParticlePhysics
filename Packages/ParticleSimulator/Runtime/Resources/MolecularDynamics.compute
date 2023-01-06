@@ -1,8 +1,14 @@
-﻿#pragma kernel ContactForceCS
+﻿#pragma kernel ParticleCollisionCS
+#pragma kernel TerrainCollisionCS
+//#pragma kernel ObjectCollisionCS
 #pragma kernel IntegrateCS
 
-// 簡略化のためにスレッド数は1次元にしておく
-#define THREAD_SIZE_X 32
+#pragma enable_d3d11_debug_symbols
+
+// Thread x is particle
+// Thread yz is element
+#define PARTICLE_NUM 10
+#define MAX_ELEMENT_NUM 10
 
 #include "./Include/Particle.cginc"
 #include "./Include/GridSearch.cginc"
@@ -10,188 +16,210 @@
 #include "./Include/Math.cginc"
 
 // デバッグ用バッファ
-RWStructuredBuffer<float4> _DebugBuffer;
+RWStructuredBuffer<float3> _DebugBuffer;
 
-// ▼ シェーダ定数の定義 -----------------------
+struct ParticleCollisionForce
+{
+	float3 acceleration;
+	float3 angularAcceleration;
+};
+struct ObjectCollisionForce
+{
+	float3 acceleration;
+	float3 angularAcceleration;
+};
+struct TerrainCollisionForce
+{
+	float3 acceleration;
+	float3 angularAcceleration;
+};
+
+RWStructuredBuffer<ParticleCollisionForce> _ParticleCollisionForce;
+RWStructuredBuffer<ObjectCollisionForce> _ObjectCollisionForce;
+RWStructuredBuffer<TerrainCollisionForce> _TerrainCollisionForce;
+
+groupshared ParticleCollisionForce sharedBuffer[PARTICLE_NUM];
+
 cbuffer MolecularDynamicsCB
 {
-	float _TimeStep; // 時間刻み幅(dt)
-	float3 _Gravity; // 重力
+	float3 _Gravity;
+	float _TimeStep;
 };
-// ▲ シェーダ定数の定義 -----------------------
 
+inline float CalculateNormalForce(float overlap, float normal_velocity,
+								  float alpha = 0.5f, float beta = 1.5f,
+								  float kd = 200.0f, float kr = 10000.0f, float kt = 10000.0f)
+{
+	return -(kd * pow(overlap, alpha) * normal_velocity + kr * pow(overlap, beta)); // fn + kd * E^alpha * E. + kr * E ^ beta = 0
+}
 
-// ▼ ★ここから本体 --------------------------------------
-
+inline float3 CalculateShearForce(float normal_force, float normal_vel, float3 normal_vec,
+								  float3 velocity_vec, float kt = 10000.0f)
+{
+	float3 shear_force = float3(0, 0, 0);
+	float4 tangent_velocity = float4(0, 0, 0, 0);
+	tangent_velocity.xyz = velocity_vec - normal_vel * normal_vec; // Vt = V - E. * N
+	tangent_velocity.w = length(tangent_velocity.xyz); // vt = ||Vt||
+	if (tangent_velocity.w > 0.f)
+		shear_force = -min(_ParticleMu * -normal_force, kt * tangent_velocity.w) * tangent_velocity.xyz / tangent_velocity.w;
+	return shear_force;
+}
 
 inline float3 CalculateContactForce(float this_particle_radius, float3 this_particle_position, float3 this_particle_velocity,
 									float other_particle_radius, float3 other_particle_position, float3 other_particle_velocity)
 {
-	float alpha = 0.5f;
-	float beta = 1.5f;
-	float kd = 200.0f;
-	float kr = 10000.0f;
-	float kt = 10000.0f;
-
-	float3 vector_from_this_to_other = other_particle_position - this_particle_position;
-	float offset_length = length(vector_from_this_to_other); // 粒子の中心間距離
-	float xi = max(0, this_particle_radius + other_particle_radius - offset_length); // 粒子の重なり
-	if (xi == 0)
-		return 0; // 粒子が重なっていなければ接触力ゼロ
-
 	float3 contact_force = float3(0, 0, 0);
-	float3 normal = vector_from_this_to_other / offset_length; // N = (x2 - x1) / (||x2 - x1||)
-
-	float3 relative_velocity = this_particle_velocity - other_particle_velocity; // V = v1 - v2
-	float normal_velocity = dot(relative_velocity, normal); // E. = V . N
-	float3 tangent_velocity = relative_velocity - normal_velocity * normal; // Vt = V - E. * N
-	float tangent_velocity_magnitude = length(tangent_velocity); // vt = ||Vt||
-
-	float normal_force_magnitude = (kd * pow(xi, alpha) * normal_velocity + kr * pow(xi, beta)); // fn + kd * E^alpha * E. + kr * E ^ beta = 0
-	float3 normal_force = -normal_force_magnitude * normal;
-
-	if (tangent_velocity_magnitude > 0.f)
+	
+	float4 from_this_to_other = float4(0, 0, 0, 0);
+	from_this_to_other.xyz = other_particle_position - this_particle_position; // vector
+	from_this_to_other.w = length(from_this_to_other.xyz); // length
+	
+	float overlap = max(0, this_particle_radius + other_particle_radius - from_this_to_other.w); // 粒子の重なり
+	if (overlap != 0)
 	{
-		float3 shear_force = -min(_GranularMu * normal_force_magnitude, kt * tangent_velocity_magnitude) * tangent_velocity / tangent_velocity_magnitude;
-		contact_force += shear_force;
+		float3 velocity_vec = this_particle_velocity - other_particle_velocity; // V = v1 - v2
+	
+		float4 normal = float4(0, 0, 0, 0);
+		normal.xyz = from_this_to_other.xyz / from_this_to_other.w; // vector: N = (x2 - x1) / (||x2 - x1||)
+		normal.w = dot(velocity_vec, normal.xyz); // velocity(normal): E. = V . N
+	
+		// Normal force vector
+		float normal_force = CalculateNormalForce(overlap, normal.w); // normal force(scaler):
+		
+		contact_force += normal_force * normal.xyz;
+		contact_force += CalculateShearForce(normal_force, normal.w, normal.xyz, velocity_vec);
 	}
-
-	contact_force += normal_force;
-
+	
+	// Return contact force vector
 	return contact_force;
 }
 
-
-// ▼ カーネル関数
-//--------------------------------------------------------------------------------------
-// 接触力の計算
-//--------------------------------------------------------------------------------------
-[numthreads(THREAD_SIZE_X, 1, 1)]
-void ContactForceCS(uint3 DTid : SV_DispatchThreadID)
+[numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
+void ParticleCollisionCS(uint3 groupID : SV_GroupID, uint3 threadID : SV_GroupThreadID)
 {
-	const uint P_ID = DTid.x; // 現在処理しているパーティクルID
-
-	float3 P_position = _GranularsBufferRead[P_ID].position;
-	float3 P_velocity = _GranularsBufferRead[P_ID].velocity;
-	float4 P_orientation = _GranularsBufferRead[P_ID].orientation;
-	float3 P_angularVelocity = _GranularsBufferRead[P_ID].angularVelocity;
-
-	float3 Force = float3(0, 0, 0);
-	float3 Torque = float3(0, 0, 0);
+	sharedBuffer[threadID.x].acceleration = float3(0, 0, 0);
+	sharedBuffer[threadID.x].angularAcceleration = float3(0, 0, 0);
+	GroupMemoryBarrierWithGroupSync();
+	
+	const uint P_ID = groupID.x * PARTICLE_NUM + threadID.x; // 現在処理しているパーティクルID
+	_DebugBuffer[P_ID] = float3(0, 0, 1);
+	//_DebugBuffer[P_ID] = _GridCenter;
+	
+	if (threadID.y < _ElementNum | threadID.z < _ElementNum)
+	{
 
 	// 近傍探索
-	LOOP_AROUND_NEIGHBOR(_GranularsBufferRead[P_ID].position)
-			{
-				unsigned int G_CELL = GridKey(uint3(X, Y, Z)); // Calculate Neighbor (or own) Cell ID
-
-				uint2 G_START_END = _GridIndicesBufferRead[G_CELL];
-				for (unsigned int N_ID = G_START_END.x; N_ID < G_START_END.y; N_ID++)
+	LOOP_AROUND_NEIGHBOR(_ParticleBufferRead[P_ID].position)
 				{
-					if (N_ID == P_ID)
-						continue; // 自身を計算対象とした場合スキップ
-					
-					// ▼ MD法による接触力の計算
-					
-					// https://github.com/WestRyanK/Particle-Simulator/blob/93da771838b3d02f45c3aec964ef4a04bbef6fd4/GranularSimulator/GranularSubstanceSimulator.cpp#L203-L214
-					
-					float3 N_position = _GranularsBufferRead[N_ID].position;
-					float3 N_velocity = _GranularsBufferRead[N_ID].velocity;
-					float4 N_orientation = _GranularsBufferRead[N_ID].orientation;
-					float3 N_angularVelocity = _GranularsBufferRead[N_ID].angularVelocity;
-					
-					float3 offset = normalize(N_position - P_position);
-					
-					for (unsigned int P_particleIndice = 0; P_particleIndice < _GranularParticleNum; P_particleIndice++)
+					const unsigned int G_CELL = GridKey(uint3(X, Y, Z)); // Calculate Neighbor (or own) Cell ID
+					_DebugBuffer[P_ID] = float3(0, 1, 1);
+
+					const uint2 G_START_END = _GridIndicesBufferRead[G_CELL];
+					for (unsigned int N_ID = G_START_END.x; N_ID < G_START_END.y; N_ID++)
 					{
-						float3 P_particlePosition = P_position + RotateVector(_ParticleSubstancesBuffer[P_particleIndice].offsetFromGranularCenter, P_orientation);
-						float3 P_contact_offset_from_center = _ParticleSubstancesBuffer[P_particleIndice].offsetFromGranularCenter + offset * _ParticleSubstancesBuffer[P_particleIndice].radius;
-						float3 P_contact_velocity = P_velocity + cross(P_angularVelocity, P_contact_offset_from_center);
-						
-						for (unsigned int N_particleIndice = 0; N_particleIndice < _GranularParticleNum; N_particleIndice++)
-						{
-							float3 N_particlePosition = N_position + RotateVector(_ParticleSubstancesBuffer[N_particleIndice].offsetFromGranularCenter, N_orientation);
-							float3 N_contact_offset_from_center = _ParticleSubstancesBuffer[N_particleIndice].offsetFromGranularCenter + offset * _ParticleSubstancesBuffer[N_particleIndice].radius;
-							float3 N_contact_velocity = N_velocity + cross(N_angularVelocity, -N_contact_offset_from_center);
-							
-							float3 contactForce = CalculateContactForce(_ParticleSubstancesBuffer[P_particleIndice].radius,
-																		P_particlePosition,
-																		P_contact_velocity,
-																		_ParticleSubstancesBuffer[N_particleIndice].radius,
-																		N_particlePosition,
-																		N_contact_velocity);
-							float3 contactTorque = cross(P_contact_offset_from_center, contactForce);
-							
-							Force += contactForce;
-							Torque += contactTorque;
-						}
+						if (N_ID == P_ID)
+							continue; // 自身を計算対象とした場合スキップ
+					
+						// ▼ 接触力の計算
+						// https://github.com/WestRyanK/Particle-Simulator/blob/93da771838b3d02f45c3aec964ef4a04bbef6fd4/GranularSimulator/GranularSubstanceSimulator.cpp#L203-L214
+					
+						const float3 offset = normalize(_ParticleBufferRead[N_ID].position - _ParticleBufferRead[P_ID].position);
+					
+						const uint P_elementIndice = threadID.y;
+					
+						const float3 P_element_position = _ParticleBufferRead[P_ID].position + RotateVector(_ElementBuffer[P_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[P_ID].orientation);
+						const float3 P_contact_offset_from_center = _ElementBuffer[P_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[P_elementIndice].radius;
+						const float3 P_contact_velocity = _ParticleBufferRead[P_ID].velocity + cross(_ParticleBufferRead[P_ID].angularVelocity, P_contact_offset_from_center);
+					
+						const uint N_elementIndice = threadID.z;
+					
+						const float3 N_element_position = _ParticleBufferRead[N_ID].position + RotateVector(_ElementBuffer[N_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[N_ID].orientation);
+						const float3 N_contact_offset_from_center = _ElementBuffer[N_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[N_elementIndice].radius;
+						const float3 N_contact_velocity = _ParticleBufferRead[N_ID].velocity + cross(_ParticleBufferRead[N_ID].angularVelocity, -N_contact_offset_from_center);
+					
+					
+						const float3 contactForce = CalculateContactForce(_ElementBuffer[P_elementIndice].radius,
+																		  P_element_position,
+																		  P_contact_velocity,
+																		  _ElementBuffer[N_elementIndice].radius,
+																		  N_element_position,
+																		  N_contact_velocity);
+						const float3 contactTorque = cross(P_contact_offset_from_center, contactForce);
+					
+					
+						sharedBuffer[threadID.x].acceleration += contactForce;
+						sharedBuffer[threadID.x].angularAcceleration += contactTorque;
 					}
-
-					// ▲ ★ここまで
-
 				}
-			}
+	}
 	
-	_GranularsBufferWrite[P_ID].acceleration = Force;
-	
-	// Debug用の処理
-	//_DebugBuffer[P_ID] = float4(RotateVector(float3(0.38, 0.38, -0.38), float4(0.01754, -0.04766, 0.18226, 0.98194)), 1);
+	GroupMemoryBarrierWithGroupSync();
+	_ParticleCollisionForce[P_ID] = sharedBuffer[threadID.x];
 }
 
-
-//--------------------------------------------------------------------------------------
-// 衝突判定などを行って、位置を更新
-//--------------------------------------------------------------------------------------
-[numthreads(THREAD_SIZE_X, 1, 1)]
-void IntegrateCS(uint3 DTid : SV_DispatchThreadID)
+[numthreads(PARTICLE_NUM, 1, 1)]
+void TerrainCollisionCS(uint3 dispatchID : SV_DispatchThreadID)
 {
-
-	const unsigned int P_ID = DTid.x; // 現在処理しているパーティクルID
+	const unsigned int P_ID = dispatchID.x; // 現在処理しているパーティクルID
 
 	// 更新前情報
-	float3 position = _GranularsBufferRead[P_ID].position;
-	float3 velocity = _GranularsBufferRead[P_ID].velocity;
-	float3 acceleration = _GranularsBufferRead[P_ID].acceleration;
-	float4 orientation = _GranularsBufferRead[P_ID].orientation;
-	float3 angularVelocity = _GranularsBufferRead[P_ID].angularVelocity;
-	float3 angularAcceleration = _GranularsBufferRead[P_ID].angularAcceleration;
+	float3 position = _ParticleBufferRead[P_ID].position;
+	float3 velocity = _ParticleBufferRead[P_ID].velocity;
 	
-	uint2 pos = uint2(position.x * _Ratio.x, position.z * _Ratio.z); // Terrain座標（計算用）
+	const uint2 pos = uint2(position.x * _Ratio.x, position.z * _Ratio.z); // Terrain座標（計算用）
+	
+	// Terrainとの衝突判定 => 衝突したら壁に沿って移動
+	float3 pa = position - float3(pos.x, _TerrainBuffer[pos.x + pos.y * _Resolution].height, pos.y);
+	float3 norm = _TerrainBuffer[pos.x + pos.y * _Resolution].normal;
+	_TerrainCollisionForce[P_ID].acceleration = min(-dot(pa, norm), 0) * -3.0f * float3(0, 1, 0);
+}
 
-	// 重力を付加
-	acceleration += _Gravity;
+//--------------------------------------------------------------------------------------
+// Update particle state
+//--------------------------------------------------------------------------------------
+[numthreads(PARTICLE_NUM, 1, 1)]
+void IntegrateCS(uint3 dispatchID : SV_DispatchThreadID)
+{
+	const unsigned int P_ID = dispatchID.x; // 現在処理しているパーティクルID
 	
-	acceleration = acceleration / _GranularTotalMass;
+	// 更新前情報
+	ParticleType particle = _ParticleBufferRead[P_ID];
+	ParticleCollisionForce pcf = _ParticleCollisionForce[P_ID];
+	ObjectCollisionForce ocf = _ObjectCollisionForce[P_ID];
+	TerrainCollisionForce tcf = _TerrainCollisionForce[P_ID];
+	
+	// 重力を付加
+	float3 acceleration = _Gravity;
+	acceleration += (pcf.acceleration + ocf.acceleration + tcf.acceleration);
+	//acceleration = acceleration / _ParticleTotalMass;
 	
 	// Rotate moment of inertia tensor
 	// https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec26.pdf
-	float4x4 rotated_inverse_inertial_moment = (QuaternionToRotateMatrix(orientation) * _GranularInertialMoment) * transpose(QuaternionToRotateMatrix(orientation));
+	float3 angularAcceleration = (pcf.angularAcceleration + ocf.angularAcceleration + tcf.angularAcceleration);
+	const float4x4 rotated_inverse_inertial_moment = (QuaternionToRotateMatrix(particle.orientation) * _ParticleInertialMoment) * transpose(QuaternionToRotateMatrix(particle.orientation));
 	angularAcceleration = mul(rotated_inverse_inertial_moment, float4(angularAcceleration, 1)).xyz;
 
 	// Terrainとの衝突判定 => 衝突したら壁に沿って移動
 	float3 norm;
-	float height = GetInterpolatedHeight(position.x * _Ratio.x, position.z * _Ratio.z);
-	if (position.y < height)
+	const uint2 pos = uint2(particle.position.x * _Ratio.x, particle.position.z * _Ratio.z); // Terrain座標（計算用）
+	float height = GetInterpolatedHeight(particle.position.x * _Ratio.x, particle.position.z * _Ratio.z);
+	if (particle.position.y < height)
 	{
-		position.y = height;
+		particle.position.y = height;
 		norm = _TerrainBuffer[pos.x + pos.y * _Resolution].normal; // 法線ベクトル
-		velocity = velocity + dot(-velocity, norm) * norm; // 速度ベクトルを壁に沿った向きに変換
-		velocity = _Friction * velocity; // 摩擦
+		particle.velocity = particle.velocity + dot(-particle.velocity, norm) * norm; // 速度ベクトルを壁に沿った向きに変換
+		particle.velocity = _Friction * particle.velocity; // 摩擦
 	}
-
+	
 	// 前進オイラー法で次の粒子位置を更新
-	velocity += _TimeStep * acceleration;
-	position += _TimeStep * velocity;
-	angularVelocity += _TimeStep * angularAcceleration;
-	orientation = mul(orientation, EulerToQuaternion(_TimeStep * angularVelocity));
+	particle.velocity += _TimeStep * acceleration;
+	particle.position += _TimeStep * particle.velocity;
+	particle.angularVelocity += _TimeStep * angularAcceleration;
+	particle.orientation = mul(particle.orientation, EulerToQuaternion(_TimeStep * particle.angularVelocity));
 
 	// パーティクルのバッファ更新
-	_GranularsBufferWrite[P_ID].position = position;
-	_GranularsBufferWrite[P_ID].velocity = velocity;
-	_GranularsBufferWrite[P_ID].orientation = orientation;
-	_GranularsBufferWrite[P_ID].angularVelocity = angularVelocity;
-
+	_ParticleBufferWrite[P_ID] = particle;
+	
 	// Debug用の処理
 	//_DebugBuffer[P_ID] = float3(height, 0, 0);
 }
-
-// ▲ ★ここまで本体 --------------------------------------

@@ -2,7 +2,11 @@
     "name": "Qoopen.ParticleSimulator",
     "rootNamespace": "",
     "references": [
-        "GUID:d8b63aba1907145bea998dd612889d6b"
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:116a4d4dbf5c04973bbf517077a062a1",
+        "GUID:0377f9a54f8f24f459589f04edd75c20",
+        "GUID:d04eb9c554ad44ceab303cecf0c0cf82",
+        "GUID:4efc780901275194582067357ece5e4b"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

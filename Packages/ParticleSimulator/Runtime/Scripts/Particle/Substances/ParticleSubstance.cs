@@ -5,25 +5,25 @@ namespace ParticleSimulator.Substance
 {
     public abstract class ParticleSubstance
     {
-        protected Element[] elements;
+        protected GraphicsBuffer elements;
 
+        protected float mu;
         protected float totalMass;
         protected float3 centerOfMass;
         protected float3x3 inertialMoment;
 
         #region Accessor
-        public Element[] Elements => elements;
+        public GraphicsBuffer Elements => elements; 
         public float TotalMass => totalMass;
+        public float Mu => mu;
         public Vector3 CenterOfMass => centerOfMass;
         public float3x3 InertialMoment => inertialMoment;
+
         #endregion
 
-        protected ParticleSubstance(float radius = 0.04f, float density = 2000.0f)
+        public void Release()
         {
-            this.elements = SetElements(radius, density);
-            totalMass = CalculateTotalMass(elements, density);
-            centerOfMass = CalculateCenterOfMass(elements);
-            inertialMoment = CalculateInverseInertialMoment(elements);
+            elements.Release();
         }
 
         protected float CalculateElementMass(float radius, float density)
@@ -33,11 +33,11 @@ namespace ParticleSimulator.Substance
             return mass;
         }
 
-        protected float3x3 CalculateInverseInertialMoment(Element[] elements)
+        protected float3x3 CalculateInverseInertialMoment(ElementType[] elements)
         {
             float3x3 inertialMoment = float3x3.zero;
 
-            foreach (Element element in elements)
+            foreach (ElementType element in elements)
             {
                 float3x3 elementInertialMoment = float3x3.identity * (2.0f / 5.0f) * element.mass * math.pow(element.radius, 2);
 
@@ -51,26 +51,26 @@ namespace ParticleSimulator.Substance
             return inertialMoment;
         }
 
-        protected float CalculateTotalMass(Element[] elements, float density)
+        protected float CalculateTotalMass(ElementType[] elements, float density)
         {
             float totalMass = 0;
-            foreach (Element element in elements)
+            foreach (ElementType element in elements)
             {
                 totalMass += CalculateElementMass(element.radius, density);
             }
             return totalMass;
         }
 
-        protected float3 CalculateCenterOfMass(Element[] elements)
+        protected float3 CalculateCenterOfMass(ElementType[] elements)
         {
             float3 centerOfMass = float3.zero;
-            foreach (Element element in elements)
+            foreach (ElementType element in elements)
             {
                 centerOfMass += new float3(element.offsetFromParticleCenter);
             }
-            return centerOfMass / (float)this.elements.Length;
+            return centerOfMass / (float)elements.Length;
         }
 
-        protected abstract Element[] SetElements(float particleRadius, float particleDensity);
+        protected abstract ElementType[] SetElements(float particleRadius, float particleDensity);
     }
 }
