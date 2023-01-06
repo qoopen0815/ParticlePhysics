@@ -56,41 +56,42 @@ inline float CalculateNormalForce(float overlap, float normal_velocity,
 inline float3 CalculateShearForce(float normal_force, float normal_vel, float3 normal_vec,
 								  float3 velocity_vec, float kt = 10000.0f)
 {
+	float3 shear_force = float3(0, 0, 0);
 	float4 tangent_velocity = float4(0, 0, 0, 0);
 	tangent_velocity.xyz = velocity_vec - normal_vel * normal_vec; // Vt = V - E. * N
 	tangent_velocity.w = length(tangent_velocity.xyz); // vt = ||Vt||
 	if (tangent_velocity.w > 0.f)
-		return -min(_ParticleMu * -normal_force, kt * tangent_velocity.w) * tangent_velocity.xyz / tangent_velocity.w;
-	return float3(0, 0, 0);
+		shear_force = - min(_ParticleMu * -normal_force, kt * tangent_velocity.w) * tangent_velocity.xyz / tangent_velocity.w;
+	return shear_force;
 }
 
 inline float3 CalculateContactForce(float this_particle_radius, float3 this_particle_position, float3 this_particle_velocity,
 									float other_particle_radius, float3 other_particle_position, float3 other_particle_velocity)
 {
+	float3 contact_force = float3(0, 0, 0);
+	
 	float4 from_this_to_other = float4(0, 0, 0, 0);
 	from_this_to_other.xyz = other_particle_position - this_particle_position;	// vector
 	from_this_to_other.w = length(from_this_to_other.xyz);						// length
 	
 	float overlap = max(0, this_particle_radius + other_particle_radius - from_this_to_other.w); // 粒子の重なり
-	if (overlap == 0)
-		return 0; // 粒子が重なっていなければ接触力ゼロ
+	if (overlap != 0)
+	{
+		float3 velocity_vec = this_particle_velocity - other_particle_velocity; // V = v1 - v2
 	
-	float3 velocity_vec = this_particle_velocity - other_particle_velocity; // V = v1 - v2
+		float4 normal = float4(0, 0, 0, 0);
+		normal.xyz = from_this_to_other.xyz / from_this_to_other.w; // vector: N = (x2 - x1) / (||x2 - x1||)
+		normal.w = dot(velocity_vec, normal.xyz); // velocity(normal): E. = V . N
 	
-	float4 normal = float4(0, 0, 0, 0);
-	normal.xyz = from_this_to_other.xyz / from_this_to_other.w;	// vector: N = (x2 - x1) / (||x2 - x1||)
-	normal.w = dot(velocity_vec, normal.xyz);					// velocity(normal): E. = V . N
-	
-	// Normal force vector
-	float4 normal_force = float4(0, 0, 0, 0);
-	normal_force.w = CalculateNormalForce(overlap, normal.w);	// normal force(scaler):
-	normal_force.xyz = normal_force.w * normal.xyz;				// normal force(vector :
-	
-	// Shear force vector
-	float3 shear_force_vec = CalculateShearForce(normal_force.w, normal.w, normal.xyz, velocity_vec);
+		// Normal force vector
+		float normal_force = CalculateNormalForce(overlap, normal.w); // normal force(scaler):
+		
+		contact_force += normal_force * normal.xyz;
+		contact_force += CalculateShearForce(normal_force, normal.w, normal.xyz, velocity_vec);
+	}
 	
 	// Return contact force vector
-	return shear_force_vec + normal_force.xyz;
+	return contact_force;
 }
 
 [numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
@@ -107,7 +108,7 @@ void ParticleCollisionCS(uint3 groupID : SV_GroupID, uint3 threadID : SV_GroupTh
 		const ParticleType P_particle = _ParticleBufferRead[P_ID];
 
 	// 近傍探索
-	LOOP_AROUND_NEIGHBOR(_ParticleBufferRead[P_ID].position)
+	LOOP_AROUND_NEIGHBOR(P_particle.position)
 				{
 					const unsigned int G_CELL = GridKey(uint3(X, Y, Z)); // Calculate Neighbor (or own) Cell ID
 
