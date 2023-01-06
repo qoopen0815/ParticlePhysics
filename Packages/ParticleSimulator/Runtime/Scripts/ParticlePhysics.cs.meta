@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9191cb30d96eeb84f8623096ba9b4356
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _particleRenderMat: {fileID: 2100000, guid: 48e8317f90ff45c4f92c4e2de9ec720d,
+      type: 2}
+  - _terrain: {instanceID: 0}
+  - _mesh: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,45 @@
+#pragma kernel CSMain
+
+struct Test
+{
+	float x;
+	float y;
+	float z;
+};
+
+RWStructuredBuffer<Test> _test;
+
+[numthreads(10,10,10)]
+void CSMain (uint3 threadID : SV_DispatchThreadID)
+{
+	float3 hoge = float3(1, 0, 0);
+	
+	for (int i = 0; i < 100000; i++)
+	{
+		float3 fuga0 = float3(1, 1, 1);
+		float3 fuga1 = float3(1, 1, 1);
+		float3 fuga2 = float3(1, 1, 1);
+		float3 fuga3 = float3(1, 1, 1);
+		float3 fuga4 = float3(1, 1, 1);
+		float3 fuga5 = float3(1, 1, 1);
+		float3 fuga6 = float3(1, 1, 1);
+		float3 fuga7 = float3(1, 1, 1);
+		float3 fuga8 = float3(1, 1, 1);
+		float3 fuga9 = float3(1, 1, 1);
+		float3 fuga10 = float3(1, 1, 1);
+		float3 fuga11 = float3(1, 1, 1);
+		float3 fuga12 = float3(1, 1, 1);
+		float3 fuga13 = float3(1, 1, 1);
+		float3 fuga14 = float3(1, 1, 1);
+		float3 fuga15 = float3(1, 1, 1);
+		float3 fuga16 = float3(1, 1, 1);
+		float3 fuga17 = float3(1, 1, 1);
+		float3 fuga18 = float3(1, 1, 1);
+		float3 fuga19 = float3(1, 1, 1);
+		hoge += fuga19;
+	}
+	
+	_test[threadID.x].x = hoge.x;
+	_test[threadID.x].y = hoge.y;
+	_test[threadID.x].z = hoge.z;
+}
