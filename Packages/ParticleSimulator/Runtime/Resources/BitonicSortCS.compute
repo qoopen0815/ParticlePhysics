@@ -1,6 +1,8 @@
 ﻿#pragma kernel BitonicSort
 #pragma kernel MatrixTranspose
 
+#pragma enable_d3d11_debug_symbols
+
 #define BITONIC_BLOCK_SIZE 512
 #define TRANSPOSE_BLOCK_SIZE 16
 

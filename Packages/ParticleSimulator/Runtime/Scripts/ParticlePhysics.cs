@@ -69,6 +69,7 @@ namespace ParticleSimulator
 
             _effect.SetGraphicsBuffer("ParticleBuffer", _particle.status);
             _effect.SetUInt("ParticleNum", (uint)_particle.status.count);
+            _effect.SetFloat("ParticleSize", _particleRadius);
         }
 
         private void Update()
@@ -82,21 +83,6 @@ namespace ParticleSimulator
             _objectParticle.Release();
             _terrainBuffer.Release();
             _solver.Release();
-        }
-
-        private void OnDrawGizmos()
-        {
-            Vector3 cellSize = _gridSize / _gridResolution.x;
-            //for (float x = _spornPos.x - _gridSize.x/2; x < _spornPos.x + _gridSize.x / 2; x += cellSize.x)
-            //{
-            //    for (float y = _spornPos.y - _gridSize.y / 2; y < _spornPos.y + _gridSize.y / 2; y += cellSize.y)
-            //    {
-            //        for (float z = _spornPos.z - _gridSize.z / 2; z < _spornPos.z + _gridSize.z / 2; z += cellSize.z)
-            //        {
-            //            Gizmos.DrawWireCube(new(x,y,z), cellSize);
-            //        }
-            //    }
-            //}
         }
     }
 }

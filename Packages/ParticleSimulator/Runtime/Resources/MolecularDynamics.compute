@@ -154,7 +154,7 @@ void ParticleCollisionCS(uint3 groupID : SV_GroupID, uint3 threadID : SV_GroupTh
 	_ParticleCollisionForce[P_ID] = sharedBuffer[threadID.x];
 	
 	// Debug用の処理
-	//_DebugBuffer[P_ID] = float4(RotateVector(float3(0.38, 0.38, -0.38), float4(0.01754, -0.04766, 0.18226, 0.98194)), 1);
+	_DebugBuffer[P_ID] = float4(_ParticleNum, _ParticleMu, _ParticleTotalMass, 0);
 }
 
 [numthreads(PARTICLE_NUM, 1, 1)]

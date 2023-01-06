@@ -478,14 +478,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9191cb30d96eeb84f8623096ba9b4356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxParticle: 16384
-  _particleType: 0
-  _particleRadius: 0.02
+  _maxParticle: 32768
+  _particleType: 1
+  _particleRadius: 0.1
   _spornPos: {x: 50, y: 10, z: 50}
   _effect: {fileID: 1358538621}
   _terrain: {fileID: 510845133}
-  _objects:
-  - {fileID: 0}
+  _objects: []
   _gridSize: {x: 100, y: 100, z: 100}
   _gridResolution: {x: 500, y: 100, z: 500}
 --- !u!1 &832575517
