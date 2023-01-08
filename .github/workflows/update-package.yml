@@ -1,0 +1,61 @@
+name: Update package.json
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types: [closed]
+
+env:
+  TARGET_FILE: ./Packages/ParticleSimulator/package.json
+
+jobs:
+  update-packagejson:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # Checkout
+      - uses: actions/checkout@v2
+      - name: Output package.json (Before)
+        run: cat ${{ env.TARGET_FILE}}
+      # Cache
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-Package
+          restore-keys: Library-
+      # Get version
+      - uses: actions/checkout@v2
+      - name: Get next version 
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dry_run: true
+      # Update
+      - name: Update package.json to version ${{ steps.tag_version.outputs.new_version }}
+        run: |
+          sed -i -e "s/\(\"version\":\) \"\(.*\)\",/\1 \"${{ steps.tag_version.outputs.new_version }}\",/" ${{ env.TARGET_FILE }}
+      # Check
+      - name: Check update
+        id: check_update
+        run: |
+          cat ${{ env.TARGET_FILE}}
+          git diff --exit-code || echo "::set-output name=changed::1"
+      # Commit
+      - name: Commit files
+        id: commit
+        if: steps.check_update.outputs.changed == '1'
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Update package.json to ${{ steps.tag_version.outputs.new_version }}" -a
+      # Push
+      - name: Push changes
+        if: steps.check_update.outputs.changed == '1'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          tags: true
