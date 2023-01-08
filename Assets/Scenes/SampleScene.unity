@@ -480,6 +480,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxParticle: 8192
   _particleType: 1
+  _renderType: 0
   _particleRadius: 0.1
   _spornPos: {x: 50, y: 25, z: 50}
   _effect: {fileID: 1358538621}

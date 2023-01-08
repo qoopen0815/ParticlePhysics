@@ -6,18 +6,22 @@ using UnityEngine.VFX;
 
 namespace ParticleSimulator
 {
+    public enum RenderType
+    {
+        SandLike = 0,
+        Velocity = 1,
+        Debug = 2
+    };
+
     public class ParticlePhysics : MonoBehaviour
     {
         [Header("Particle Setting")]
-        [SerializeField] private ParticleNumEnum _maxParticle;
-        [SerializeField] private ParticleTypeEnum _particleType;
-        [SerializeField, Range(0.02f, 0.1f)] private float _particleRadius;
-        [SerializeField] private Vector3 _spornPos;     // When a debugging component is available, this variable will be moved there.
+        [SerializeField] private ParticleNumEnum _maxParticle = ParticleNumEnum.NUM_8K;
+        [SerializeField] private ParticleTypeEnum _particleType = ParticleTypeEnum.Tetrahedron;
+        [SerializeField] private RenderType _renderType = RenderType.SandLike;
+        [SerializeField, Range(0.02f, 0.1f)] private float _particleRadius = 0.1f;
+        [SerializeField] private Vector3 _spornPos = Vector3.one;     // When a debugging component is available, this variable will be moved there.
         [SerializeField] private VisualEffect _effect;
-
-        [Header("Physics Setting")]  // Will be erased in the future.
-        //[SerializeField] private Vector3 _gravity = Physics.gravity;
-        //[SerializeField] private float _maxTimestep = 0.0005f;
 
         [Header("Collision Objects")]
         [SerializeField] private Terrain _terrain;
@@ -71,7 +75,7 @@ namespace ParticleSimulator
             _effect.SetGraphicsBuffer("debugBuffer", _solver._debugger);
             _effect.SetUInt("ParticleNum", (uint)_particle.status.count);
             _effect.SetFloat("ParticleSize", _particleRadius);
-
+            _effect.SetInt("RenderType", (int)_renderType);
         }
 
         private void Update()
