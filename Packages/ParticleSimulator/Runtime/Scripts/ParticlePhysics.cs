@@ -45,7 +45,7 @@ namespace ParticleSimulator
         {
             // Init Particle Buffer
             _particle = Particle.SetAsTetrahedronParticle(
-                ParticleStatus.GenerateSphere((int)_maxParticle, _spornPos, 5));
+                ParticleStatus.GenerateSphere((int)_maxParticle, _spornPos, 5), radius: _particleRadius);
 
             // Init Object Particle Buffer
             _objectParticle = Particle.SetAsSimpleParticle(
