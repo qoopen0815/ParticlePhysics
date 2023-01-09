@@ -122,7 +122,7 @@ namespace ParticleSimulator
             _debugger = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 (int)objNum,
-                Marshal.SizeOf(typeof(Vector3)));
+                Marshal.SizeOf(typeof(Vector4)));
         }
 
         public void UpdateParticle(ref Particle particles, GraphicsBuffer terrain)
@@ -151,7 +151,7 @@ namespace ParticleSimulator
             _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
 
-            //ShaderDebug.DebugLog<Vector3>(_debugger, _particleNum);
+            BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
             //var result = new NearestNeighbor.Uint2[_particleNum];
             //_nearestNeighbor.GridIndicesBuffer.GetData(result);
             //foreach (var eachResult in result)
