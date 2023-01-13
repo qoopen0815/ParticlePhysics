@@ -159,6 +159,7 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 			}
 		}
 		_ParticleCollisionForce[P_ID] = sum;
+		_DebugBuffer[P_ID] = float4(P_ID, sum.torque);
 	}
 }
 
