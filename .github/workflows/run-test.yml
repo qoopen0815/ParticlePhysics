@@ -1,0 +1,44 @@
+name: Run Test
+
+on:
+  workflow_run:
+    workflows:
+      - "Update package.json"
+    types:
+      - completed
+
+jobs:
+  test:
+    name: Test in Unity${{ matrix.unityVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        unityVersion:
+          - 2021.3.16f1
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+          path: Unity${{ matrix.unityVersion }}
+      - uses: actions/cache@v3
+        with:
+          path: Unity${{ matrix.unityVersion }}/Library
+          key: Library-Unity${{ matrix.unityVersion }}
+          restore-keys: |
+            Library-
+      - uses: game-ci/unity-test-runner@5263cf0ab1d1c310c57c1861c71324b7e273909c
+        id: tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          unityVersion: ${{ matrix.unityVersion }}
+          projectPath: Unity${{ matrix.unityVersion }}
+          artifactsPath: Unity${{ matrix.unityVersion }}-artifacts
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Unity${{ matrix.unityVersion }} Test Results
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: Test results for Unity${{ matrix.unityVersion }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
