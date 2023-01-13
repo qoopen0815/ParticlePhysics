@@ -35,20 +35,20 @@ public class ParticlePhysicsExample : MonoBehaviour
     private Mesh _mesh;
 
     // ComputeShader
-    private ParticlePhysics.Particle.Particle _particle;
-    private ParticlePhysics.Particle.Particle _objectParticle;
+    private ParticlePhysics.Particle.Data _particle;
+    private ParticlePhysics.Particle.Data _objectParticle;
     private GraphicsBuffer _terrainBuffer;
 
     private void Start()
     {
         // Init Particle Buffer
-        _particle = ParticlePhysics.Particle.Particle.SetAsTetrahedronParticle(
-            ParticlePhysics.Particle.ParticleStatus.GenerateSphere((int)_maxParticle, _spornPos, 5),
+        _particle = ParticlePhysics.Particle.Data.SetAsTetrahedronParticle(
+            ParticlePhysics.Particle.State.GenerateSphere((int)_maxParticle, _spornPos, 5),
             radius: _particleRadius);
 
         // Init Object Particle Buffer
-        _objectParticle = ParticlePhysics.Particle.Particle.SetAsSimpleParticle(
-            ParticlePhysics.Particle.ParticleStatus.GenerateFromMesh((int)_maxParticle, _mesh));
+        _objectParticle = ParticlePhysics.Particle.Data.SetAsSimpleParticle(
+            ParticlePhysics.Particle.State.GenerateFromMesh((int)_maxParticle, _mesh));
 
         // Init Terrain Bufer
         var t = ParticlePhysics.Utils.TerrainType.GenerateFromTerrain(_terrain);
