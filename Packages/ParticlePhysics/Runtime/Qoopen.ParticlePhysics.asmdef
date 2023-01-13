@@ -1,0 +1,17 @@
+{
+    "name": "Qoopen.ParticlePhysics",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Mathematics",
+        "Unity.VisualEffectGraph.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
