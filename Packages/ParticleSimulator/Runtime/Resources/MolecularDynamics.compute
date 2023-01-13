@@ -21,18 +21,18 @@ RWStructuredBuffer<float4> _DebugBuffer;
 
 struct ParticleCollisionForce
 {
-	float3 acceleration;
-	float3 angularAcceleration;
+	float3 force;
+	float3 torque;
 };
 struct ObjectCollisionForce
 {
-	float3 acceleration;
-	float3 angularAcceleration;
+	float3 force;
+	float3 torque;
 };
 struct TerrainCollisionForce
 {
-	float3 acceleration;
-	float3 angularAcceleration;
+	float3 force;
+	float3 torque;
 };
 
 RWStructuredBuffer<ParticleCollisionForce> _ParticleCollisionForce;
@@ -98,8 +98,8 @@ inline float3 calculate_contact_force(float this_particle_radius, float3 this_pa
 [numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
 void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : SV_GroupThreadID)
 {
-	sharedBuffer[threadID.x][threadID.y][threadID.z].acceleration = float3(0, 0, 0);
-	sharedBuffer[threadID.x][threadID.y][threadID.z].angularAcceleration = float3(0, 0, 0);
+	sharedBuffer[threadID.x][threadID.y][threadID.z].force = float3(0, 0, 0);
+	sharedBuffer[threadID.x][threadID.y][threadID.z].torque = float3(0, 0, 0);
 	GroupMemoryBarrierWithGroupSync();
 	
 	const uint P_ID = dispatchID.x; // 現在処理しているパーティクルID
@@ -132,8 +132,8 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 																 _ElementBuffer[N_elementIndice].radius, N_element_position, N_contact_velocity);
 			const float3 contact_torque = cross(P_contact_offset_from_center, contact_force);
 						
-			sharedBuffer[threadID.x][threadID.y][threadID.z].acceleration += contact_force;
-			sharedBuffer[threadID.x][threadID.y][threadID.z].angularAcceleration += contact_torque;
+			sharedBuffer[threadID.x][threadID.y][threadID.z].force += contact_force;
+			sharedBuffer[threadID.x][threadID.y][threadID.z].torque += contact_torque;
 		}
 	}
 	
@@ -142,18 +142,18 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 	if (threadID.y == 0 && threadID.z == 0)
 	{
 		ParticleCollisionForce sum;
-		sum.acceleration = float3(0, 0, 0);
-		sum.angularAcceleration = float3(0, 0, 0);
+		sum.force = float3(0, 0, 0);
+		sum.torque = float3(0, 0, 0);
 		
 		for (int y = 0; y < MAX_ELEMENT_NUM; y++)
 		{
 			for (int z = 0; z < MAX_ELEMENT_NUM; z++)
 			{
-				sum.acceleration += sharedBuffer[threadID.x][y][z].acceleration;
-				sum.angularAcceleration += sharedBuffer[threadID.x][y][z].angularAcceleration;
+				sum.force += sharedBuffer[threadID.x][y][z].force;
+				sum.torque += sharedBuffer[threadID.x][y][z].torque;
 			}
 		}
-		_DebugBuffer[P_ID] = float4(P_ID, sum.acceleration);
+		_DebugBuffer[P_ID] = float4(P_ID, sum.force);
 		_ParticleCollisionForce[P_ID] = sum;
 	}
 }
@@ -161,8 +161,8 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 [numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
 void OptimizedParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : SV_GroupThreadID)
 {
-	sharedBuffer[threadID.x][threadID.y][threadID.z].acceleration = float3(0, 0, 0);
-	sharedBuffer[threadID.x][threadID.y][threadID.z].angularAcceleration = float3(0, 0, 0);
+	sharedBuffer[threadID.x][threadID.y][threadID.z].force = float3(0, 0, 0);
+	sharedBuffer[threadID.x][threadID.y][threadID.z].torque = float3(0, 0, 0);
 	GroupMemoryBarrierWithGroupSync();
 	
 	const uint P_ID = dispatchID.x; // 現在処理しているパーティクルID
@@ -200,8 +200,8 @@ void OptimizedParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 
 																			 _ElementBuffer[N_elementIndice].radius, N_element_position, N_contact_velocity);
 						const float3 contact_torque = cross(P_contact_offset_from_center, contact_force);
 						
-						sharedBuffer[threadID.x][threadID.y][threadID.z].acceleration += contact_force;
-						sharedBuffer[threadID.x][threadID.y][threadID.z].angularAcceleration += contact_torque;
+						sharedBuffer[threadID.x][threadID.y][threadID.z].force += contact_force;
+						sharedBuffer[threadID.x][threadID.y][threadID.z].torque += contact_torque;
 					}
 				}
 			}
@@ -211,15 +211,15 @@ void OptimizedParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 
 	if (threadID.y == 0 && threadID.z == 0)
 	{
 		ParticleCollisionForce sum;
-		sum.acceleration = float3(0, 0, 0);
-		sum.angularAcceleration = float3(0, 0, 0);
+		sum.force = float3(0, 0, 0);
+		sum.torque = float3(0, 0, 0);
 		
 		for (int y = 0; y < MAX_ELEMENT_NUM; y++)
 		{
 			for (int z = 0; z < MAX_ELEMENT_NUM; z++)
 			{
-				sum.acceleration += sharedBuffer[threadID.x][y][z].acceleration;
-				sum.angularAcceleration += sharedBuffer[threadID.x][y][z].angularAcceleration;
+				sum.force += sharedBuffer[threadID.x][y][z].force;
+				sum.torque += sharedBuffer[threadID.x][y][z].torque;
 			}
 		}
 		//_DebugBuffer[P_ID] = _ParticleBufferRead[P_ID].orientation;
@@ -241,7 +241,7 @@ void TerrainCollisionCS(uint3 dispatchID : SV_DispatchThreadID)
 	// Terrainとの衝突判定 => 衝突したら壁に沿って移動
 	float3 pa = position - float3(pos.x, _TerrainBuffer[pos.x + pos.y * _Resolution].height, pos.y);
 	float3 norm = _TerrainBuffer[pos.x + pos.y * _Resolution].normal;
-	_TerrainCollisionForce[P_ID].acceleration = min(-dot(pa, norm), 0) * -3.0f * float3(0, 1, 0);
+	_TerrainCollisionForce[P_ID].force = min(-dot(pa, norm), 0) * -3.0f * float3(0, 1, 0);
 }
 
 //--------------------------------------------------------------------------------------
@@ -260,12 +260,12 @@ void IntegrateCS(uint3 dispatchID : SV_DispatchThreadID)
 	
 	// 重力を付加
 	float3 acceleration = _Gravity;
-	acceleration += (pcf.acceleration + ocf.acceleration + tcf.acceleration);
+	acceleration += (pcf.force + ocf.force + tcf.force);
 	acceleration = acceleration / _ParticleTotalMass;
 	
 	// Rotate moment of inertia tensor
 	// https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec26.pdf
-	float3 angularAcceleration = (pcf.angularAcceleration + ocf.angularAcceleration + tcf.angularAcceleration);
+	float3 angularAcceleration = (pcf.torque + ocf.torque + tcf.torque);
 	const float4x4 rotated_inverse_inertial_moment = (quaternion_to_matrix(particle.orientation) * _ParticleInertialMoment) * transpose(quaternion_to_matrix(particle.orientation));
 	angularAcceleration = mul(rotated_inverse_inertial_moment, float4(angularAcceleration, 1)).xyz;
 
