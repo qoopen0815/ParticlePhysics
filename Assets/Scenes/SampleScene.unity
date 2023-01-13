@@ -480,13 +480,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxParticle: 8192
   _particleType: 1
+  _renderType: 0
   _particleRadius: 0.1
   _spornPos: {x: 50, y: 25, z: 50}
   _effect: {fileID: 1358538621}
   _terrain: {fileID: 510845133}
   _objects: []
   _gridSize: {x: 40, y: 30, z: 40}
-  _gridCellSize: 1
+  _gridCellSize: 0.3
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

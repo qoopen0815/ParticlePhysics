@@ -21,7 +21,7 @@ namespace ParticleSimulator
             substance.Release();
         }
 
-        public static Particle SetAsSimpleParticle(ParticleStatus[] particles)
+        public static Particle SetAsSimpleParticle(ParticleStatus[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
             Particle p = new Particle(particles.Length);
             p.status = new GraphicsBuffer(
@@ -29,11 +29,11 @@ namespace ParticleSimulator
                 particles.Length,
                 Marshal.SizeOf(typeof(ParticleStatus)));
             p.status.SetData(particles);
-            p.substance = new SimpleSubstance();
+            p.substance = new SimpleSubstance(radius, density, mu);
             return p;
         }
 
-        public static Particle SetAsTetrahedronParticle(ParticleStatus[] particles)
+        public static Particle SetAsTetrahedronParticle(ParticleStatus[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
             Particle p = new Particle(particles.Length);
             p.status = new GraphicsBuffer(
@@ -41,11 +41,11 @@ namespace ParticleSimulator
                 particles.Length,
                 Marshal.SizeOf(typeof(ParticleStatus)));
             p.status.SetData(particles);
-            p.substance = new TetrahedronSubstance();
+            p.substance = new TetrahedronSubstance(radius, density, mu);
             return p;
         }
 
-        public static Particle SetAsCubeParticle(ParticleStatus[] particles)
+        public static Particle SetAsCubeParticle(ParticleStatus[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
             Particle p = new Particle(particles.Length);
             p.status = new GraphicsBuffer(
@@ -53,7 +53,7 @@ namespace ParticleSimulator
                 particles.Length,
                 Marshal.SizeOf(typeof(ParticleStatus)));
             p.status.SetData(particles);
-            p.substance = new CubeSubstance();
+            p.substance = new CubeSubstance(radius, density, mu);
             return p;
         }
     }

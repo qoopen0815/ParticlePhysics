@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ParticleSimulator.NearestNeighbor
+namespace ParticleSimulator.NearestNeighbour
 {
     internal abstract class GridSearchBase
     {

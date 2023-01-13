@@ -41,4 +41,32 @@ public class BufferUtils
             }
         }
     }
+    public static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups)
+    {
+        if (buffer != null)
+        {
+            var result = new T[threadGroups];
+            buffer.GetData(result);
+            foreach (var eachResult in result)
+            {
+                Debug.Log(eachResult);
+            }
+        }
+    }
+    public static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups, int index)
+    {
+        if (buffer != null)
+        {
+            var result = new T[threadGroups];
+            buffer.GetData(result);
+            if (index < result.Length)
+            {
+                Debug.Log(result[index]);
+            }
+            else
+            {
+                Debug.LogError("index out of range.");
+            }
+        }
+    }
 }
