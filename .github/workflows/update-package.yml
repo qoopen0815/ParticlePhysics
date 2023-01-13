@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  TARGET_FILE: ./Packages/ParticleSimulator/package.json
+  TARGET_FILE: ./Packages/ParticlePhysics/package.json
 
 jobs:
   update-packagejson:

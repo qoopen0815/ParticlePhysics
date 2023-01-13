@@ -8,7 +8,7 @@ on:
         required: true
 
 env:
-  FILE_NAME: "ParticleSimulator"
+  FILE_NAME: "ParticlePhysics"
   BUILD_METHOD: "PackageExporter.Export"
 
 jobs:
