@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace ParticleSimulator
@@ -44,14 +44,16 @@ namespace ParticleSimulator
             _particleNum = particle.status.count;
             _particleMu = particle.substance.Mu;
             _particleTotalMass = particle.substance.TotalMass;
-            //_particleInertialMoment = particle.substance.InertialMoment;
-            _particleInertialMoment = Matrix4x4.identity;
+            _particleInertialMoment = particle.substance.InertialMoment4x4;
+            //_particleInertialMoment = Matrix4x4.identity;
             _gridCenter = gridCenter;
             _terrainResolution = terrainResolution;
             _terrainRatio = terrainRatio;
             _terrainFriction = terrainFriction;
 
             _solver = (ComputeShader)Resources.Load("MolecularDynamics");
+
+            
 
             _solver.SetVector("_Gravity", _gravity);
             _solver.SetInt("_ElementNum", _elementNum);
@@ -142,13 +144,14 @@ namespace ParticleSimulator
         private void CalculateParticleCollisionForce(GraphicsBuffer particleBuffer, GraphicsBuffer elementBuffer)
         {
             int kernelID = _solver.FindKernel("ParticleCollisionCS");
-            _solver.SetFloat("_ParticleMu", _particleMu);
             _solver.SetBuffer(kernelID, "_ElementBuffer", elementBuffer);
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
             _solver.SetBuffer(kernelID, "_GridIndicesBufferRead", _nearestNeighbor.GridIndicesBuffer);
             _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
             _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
+            
+            //BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
         }
 
         private void CalculateObjectCollision(GraphicsBuffer particleBuffer, GraphicsBuffer objectBuffer)

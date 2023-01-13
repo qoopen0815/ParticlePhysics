@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -175,7 +175,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 31.596601
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -201,7 +201,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   m_LocalRotation: {x: 0.3965729, y: -0, z: -0, w: 0.91800326}
-  m_LocalPosition: {x: 50.6, y: 53.3, z: 25.4}
+  m_LocalPosition: {x: 50, y: 37, z: 37}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -478,7 +478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9191cb30d96eeb84f8623096ba9b4356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxParticle: 8192
+  _maxParticle: 16384
   _particleType: 1
   _renderType: 0
   _particleRadius: 0.1
@@ -487,7 +487,7 @@ MonoBehaviour:
   _terrain: {fileID: 510845133}
   _objects: []
   _gridSize: {x: 40, y: 30, z: 40}
-  _gridCellSize: 0.3
+  _gridCellSize: 0.4
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
