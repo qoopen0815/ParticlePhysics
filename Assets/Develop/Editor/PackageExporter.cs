@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine;
 
 public class PackageExporter
 {
     // Packages以下を指定する場合フォルダパスではなく Packages/{パッケージ名} なので注意
-    private static readonly string _packagePath = "Packages/com.qoopen.particlesimulator";
-    private static readonly string _fileName = "ParticleSimulator";
+    private static readonly string _packagePath = "Packages/com.qoopen.particlephysics";
+    private static readonly string _fileName = "ParticlePhysics";
 
     [MenuItem("Tools/ExportPackage")]
     // 必ずstaticにする
