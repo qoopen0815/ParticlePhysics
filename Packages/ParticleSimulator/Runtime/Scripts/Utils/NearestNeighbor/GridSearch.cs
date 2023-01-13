@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace ParticleSimulator.NearestNeighbor
+namespace ParticleSimulator.NearestNeighbour
 {
     internal struct Uint2
     {
@@ -12,11 +12,11 @@ namespace ParticleSimulator.NearestNeighbor
     internal class GridSearch<T> : GridSearchBase where T : struct
     {
         /// <summary>
-        /// 
+        /// GridSearch manage nearest neighbour search task.
         /// </summary>
         /// <param name="objNum"></param>
         /// <param name="gridSize"></param>
-        /// <param name="cellSize"></param>
+        /// <param name="gridCellSize"></param>
         public GridSearch(int objNum, Vector3 gridSize, float gridCellSize) : base(objNum)
         {
             this.gridCenter = gridSize / 2;

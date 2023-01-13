@@ -31,7 +31,7 @@ namespace ParticleSimulator
         private GraphicsBuffer _terrainCollisionForce;
         private GraphicsBuffer _tmpBufferWrite;
 
-        private NearestNeighbor.GridSearch<ParticleStatus> _nearestNeighbor;
+        private NearestNeighbour.GridSearch<ParticleStatus> _nearestNeighbor;
 
         public GraphicsBuffer _debugger;
 
@@ -76,7 +76,7 @@ namespace ParticleSimulator
 
             InitCSBuffer(_particleNum);
 
-            _nearestNeighbor = new NearestNeighbor.GridSearch<ParticleStatus>(_particleNum, gridSize, gridCellSize);
+            _nearestNeighbor = new NearestNeighbour.GridSearch<ParticleStatus>(_particleNum, gridSize, gridCellSize);
             _nearestNeighbor.GridCenter = gridCenter;
             _nearestNeighbor.SetCSVariables(_solver);
         }
