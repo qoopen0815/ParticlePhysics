@@ -128,6 +128,14 @@ namespace ParticleSimulator
         public void UpdateParticle(ref Particle particles, GraphicsBuffer terrain)
         {
             _nearestNeighbor.GridSort(ref particles.status);
+            CalculateOptimizedParticleCollisionForce(particles.status, particles.substance.Elements);
+            ////CalculateTerrainCollision(ref _terrainCollisionForce, _particleBuffer, _terrainBuffer);
+            //CalculateObjectCollision(ref _objectCollisionForce, _particleBuffer, _objectParticleBuffer);
+            Integrate(ref particles.status, terrain);
+        }
+
+        public void UpdateParticleNonOptimized(ref Particle particles, GraphicsBuffer terrain)
+        {
             CalculateParticleCollisionForce(particles.status, particles.substance.Elements);
             ////CalculateTerrainCollision(ref _terrainCollisionForce, _particleBuffer, _terrainBuffer);
             //CalculateObjectCollision(ref _objectCollisionForce, _particleBuffer, _objectParticleBuffer);
@@ -145,13 +153,25 @@ namespace ParticleSimulator
             _solver.SetFloat("_ParticleMu", _particleMu);
             _solver.SetBuffer(kernelID, "_ElementBuffer", elementBuffer);
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
+            _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
+            _solver.SetBuffer(kernelID, "_DebugBuffer", _debugger);
+            _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
+            _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
+        }
+
+        private void CalculateOptimizedParticleCollisionForce(GraphicsBuffer particleBuffer, GraphicsBuffer elementBuffer)
+        {
+            int kernelID = _solver.FindKernel("OptimizedParticleCollisionCS");
+            _solver.SetFloat("_ParticleMu", _particleMu);
+            _solver.SetBuffer(kernelID, "_ElementBuffer", elementBuffer);
+            _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
             _solver.SetBuffer(kernelID, "_GridIndicesBufferRead", _nearestNeighbor.GridIndicesBuffer);
             _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
             _solver.SetBuffer(kernelID, "_DebugBuffer", _debugger);
             _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
 
-            BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
+            //BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
             //var result = new NearestNeighbor.Uint2[_particleNum];
             //_nearestNeighbor.GridIndicesBuffer.GetData(result);
             //foreach (var eachResult in result)
@@ -190,7 +210,7 @@ namespace ParticleSimulator
         private void Integrate(ref GraphicsBuffer particleBuffer, GraphicsBuffer terrain)
         {
             int kernelID = _solver.FindKernel("IntegrateCS");
-            _solver.SetFloat("_TimeStep", Mathf.Min(0.05f, Time.deltaTime));
+            _solver.SetFloat("_TimeStep", Mathf.Min(0.005f, Time.deltaTime));
             //_solver.SetFloat("_TimeStep", Time.deltaTime);
             _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
             _solver.SetBuffer(kernelID, "_ObjectCollisionForce", _objectCollisionForce);
