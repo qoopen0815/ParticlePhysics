@@ -195,7 +195,7 @@ void IntegrateCS(uint3 dispatchID : SV_DispatchThreadID)
 	TerrainCollisionForce tcf = _TerrainCollisionForce[P_ID];
 	
 	// 重力を付加
-	float3 acceleration = _Gravity;
+	float3 acceleration = _Gravity * _ParticleTotalMass;
 	acceleration += (pcf.force + ocf.force + tcf.force);
 	acceleration = acceleration / _ParticleTotalMass;
 	

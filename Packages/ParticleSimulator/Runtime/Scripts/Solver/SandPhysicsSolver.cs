@@ -152,7 +152,7 @@ namespace ParticleSimulator
             _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
 
-            BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
+            //BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
         }
 
         private void CalculateObjectCollision(GraphicsBuffer particleBuffer, GraphicsBuffer objectBuffer)
