@@ -19,7 +19,7 @@ namespace ParticleSimulator
         [SerializeField] private ParticleNumEnum _maxParticle = ParticleNumEnum.NUM_8K;
         [SerializeField] private ParticleTypeEnum _particleType = ParticleTypeEnum.Tetrahedron;
         [SerializeField] private RenderType _renderType = RenderType.SandLike;
-        [SerializeField, Range(0.02f, 0.1f)] private float _particleRadius = 0.1f;
+        [SerializeField, Range(0.07f, 0.2f)] private float _particleRadius = 0.1f;
         [SerializeField] private Vector3 _spornPos = Vector3.one;     // When a debugging component is available, this variable will be moved there.
         [SerializeField] private VisualEffect _effect;
 
