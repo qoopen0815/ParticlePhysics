@@ -18,6 +18,17 @@ namespace ParticleSimulator.Substance
         public float Mu => mu;
         public Vector3 CenterOfMass => centerOfMass;
         public float3x3 InertialMoment => inertialMoment;
+        public Matrix4x4 InertialMoment4x4
+        {
+            get
+            {
+                Vector4 c0 = new Vector4(inertialMoment.c0.x,   inertialMoment.c0.y,    inertialMoment.c0.z,    0);
+                Vector4 c1 = new Vector4(inertialMoment.c1.x,   inertialMoment.c1.y,    inertialMoment.c1.z,    0);
+                Vector4 c2 = new Vector4(inertialMoment.c2.x,   inertialMoment.c2.y,    inertialMoment.c2.z,    0);
+                Vector4 c3 = new Vector4(0,                     0,                      0,                      1);
+                return new Matrix4x4(c0, c1, c2, c3);
+            }
+        }
 
         #endregion
 
