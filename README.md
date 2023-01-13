@@ -1,11 +1,11 @@
 # ParticlePhysics
 
 ParticlePhysics simulate the dynamics of sand-like particles in Unity.  
-It is implemented in full scratch based on this paper.
+This is an implementation of the research paper ["Particle-Based Simulation of Granular Materials"](http://wnbell.com/media/2005-07-SCA-Granular/BeYiMu2005.pdf). 
 
 ## DEMO
 
-![](./.image/demo.gif)
+![demo](https://github.com/qoopen0815/ParticlePhysics/blob/readme/.images/demo.gif)
 
 ## Requirement Package
  
@@ -25,7 +25,7 @@ Clone this repository, and copy example files(./Assets/Examples) into your proje
 ## Note
 
 This project is under development.  
-We are not responsible for any damages resulting from the use of this software.
+I'm not responsible for any damages resulting from the use of this software.
 
 ## Author
 
@@ -33,5 +33,8 @@ We are not responsible for any damages resulting from the use of this software.
 * E-mail：ku_engineer_wa@yahoo.com
  
 ## License
- 
-This project is under [Apache License 2.0](https://github.com/qoopen0815/ParticlePhysics/blob/main/LICENSE).
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
