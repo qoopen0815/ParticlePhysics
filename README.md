@@ -1,5 +1,7 @@
 # ParticlePhysics
 
+[![Run Test](https://github.com/qoopen0815/ParticlePhysics/actions/workflows/run-test.yml/badge.svg)](https://github.com/qoopen0815/ParticlePhysics/actions/workflows/run-test.yml)
+
 ParticlePhysics simulate the dynamics of sand-like particles in Unity.  
 This is an implementation of the research paper ["Particle-Based Simulation of Granular Materials"](http://wnbell.com/media/2005-07-SCA-Granular/BeYiMu2005.pdf). 
 
