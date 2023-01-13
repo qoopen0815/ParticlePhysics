@@ -167,7 +167,7 @@ namespace ParticleSimulator
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
             _solver.SetBuffer(kernelID, "_GridIndicesBufferRead", _nearestNeighbor.GridIndicesBuffer);
             _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
-            _solver.SetBuffer(kernelID, "_DebugBuffer", _debugger);
+            //_solver.SetBuffer(kernelID, "_DebugBuffer", _debugger);
             _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
 
@@ -218,9 +218,12 @@ namespace ParticleSimulator
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
             _solver.SetBuffer(kernelID, "_ParticleBufferWrite", _tmpBufferWrite);
             _solver.SetBuffer(kernelID, "_TerrainBuffer", terrain);
+            _solver.SetBuffer(kernelID, "_DebugBuffer", _debugger);
             _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
             (particleBuffer, _tmpBufferWrite) = (_tmpBufferWrite, particleBuffer);
+
+            BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
         }
 
         public void Release()

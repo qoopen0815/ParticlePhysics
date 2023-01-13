@@ -47,14 +47,14 @@ cbuffer MolecularDynamicsCB
 	float _TimeStep;
 };
 
-inline float CalculateNormalForce(float overlap, float normal_velocity,
+inline float calculate_normal_force(float overlap, float normal_velocity,
 								  float alpha = 0.5f, float beta = 1.5f,
 								  float kd = 200.0f, float kr = 10000.0f, float kt = 10000.0f)
 {
 	return -(kd * pow(overlap, alpha) * normal_velocity + kr * pow(overlap, beta)); // fn + kd * E^alpha * E. + kr * E ^ beta = 0
 }
 
-inline float3 CalculateShearForce(float normal_force, float normal_vel, float3 normal_vec,
+inline float3 calculate_shear_force(float normal_force, float normal_vel, float3 normal_vec,
 								  float3 velocity_vec, float kt = 10000.0f)
 {
 	float3 shear_force = float3(0, 0, 0);
@@ -66,7 +66,7 @@ inline float3 CalculateShearForce(float normal_force, float normal_vel, float3 n
 	return shear_force;
 }
 
-inline float3 CalculateContactForce(float this_particle_radius, float3 this_particle_position, float3 this_particle_velocity,
+inline float3 calculate_contact_force(float this_particle_radius, float3 this_particle_position, float3 this_particle_velocity,
 									float other_particle_radius, float3 other_particle_position, float3 other_particle_velocity)
 {
 	float3 contact_force = float3(0, 0, 0);
@@ -85,10 +85,10 @@ inline float3 CalculateContactForce(float this_particle_radius, float3 this_part
 		normal.w = dot(velocity_vec, normal.xyz); // velocity(normal): E. = V . N
 	
 		// Normal force vector
-		float normal_force = CalculateNormalForce(overlap, normal.w); // normal force(scaler):
+		float normal_force = calculate_normal_force(overlap, normal.w); // normal force(scaler):
 		
 		contact_force += normal_force * normal.xyz;
-		contact_force += CalculateShearForce(normal_force, normal.w, normal.xyz, velocity_vec);
+		contact_force += calculate_shear_force(normal_force, normal.w, normal.xyz, velocity_vec);
 	}
 	
 	// Return contact force vector
@@ -118,18 +118,18 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 						
 			const uint P_elementIndice = threadID.y;
 						
-			const float3 P_element_position = _ParticleBufferRead[P_ID].position + RotateVector(_ElementBuffer[P_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[P_ID].orientation);
+			const float3 P_element_position = _ParticleBufferRead[P_ID].position + rotate_vector(_ElementBuffer[P_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[P_ID].orientation);
 			const float3 P_contact_offset_from_center = _ElementBuffer[P_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[P_elementIndice].radius;
 			const float3 P_contact_velocity = _ParticleBufferRead[P_ID].velocity + cross(_ParticleBufferRead[P_ID].angularVelocity, P_contact_offset_from_center);
 						
 			const uint N_elementIndice = threadID.z;
 						
-			const float3 N_element_position = _ParticleBufferRead[N_ID].position + RotateVector(_ElementBuffer[N_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[N_ID].orientation);
+			const float3 N_element_position = _ParticleBufferRead[N_ID].position + rotate_vector(_ElementBuffer[N_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[N_ID].orientation);
 			const float3 N_contact_offset_from_center = _ElementBuffer[N_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[N_elementIndice].radius;
 			const float3 N_contact_velocity = _ParticleBufferRead[N_ID].velocity + cross(_ParticleBufferRead[N_ID].angularVelocity, -N_contact_offset_from_center);
 						
-			const float3 contact_force = CalculateContactForce(_ElementBuffer[P_elementIndice].radius, P_element_position, P_contact_velocity,
-																		  _ElementBuffer[N_elementIndice].radius, N_element_position, N_contact_velocity);
+			const float3 contact_force = calculate_contact_force(_ElementBuffer[P_elementIndice].radius, P_element_position, P_contact_velocity,
+																 _ElementBuffer[N_elementIndice].radius, N_element_position, N_contact_velocity);
 			const float3 contact_torque = cross(P_contact_offset_from_center, contact_force);
 						
 			sharedBuffer[threadID.x][threadID.y][threadID.z].acceleration += contact_force;
@@ -186,18 +186,18 @@ void OptimizedParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 
 						
 						const uint P_elementIndice = threadID.y;
 						
-						const float3 P_element_position = _ParticleBufferRead[P_ID].position + RotateVector(_ElementBuffer[P_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[P_ID].orientation);
+						const float3 P_element_position = _ParticleBufferRead[P_ID].position + rotate_vector(_ElementBuffer[P_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[P_ID].orientation);
 						const float3 P_contact_offset_from_center = _ElementBuffer[P_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[P_elementIndice].radius;
 						const float3 P_contact_velocity = _ParticleBufferRead[P_ID].velocity + cross(_ParticleBufferRead[P_ID].angularVelocity, P_contact_offset_from_center);
 						
 						const uint N_elementIndice = threadID.z;
 						
-						const float3 N_element_position = _ParticleBufferRead[N_ID].position + RotateVector(_ElementBuffer[N_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[N_ID].orientation);
+						const float3 N_element_position = _ParticleBufferRead[N_ID].position + rotate_vector(_ElementBuffer[N_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[N_ID].orientation);
 						const float3 N_contact_offset_from_center = _ElementBuffer[N_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[N_elementIndice].radius;
 						const float3 N_contact_velocity = _ParticleBufferRead[N_ID].velocity + cross(_ParticleBufferRead[N_ID].angularVelocity, -N_contact_offset_from_center);
 						
-						const float3 contact_force = CalculateContactForce(_ElementBuffer[P_elementIndice].radius, P_element_position, P_contact_velocity,
-																		  _ElementBuffer[N_elementIndice].radius, N_element_position, N_contact_velocity);
+						const float3 contact_force = calculate_contact_force(_ElementBuffer[P_elementIndice].radius, P_element_position, P_contact_velocity,
+																			 _ElementBuffer[N_elementIndice].radius, N_element_position, N_contact_velocity);
 						const float3 contact_torque = cross(P_contact_offset_from_center, contact_force);
 						
 						sharedBuffer[threadID.x][threadID.y][threadID.z].acceleration += contact_force;
@@ -222,7 +222,7 @@ void OptimizedParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 
 				sum.angularAcceleration += sharedBuffer[threadID.x][y][z].angularAcceleration;
 			}
 		}
-		_DebugBuffer[P_ID] = float4(P_ID, sum.acceleration);
+		//_DebugBuffer[P_ID] = _ParticleBufferRead[P_ID].orientation;
 		_ParticleCollisionForce[P_ID] = sum;
 	}
 }
@@ -261,12 +261,12 @@ void IntegrateCS(uint3 dispatchID : SV_DispatchThreadID)
 	// 重力を付加
 	float3 acceleration = _Gravity;
 	acceleration += (pcf.acceleration + ocf.acceleration + tcf.acceleration);
-	//acceleration = acceleration / _ParticleTotalMass;
+	acceleration = acceleration / _ParticleTotalMass;
 	
 	// Rotate moment of inertia tensor
 	// https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec26.pdf
 	float3 angularAcceleration = (pcf.angularAcceleration + ocf.angularAcceleration + tcf.angularAcceleration);
-	const float4x4 rotated_inverse_inertial_moment = (QuaternionToRotateMatrix(particle.orientation) * _ParticleInertialMoment) * transpose(QuaternionToRotateMatrix(particle.orientation));
+	const float4x4 rotated_inverse_inertial_moment = (quaternion_to_matrix(particle.orientation) * _ParticleInertialMoment) * transpose(quaternion_to_matrix(particle.orientation));
 	angularAcceleration = mul(rotated_inverse_inertial_moment, float4(angularAcceleration, 1)).xyz;
 
 	// Terrainとの衝突判定 => 衝突したら壁に沿って移動
@@ -285,11 +285,10 @@ void IntegrateCS(uint3 dispatchID : SV_DispatchThreadID)
 	particle.velocity += _TimeStep * acceleration;
 	particle.position += _TimeStep * particle.velocity;
 	particle.angularVelocity += _TimeStep * angularAcceleration;
-	particle.orientation = mul(particle.orientation, EulerToQuaternion(_TimeStep * particle.angularVelocity));
+	particle.orientation = mul(particle.orientation, euler_to_quaternion(_TimeStep * particle.angularVelocity));
 
 	// パーティクルのバッファ更新
 	_ParticleBufferWrite[P_ID] = particle;
 	
-	// Debug用の処理
-	//_DebugBuffer[P_ID] = float3(height, 0, 0);
+	_DebugBuffer[P_ID] = _ParticleBufferRead[P_ID].orientation;
 }
