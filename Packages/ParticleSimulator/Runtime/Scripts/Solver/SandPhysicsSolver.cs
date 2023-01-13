@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace ParticleSimulator
@@ -148,10 +148,9 @@ namespace ParticleSimulator
             _solver.SetBuffer(kernelID, "_ParticleBufferRead", particleBuffer);
             _solver.SetBuffer(kernelID, "_GridIndicesBufferRead", _nearestNeighbor.GridIndicesBuffer);
             _solver.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
-            _solver.SetBuffer(kernelID, "_DebugBuffer", _debugger);
             _solver.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);
             _solver.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
-
+            
             //BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
         }
 

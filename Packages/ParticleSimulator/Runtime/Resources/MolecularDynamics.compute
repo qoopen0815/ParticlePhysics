@@ -1,4 +1,4 @@
-﻿#pragma kernel ParticleCollisionCS
+#pragma kernel ParticleCollisionCS
 #pragma kernel TerrainCollisionCS
 //#pragma kernel ObjectCollisionCS
 #pragma kernel IntegrateCS
