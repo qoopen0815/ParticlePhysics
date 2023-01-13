@@ -1,8 +1,6 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-using ParticlePhysics.Particle;
-
 namespace ParticlePhysics.Solver
 {
     public class SandPhysicsSolver
@@ -33,12 +31,12 @@ namespace ParticlePhysics.Solver
         private GraphicsBuffer _terrainCollisionForce;
         private GraphicsBuffer _tmpBufferWrite;
 
-        private ParticlePhysics.Utils.NearestNeighbour.GridSearch<ParticleStatus> _nearestNeighbor;
+        private Utils.NearestNeighbour.GridSearch<Particle.State> _nearestNeighbor;
 
         public GraphicsBuffer _debugger;
 
         public SandPhysicsSolver(
-            ParticlePhysics.Particle.Particle particle,
+            Particle.Data particle,
             Vector3 gridSize, float gridCellSize, Vector3 gridCenter,
             int terrainResolution, Vector3 terrainRatio, float terrainFriction)
         {
@@ -80,12 +78,12 @@ namespace ParticlePhysics.Solver
 
             InitCSBuffer(_particleNum);
 
-            _nearestNeighbor = new ParticlePhysics.Utils.NearestNeighbour.GridSearch<ParticleStatus>(_particleNum, gridSize, gridCellSize);
+            _nearestNeighbor = new Utils.NearestNeighbour.GridSearch<Particle.State>(_particleNum, gridSize, gridCellSize);
             _nearestNeighbor.GridCenter = gridCenter;
             _nearestNeighbor.SetCSVariables(_solver);
         }
 
-        public void SetParticleCSParams(ParticlePhysics.Particle.Particle particle)
+        public void SetParticleCSParams(Particle.Data particle)
         {
             _solver.SetInt("_ElementNum", particle.substance.Elements.count);
             _solver.SetInt("_ParticleNum", particle.num);
@@ -121,7 +119,7 @@ namespace ParticlePhysics.Solver
             _tmpBufferWrite = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 (int)objNum,
-                Marshal.SizeOf(typeof(ParticleStatus)));
+                Marshal.SizeOf(typeof(Particle.State)));
 
             _debugger = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
@@ -129,7 +127,7 @@ namespace ParticlePhysics.Solver
                 Marshal.SizeOf(typeof(Vector4)));
         }
 
-        public void UpdateParticle(ref ParticlePhysics.Particle.Particle particles, GraphicsBuffer terrain)
+        public void UpdateParticle(ref Particle.Data particles, GraphicsBuffer terrain)
         {
             _nearestNeighbor.GridSort(ref particles.status);
             CalculateParticleCollisionForce(particles.status, particles.substance.Elements);
