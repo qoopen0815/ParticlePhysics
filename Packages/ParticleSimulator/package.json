@@ -1,7 +1,7 @@
 {
   "name": "com.qoopen.particlesimulator",
   "displayName": "ParticleSimulator",
-  "version": "0.2.0-develop.0",
+  "version": "0.2.1",
   "unity": "2021.3",
   "description": "This package simulates the dynamics of sand-like particles.",
   "dependencies": {
