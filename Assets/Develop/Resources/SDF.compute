@@ -4,12 +4,12 @@ RWStructuredBuffer<float3> result;
 RWStructuredBuffer<float4> debug;
 Texture3D<float4> sdf;
 
-cbuffer sdf
+cbuffer SDFObjectTool
 {
-	float radius;
+	float4 boxSize;
 	float4 resolution;
+	float particleRadius;
 	float4 ratio;
-	float4 meshSize;
 };
 
 [numthreads(1,1,1)]
@@ -24,7 +24,10 @@ void CSMain (uint3 dispatchID : SV_DispatchThreadID, uint3 groupID: SV_GroupID)
 	float3 target = float3(ratio.x * size.x, ratio.y * size.y, ratio.z * size.z);
 	if (abs(sdf[target].r) < 0.01f)
 	{
-		result[id] = groupID * radius;
+		result[id] = float3(
+			boxSize.x * groupID.x / resolution.x - boxSize.x / 2,
+			boxSize.y * groupID.y / resolution.y - boxSize.y / 2,
+			boxSize.z * groupID.z / resolution.z - boxSize.z / 2);
 		debug[id] = float4(size, 0);
 	}
 	
