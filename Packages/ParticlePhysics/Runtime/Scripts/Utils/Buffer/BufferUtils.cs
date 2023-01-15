@@ -59,13 +59,30 @@ public class BufferUtils
         {
             var result = new T[threadGroups];
             buffer.GetData(result);
-            if (index < result.Length)
-            {
-                Debug.Log(result[index]);
-            }
-            else
+            if (index >= result.Length)
             {
                 Debug.LogError("index out of range.");
+                return;
+            }
+
+            Debug.Log(result[index]);
+        }
+    }
+    public static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups, int startIndex, int endIndex)
+    {
+        if (buffer != null)
+        {
+            var result = new T[threadGroups];
+            buffer.GetData(result);
+            if (endIndex >= result.Length)
+            {
+                Debug.LogError("index out of range.");
+                return;
+            }
+
+            for (int index = startIndex; index <= endIndex; index++)
+            {
+                Debug.Log(result[index]);
             }
         }
     }

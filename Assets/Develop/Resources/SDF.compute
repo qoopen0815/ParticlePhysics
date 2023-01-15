@@ -1,0 +1,31 @@
+#pragma kernel CSMain
+
+RWStructuredBuffer<float3> result;
+RWStructuredBuffer<float4> debug;
+Texture3D<float4> sdf;
+
+cbuffer sdf
+{
+	float radius;
+	float4 resolution;
+	float4 ratio;
+	float4 meshSize;
+};
+
+[numthreads(1,1,1)]
+void CSMain (uint3 dispatchID : SV_DispatchThreadID, uint3 groupID: SV_GroupID)
+{
+	int id = groupID.x + groupID.y * resolution.x + groupID.z * resolution.x * resolution.y;
+	result[id] = float3(0, 0, 0);
+	debug[id] = float4(0, 0, 0, 0);
+	
+	float3 size;
+	sdf.GetDimensions(size.x, size.y, size.z);
+	float3 target = float3(ratio.x * size.x, ratio.y * size.y, ratio.z * size.z);
+	if (abs(sdf[target].r) < 0.01f)
+	{
+		result[id] = groupID * radius;
+		debug[id] = float4(size, 0);
+	}
+	
+}
