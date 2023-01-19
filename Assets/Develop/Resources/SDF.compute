@@ -1,34 +1,38 @@
-#pragma kernel CSMain
+#pragma kernel SearchPixelCS
 
-RWStructuredBuffer<float3> result;
-RWStructuredBuffer<float4> debug;
-Texture3D<float4> sdf;
+RWStructuredBuffer<float4> buffer;
 
-cbuffer SDFObjectTool
+cbuffer BilinearCB
 {
-	float4 boxSize;
-	float4 resolution;
-	float particleRadius;
-	float4 ratio;
+	int3 target_uvw;
+	int3 resolution;
+	Texture3D<float4> tex3d;
 };
 
-[numthreads(1,1,1)]
-void CSMain (uint3 dispatchID : SV_DispatchThreadID, uint3 groupID: SV_GroupID)
+inline float4 Bilinear3D(int3 uvw, float3 p)
 {
-	int id = groupID.x + groupID.y * resolution.x + groupID.z * resolution.x * resolution.y;
-	result[id] = float3(0, 0, 0);
-	debug[id] = float4(0, 0, 0, 0);
+	return	(1 - p.x) * (1 - p.y) * (1 - p.z) * tex3d[uvw] +
+			p.x * (1 - p.y) * (1 - p.z) * tex3d[uvw + int3(1, 0, 0)] +
+			p.y * (1 - p.z) * (1 - p.x) * tex3d[uvw + int3(0, 1, 0)] +
+			p.z * (1 - p.x) * (1 - p.y) * tex3d[uvw + int3(0, 0, 1)] +
+			p.x * p.y * (1 - p.z) * tex3d[uvw + int3(1, 1, 0)] +
+			p.y * p.z * (1 - p.x) * tex3d[uvw + int3(0, 1, 1)] +
+			p.z * p.x * (1 - p.y) * tex3d[uvw + int3(1, 0, 1)] +
+			p.x * p.y * p.z * tex3d[uvw + int3(1, 1, 1)];
+}
+
+[numthreads(8,8,8)]
+void SearchPixelCS(uint3 dispatchID : SV_DispatchThreadID)
+{
+	float3 texSize;
+	tex3d.GetDimensions(texSize.x, texSize.y, texSize.z);
+	float3 frac_uvw = float3(
+		(float) dispatchID.x / (float) resolution.x,
+		(float) dispatchID.y / (float) resolution.y,
+		(float) dispatchID.z / (float) resolution.z);
+	float4 pixelColor = Bilinear3D(target_uvw, frac_uvw);
+
+	int id = dispatchID.x + dispatchID.y * resolution.x + dispatchID.z * resolution.x * resolution.y;
 	
-	float3 size;
-	sdf.GetDimensions(size.x, size.y, size.z);
-	float3 target = float3(ratio.x * size.x, ratio.y * size.y, ratio.z * size.z);
-	if (abs(sdf[target].r) < 0.01f)
-	{
-		result[id] = float3(
-			boxSize.x * groupID.x / resolution.x - boxSize.x / 2,
-			boxSize.y * groupID.y / resolution.y - boxSize.y / 2,
-			boxSize.z * groupID.z / resolution.z - boxSize.z / 2);
-		debug[id] = float4(size, 0);
-	}
-	
+	buffer[id] = float4((float3) target_uvw + frac_uvw, pixelColor.x);
 }

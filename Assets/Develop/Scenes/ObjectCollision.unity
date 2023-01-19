@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -200,6 +200,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 471893bf3545a0140b0c1a9850a4f7d4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 471893bf3545a0140b0c1a9850a4f7d4,
         type: 3}
       propertyPath: m_Name
@@ -213,20 +218,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 198734728}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &198734730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198734729}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de97c1200318d2c47abe4eadc45491fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  particleRadius: 0.1
-  effect: {fileID: 198734735}
 --- !u!73398921 &198734734
 VFXRenderer:
   serializedVersion: 1
@@ -304,6 +295,21 @@ VisualEffect:
       m_Array: []
     m_Bool:
       m_Array: []
+--- !u!114 &198734736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 198734729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d5dde00d2833ba4f84830654c8f2bed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleRadius: 0.1
+  effect: {fileID: 198734735}
+  sdfTex: {fileID: 11700000, guid: 217478ebd5ef82e418bc4f496500c2e5, type: 2}
 --- !u!1 &486982378
 GameObject:
   m_ObjectHideFlags: 0
@@ -444,7 +450,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &807535880
 BoxCollider:
   m_ObjectHideFlags: 0

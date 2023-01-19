@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -11,10 +12,11 @@ public class SetParticleBySDF : MonoBehaviour
     public VisualEffect effect;
 
     MeshFilter _meshFilter;
+    MeshToSDFBaker _baker;
+    RenderTexture _sdf;
 
     ComputeShader _shader;
-    GraphicsBuffer _resultBuffer;
-    GraphicsBuffer _debugBuffer;
+    GraphicsBuffer _buffer;
 
     Vector3 _boxCenter;
     Vector3 _boxSizeReference;
@@ -91,7 +93,7 @@ public class SetParticleBySDF : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    void Hoge()
     {
         _meshFilter = this.GetComponent<MeshFilter>();
 
@@ -102,64 +104,88 @@ public class SetParticleBySDF : MonoBehaviour
         _actualBoxSize = SnapBoxToVoxels();
         _boxSizeReference = _actualBoxSize;
 
-        var baker = new MeshToSDFBaker(_boxSizeReference, _boxCenter, _maxResolution, _meshFilter.mesh);
-        baker.BakeSDF();
-        var sdf = baker.SdfTexture;
+        _baker = new MeshToSDFBaker(_boxSizeReference, _boxCenter, _maxResolution, _meshFilter.mesh);
+        _baker.BakeSDF();
+        _sdf = _baker.SdfTexture;
 
         Debug.Log("bounding box size: \t" + _boxSizeReference);
-        Debug.Log("sdf size:" + "\tw: " + sdf.height + "\th: " + sdf.height + "\td: " + sdf.volumeDepth);
-
-        //Vector3Int resolution = new Vector3Int(
-        //    x: (int)(sdf.width  / particleRadius),
-        //    y: (int)(sdf.height / particleRadius),
-        //    z: (int)(sdf.depth  / particleRadius));
-
-        Vector3Int resolution = new Vector3Int(
-            x: sdf.width,
-            y: sdf.height,
-            z: sdf.volumeDepth);
-        Debug.Log("Resolution: \t" + resolution);
+        Debug.Log("sdf size:" + "\tw: " + _sdf.width + "\th: " + _sdf.height + "\td: " + _sdf.volumeDepth);
 
         _shader = (ComputeShader)Resources.Load("SDF");
-        _resultBuffer = new GraphicsBuffer(
-            GraphicsBuffer.Target.Structured,
-            resolution.x * resolution.y * resolution.z,
-            Marshal.SizeOf(typeof(Vector3)));
-        _debugBuffer = new GraphicsBuffer(
+        int kernelID = _shader.FindKernel("SearchPixelCS");
+
+        _shader.GetKernelThreadGroupSizes(kernelID, out var threadSizeX, out var threadSizeY, out var threadSizeZ);
+        Vector3Int dispatchSize = Vector3Int.one * 10;
+        Vector3Int resolution = new Vector3Int(
+            x: (int)(dispatchSize.x * threadSizeX),
+            y: (int)(dispatchSize.y * threadSizeY),
+            z: (int)(dispatchSize.z * threadSizeZ));
+        Debug.Log("Resolution: \t" + resolution);
+
+        _buffer = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
             resolution.x * resolution.y * resolution.z,
             Marshal.SizeOf(typeof(Vector4)));
 
-        effect.SetGraphicsBuffer("ParticleBuffer", _resultBuffer);
+        float[] threshold = new float[2] { 0, 0.000000001f };
+        var bufferData = new Vector4[_buffer.count];
+        var verts = new List<Vector4>();
+
+        _shader.SetInts("resolution", new int[3] { resolution.x, resolution.y, resolution.z });
+        _shader.SetTexture(kernelID, "tex3d", _sdf);
+        _shader.SetBuffer(kernelID, "buffer", _buffer);
+
+        for (int w = 0; w < _sdf.volumeDepth; w++)
+        {
+            for (int v = 0; v < 32; v++)
+            {
+                for (int u = 0; u <32; u++)
+                {
+                    _shader.SetInts("target_uvw", new int[3] { u, v, w });
+                    _shader.Dispatch(kernelID, dispatchSize.x, dispatchSize.y, dispatchSize.z);
+                    _buffer.GetData(bufferData);
+                    
+                    verts.AddRange(bufferData.OrderBy(data => data.w).Take(10000).Where(data => threshold[0] < data.w && data.w < threshold[1]));
+                }
+            }
+
+            if (verts.Count > 10000)
+            {
+                verts = verts.OrderBy(data => data.w).Take(10000).ToList();
+            }
+        }
+
+        var ratio = new Vector4(_boxSizeReference.x / _sdf.width, _boxSizeReference.y / _sdf.height, _boxSizeReference.z / _sdf.volumeDepth, 1);
+        var move = new Vector4(_boxSizeReference.x / 2, _boxSizeReference.y / 2, _boxSizeReference.z / 2, 1);
+        verts = verts.Select(data => Vector4.Scale(data, ratio) - move).ToList();
+
+        _buffer = new GraphicsBuffer(
+            GraphicsBuffer.Target.Structured,
+            verts.Count,
+            Marshal.SizeOf(typeof(Vector4)));
+        _buffer.SetData(verts);
+
+        effect.SetGraphicsBuffer("ParticleBuffer", _buffer);
         effect.SetUInt("ParticleNum", (uint)(resolution.x * resolution.y * resolution.z));
         effect.SetFloat("ParticleSize", particleRadius);
-
-        int kernelID = _shader.FindKernel("CSMain");
-
-        _shader.SetVector("boxSize", new(_boxSizeReference.x, _boxSizeReference.y, _boxSizeReference.z, 0));
-        _shader.SetVector("resolution", new(resolution.x, resolution.y, resolution.z, 0));
-        _shader.SetFloat("particleRadius", particleRadius);
-        _shader.SetVector("ratio", new(sdf.width / resolution.x, sdf.height / resolution.y, sdf.volumeDepth / resolution.z, 0));
-
-        _shader.SetTexture(kernelID, "sdf", sdf);
-        _shader.SetBuffer(kernelID, "result", _resultBuffer);
-        _shader.SetBuffer(kernelID, "debug", _debugBuffer);
-        _shader.Dispatch(kernelID, resolution.x, resolution.y, resolution.z);
-
-        BufferUtils.DebugBuffer<Vector4>(_debugBuffer, resolution.x * resolution.y * resolution.z, 10);
-
-        baker.Dispose();
     }
+
+    bool _frag = true;
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(_frag)
+        {
+            Hoge();
+            _frag = false;
+        }
     }
 
     private void OnDestroy()
     {
-        _resultBuffer.Release();
-        _debugBuffer.Release();
+        _baker.Dispose();
+        _sdf.Release();
+        _buffer.Release();
     }
 }
