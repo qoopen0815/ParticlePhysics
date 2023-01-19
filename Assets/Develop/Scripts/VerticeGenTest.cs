@@ -87,8 +87,11 @@ public class VerticeGenTest : MonoBehaviour
         //Would need to weld vertices for better quality mesh.
         marching.Generate(voxels.Voxels, verts, indices);
 
-        var ratio = new Vector3(_boxSizeReference.x / _sdf.width, _boxSizeReference.y / _sdf.height, _boxSizeReference.z / _sdf.depth);
-        var move = new Vector3(_boxSizeReference.x / 2, _boxSizeReference.y / 2, _boxSizeReference.z / 2);
+        var ratio = new Vector3(
+            _boxSizeReference.x / _sdf.width,
+            _boxSizeReference.y / _sdf.height,
+            _boxSizeReference.z / _sdf.depth);
+        var move = _boxSizeReference * 0.5f;
         verts = verts.Select(data => Vector3.Scale(data, ratio) - move).ToList();
 
         _buffer = new GraphicsBuffer(
