@@ -23,7 +23,7 @@ public class VerticeGenTest : MonoBehaviour
     Vector3 _boxCenter;
     Vector3 _boxSizeReference;
     Vector3 _actualBoxSize;
-    int _maxResolution = 64;
+    int _maxResolution = 32;
 
     bool _frag = true;
 
