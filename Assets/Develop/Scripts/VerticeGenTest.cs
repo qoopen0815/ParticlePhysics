@@ -13,6 +13,7 @@ public class VerticeGenTest : MonoBehaviour
 {
     public float particleRadius;
     public VisualEffect effect;
+    public int maxResolution = 32;
 
     MeshFilter _meshFilter;
     MeshToSDFBaker _baker;
@@ -23,17 +24,11 @@ public class VerticeGenTest : MonoBehaviour
     Vector3 _boxCenter;
     Vector3 _boxSizeReference;
     Vector3 _actualBoxSize;
-    int _maxResolution = 32;
-
-    bool _frag = true;
 
     // Update is called once per frame
-    void Update()
+    void Start()
     {
-        if (_frag)
-        {
-            Hoge();
-        }
+        Hoge();
     }
 
     private void OnDestroy()
@@ -44,8 +39,6 @@ public class VerticeGenTest : MonoBehaviour
 
     void Hoge()
     {
-        _frag = false;
-
         _meshFilter = this.GetComponent<MeshFilter>();
 
         _boxCenter = _meshFilter.mesh.bounds.center;
@@ -55,12 +48,14 @@ public class VerticeGenTest : MonoBehaviour
         _actualBoxSize = SnapBoxToVoxels();
         _boxSizeReference = _actualBoxSize;
 
-        _baker = new MeshToSDFBaker(_boxSizeReference, _boxCenter, _maxResolution, _meshFilter.mesh);
+        _baker = new MeshToSDFBaker(_boxSizeReference, _boxCenter, maxResolution, _meshFilter.mesh);
         _baker.BakeSDF();
         
         _sdf = RenderTextureUtils.ConvertToTexture3D(_baker.SdfTexture);
 
+        Debug.Log("Generate mesh: " + _meshFilter.mesh.name);
         Debug.Log("bounding box size: \t" + _boxSizeReference);
+        Debug.Log("bounding box center: \t" + _boxCenter);
         Debug.Log("sdf size:" + "\tw: " + _sdf.width + "\th: " + _sdf.height + "\td: " + _sdf.depth);
 
         Marching marching = new MarchingCubes();
@@ -70,15 +65,11 @@ public class VerticeGenTest : MonoBehaviour
 
         //Fill voxels with values. Im using perlin noise but any method to create voxels will work.
         for (int x = 0; x < _sdf.width; x++)
-        {
             for (int y = 0; y < _sdf.height; y++)
-            {
                 for (int z = 0; z < _sdf.depth; z++)
                 {
                     voxels[x, y, z] = _sdf.GetPixel(x, y, z).r;
                 }
-            }
-        }
 
         List<Vector3> verts = new List<Vector3>();
         List<int> indices = new List<int>();
@@ -91,7 +82,7 @@ public class VerticeGenTest : MonoBehaviour
             _boxSizeReference.x / _sdf.width,
             _boxSizeReference.y / _sdf.height,
             _boxSizeReference.z / _sdf.depth);
-        var move = _boxSizeReference * 0.5f;
+        var move = _boxSizeReference * 0.5f - _boxCenter;
         verts = verts.Select(data => Vector3.Scale(data, ratio) - move).ToList();
 
         _buffer = new GraphicsBuffer(
@@ -108,7 +99,7 @@ public class VerticeGenTest : MonoBehaviour
     private Vector3 GetAbsolutePadding()
     {
         float maxExtent = Mathf.Max(_boxSizeReference.x, Mathf.Max(_boxSizeReference.y, _boxSizeReference.z));
-        float voxelSize = maxExtent / _maxResolution;
+        float voxelSize = maxExtent / maxResolution;
         Vector3 absolutePadding = 2 * voxelSize * Vector3.one;
         return absolutePadding;
     }
@@ -138,9 +129,9 @@ public class VerticeGenTest : MonoBehaviour
 
         if (refAxis == 1)
         {
-            dimX = Mathf.Max(Mathf.RoundToInt(_maxResolution * _boxSizeReference.x / maxExtent), 1);
-            dimY = Mathf.Max(Mathf.CeilToInt(_maxResolution * _boxSizeReference.y / maxExtent), 1);
-            dimZ = Mathf.Max(Mathf.CeilToInt(_maxResolution * _boxSizeReference.z / maxExtent), 1);
+            dimX = Mathf.Max(Mathf.RoundToInt(maxResolution * _boxSizeReference.x / maxExtent), 1);
+            dimY = Mathf.Max(Mathf.CeilToInt(maxResolution * _boxSizeReference.y / maxExtent), 1);
+            dimZ = Mathf.Max(Mathf.CeilToInt(maxResolution * _boxSizeReference.z / maxExtent), 1);
             float voxelSize = _boxSizeReference.x / dimX;
             var tmpBoxSize = _boxSizeReference;
             tmpBoxSize.x = dimX * voxelSize;
@@ -150,9 +141,9 @@ public class VerticeGenTest : MonoBehaviour
         }
         else if (refAxis == 2)
         {
-            dimY = Mathf.Max(Mathf.RoundToInt(_maxResolution * _boxSizeReference.y / maxExtent), 1);
-            dimX = Mathf.Max(Mathf.CeilToInt(_maxResolution * _boxSizeReference.x / maxExtent), 1);
-            dimZ = Mathf.Max(Mathf.CeilToInt(_maxResolution * _boxSizeReference.z / maxExtent), 1);
+            dimY = Mathf.Max(Mathf.RoundToInt(maxResolution * _boxSizeReference.y / maxExtent), 1);
+            dimX = Mathf.Max(Mathf.CeilToInt(maxResolution * _boxSizeReference.x / maxExtent), 1);
+            dimZ = Mathf.Max(Mathf.CeilToInt(maxResolution * _boxSizeReference.z / maxExtent), 1);
             float voxelSize = _boxSizeReference.y / dimY;
             var tmpBoxSize = _boxSizeReference;
             tmpBoxSize.x = dimX * voxelSize;
@@ -162,9 +153,9 @@ public class VerticeGenTest : MonoBehaviour
         }
         else
         {
-            dimZ = Mathf.Max(Mathf.RoundToInt(_maxResolution * _boxSizeReference.z / maxExtent), 1);
-            dimY = Mathf.Max(Mathf.CeilToInt(_maxResolution * _boxSizeReference.y / maxExtent), 1);
-            dimX = Mathf.Max(Mathf.CeilToInt(_maxResolution * _boxSizeReference.x / maxExtent), 1);
+            dimZ = Mathf.Max(Mathf.RoundToInt(maxResolution * _boxSizeReference.z / maxExtent), 1);
+            dimY = Mathf.Max(Mathf.CeilToInt(maxResolution * _boxSizeReference.y / maxExtent), 1);
+            dimX = Mathf.Max(Mathf.CeilToInt(maxResolution * _boxSizeReference.x / maxExtent), 1);
             float voxelSize = _boxSizeReference.z / dimZ;
             var tmpBoxSize = _boxSizeReference;
             tmpBoxSize.x = dimX * voxelSize;
