@@ -9,89 +9,88 @@ using UnityEditor;
 
 using MarchingCubesProject;
 
-public class VerticeGenTest : MonoBehaviour
+[RequireComponent(typeof(MeshFilter))]
+public class ParticleCollider : MonoBehaviour
 {
-    public float particleRadius;
+    public float particleRadius = 0.1f;
+    public int maxResolution = 64;
     public VisualEffect effect;
-    public int maxResolution = 32;
 
-    MeshFilter _meshFilter;
-    MeshToSDFBaker _baker;
     Texture3D _sdf;
-
     GraphicsBuffer _buffer;
 
     Vector3 _boxCenter;
     Vector3 _boxSizeReference;
     Vector3 _actualBoxSize;
 
+    public Texture3D MeshSdf { get => _sdf; private set => _sdf = value; }
+    public GraphicsBuffer ObjectParticles { get => _buffer; private set => _buffer = value; }
+
+
     // Update is called once per frame
     void Start()
     {
-        Hoge();
+        SetParticlesOnMeshSurface();
     }
 
     private void OnDestroy()
     {
-        _baker.Dispose();
-        _buffer.Release();
+        ObjectParticles.Release();
     }
 
-    void Hoge()
+    void SetParticlesOnMeshSurface()
     {
-        _meshFilter = this.GetComponent<MeshFilter>();
+        var meshFilter = this.GetComponent<MeshFilter>();
 
-        _boxCenter = _meshFilter.mesh.bounds.center;
-        _boxSizeReference = _meshFilter.mesh.bounds.extents * 2.0f;
+        _boxCenter = meshFilter.mesh.bounds.center;
+        _boxSizeReference = meshFilter.mesh.bounds.extents * 2.0f;
         var absolutePadding = GetAbsolutePadding();
         _boxSizeReference += absolutePadding;
         _actualBoxSize = SnapBoxToVoxels();
         _boxSizeReference = _actualBoxSize;
 
-        _baker = new MeshToSDFBaker(_boxSizeReference, _boxCenter, maxResolution, _meshFilter.mesh);
-        _baker.BakeSDF();
-        
-        _sdf = RenderTextureUtils.ConvertToTexture3D(_baker.SdfTexture);
+        var baker = new MeshToSDFBaker(_boxSizeReference, _boxCenter, maxResolution, meshFilter.mesh);
+        baker.BakeSDF();
 
-        Debug.Log("Generate mesh: " + _meshFilter.mesh.name);
-        Debug.Log("bounding box size: \t" + _boxSizeReference);
-        Debug.Log("bounding box center: \t" + _boxCenter);
-        Debug.Log("sdf size:" + "\tw: " + _sdf.width + "\th: " + _sdf.height + "\td: " + _sdf.depth);
+        MeshSdf = RenderTextureUtils.ConvertToTexture3D(baker.SdfTexture);
+        baker.Dispose();
 
-        Marching marching = new MarchingCubes();
-        marching.Surface = 0.005f;
+        Marching marching = new MarchingCubes
+        {
+            Surface = 0.005f
+        };
 
-        var voxels = new VoxelArray(_sdf.width, _sdf.height, _sdf.depth);
+        var voxels = new VoxelArray(MeshSdf.width, MeshSdf.height, MeshSdf.depth);
 
         //Fill voxels with values. Im using perlin noise but any method to create voxels will work.
-        for (int x = 0; x < _sdf.width; x++)
-            for (int y = 0; y < _sdf.height; y++)
-                for (int z = 0; z < _sdf.depth; z++)
+        for (int x = 0; x < MeshSdf.width; x++)
+            for (int y = 0; y < MeshSdf.height; y++)
+                for (int z = 0; z < MeshSdf.depth; z++)
                 {
-                    voxels[x, y, z] = _sdf.GetPixel(x, y, z).r;
+                    voxels[x, y, z] = MeshSdf.GetPixel(x, y, z).r;
                 }
 
-        List<Vector3> verts = new List<Vector3>();
-        List<int> indices = new List<int>();
+        List<Vector3> verts = new();
+        List<int> indices = new();
 
         //The mesh produced is not optimal. There is one vert for each index.
         //Would need to weld vertices for better quality mesh.
         marching.Generate(voxels.Voxels, verts, indices);
 
         var ratio = new Vector3(
-            _boxSizeReference.x / _sdf.width,
-            _boxSizeReference.y / _sdf.height,
-            _boxSizeReference.z / _sdf.depth);
+            _boxSizeReference.x / MeshSdf.width,
+            _boxSizeReference.y / MeshSdf.height,
+            _boxSizeReference.z / MeshSdf.depth);
         var move = _boxSizeReference * 0.5f - _boxCenter;
         verts = verts.Select(data => Vector3.Scale(data, ratio) - move).ToList();
 
-        _buffer = new GraphicsBuffer(
+        ObjectParticles = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
             verts.Count,
             Marshal.SizeOf(typeof(Vector3)));
-        _buffer.SetData(verts);
+        ObjectParticles.SetData(verts);
 
-        effect.SetGraphicsBuffer("ParticleBuffer", _buffer);
+        effect.SetGraphicsBuffer("ParticleBuffer", ObjectParticles);
         effect.SetUInt("ParticleNum", (uint)verts.Count);
         effect.SetFloat("ParticleSize", particleRadius / 2);
     }
