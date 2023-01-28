@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class BufferUtils
+internal class BufferUtils
 {
     /// <summary>
     /// 引数に指定されたバッファの入れ替え
     /// </summary>
-    public static void SwapComputeBuffer(ref ComputeBuffer ping, ref ComputeBuffer pong)
+    internal static void SwapComputeBuffer(ref ComputeBuffer ping, ref ComputeBuffer pong)
     {
         ComputeBuffer temp = ping;
         ping = pong;
@@ -16,7 +16,7 @@ public class BufferUtils
     /// バッファの開放
     /// </summary>
     /// <param name="buffer"></param>
-    public static void ReleaseBuffer(ComputeBuffer buffer)
+    internal static void ReleaseBuffer(ComputeBuffer buffer)
     {
         if (buffer != null)
         {
@@ -25,11 +25,18 @@ public class BufferUtils
         }
     }
 
+    internal static T[] GetData<T>(GraphicsBuffer buffer)
+    {
+        var data = new T[buffer.count];
+        buffer.GetData(data);
+        return data;
+    }
+
     /// <summary>
     /// バッファのプリントデバッグ
     /// </summary>
     /// <param name="buffer"></param>
-    public static void DebugBuffer<T>(ComputeBuffer buffer, int threadGroups)
+    internal static void DebugBuffer<T>(ComputeBuffer buffer, int threadGroups)
     {
         if (buffer != null)
         {
@@ -41,7 +48,7 @@ public class BufferUtils
             }
         }
     }
-    public static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups)
+    internal static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups)
     {
         if (buffer != null)
         {
@@ -53,7 +60,7 @@ public class BufferUtils
             }
         }
     }
-    public static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups, int index)
+    internal static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups, int index)
     {
         if (buffer != null)
         {
@@ -68,7 +75,7 @@ public class BufferUtils
             Debug.Log(result[index]);
         }
     }
-    public static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups, int startIndex, int endIndex)
+    internal static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups, int startIndex, int endIndex)
     {
         if (buffer != null)
         {

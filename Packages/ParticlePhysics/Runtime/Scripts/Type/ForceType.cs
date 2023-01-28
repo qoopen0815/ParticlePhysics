@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ParticlePhysics.Solver
+namespace ParticlePhysics.Type
 {
     public struct ParticleCollisionForce
     {
