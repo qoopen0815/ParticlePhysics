@@ -62,8 +62,6 @@ public class ParticleCollider : MonoBehaviour
         boxSize += GetAbsolutePadding(boxSize, resolution);
         boxSize = SnapBoxToVoxels(boxSize, resolution);
 
-        Debug.Log(boxSize);
-
         var baker = new MeshToSDFBaker(
             sizeBox: boxSize,
             center: mesh.bounds.center,

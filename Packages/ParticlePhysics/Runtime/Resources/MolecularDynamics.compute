@@ -17,7 +17,6 @@
 
 RWStructuredBuffer<float4> _DebugBuffer;
 
-StructuredBuffer<ParticleType> _ObjectParticleBufferRead;
 
 struct ParticleCollisionForce
 {
@@ -196,7 +195,7 @@ void ObjectCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : 
 						const uint P_elementIndice = threadID.y;
 						const uint N_elementIndice = threadID.z;
 						buf = get_particle_collision_force(_ParticleBufferRead[P_ID], _ElementBuffer[P_elementIndice],
-														   _ObjectParticleBufferRead[N_ID], _ElementBuffer[N_elementIndice]);
+														   _ObjectParticleBufferRead[N_ID], _ObjectElementBuffer[N_elementIndice]);
 						sharedBuffer[threadID.x][threadID.y][threadID.z].force += buf.force;
 						sharedBuffer[threadID.x][threadID.y][threadID.z].torque += buf.torque;
 					}

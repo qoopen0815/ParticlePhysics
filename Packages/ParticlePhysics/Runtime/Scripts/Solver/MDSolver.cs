@@ -91,7 +91,7 @@ namespace ParticlePhysics.Solver
             InitializeBuffer(_particle.num);
         }
 
-        public void SetCollisionObjects(GameObject[] objects)
+        public void SetCollisionObjects(GameObject[] objects, Vector3 gridSize, float gridCellSize, Vector3 gridCenter)
         {
             _objectGSList = new List<GridSearch<ParticleState>>();
             _objectDatas = new List<ObjectData>();
@@ -99,8 +99,10 @@ namespace ParticlePhysics.Solver
             ObjectData data;
             foreach (GameObject obj in objects)
             {
-                data = new ObjectData(obj, GranularParticle.SetAsSimpleParticle(ParticleState.GenerateFromMesh(obj.GetComponent<MeshFilter>().mesh)));
-                _objectGSList.Add(new GridSearch<ParticleState>(data.particle.num, new(8.00f, 3.50f, 3.75f), 0.03f));
+                data = new ObjectData(obj, GranularParticle.SetAsSimpleParticle(ParticleState.GenerateFromGameObject(obj), radius: 0.2f));
+                var gs = new GridSearch<ParticleState>(data.particle.num, gridSize, gridCellSize);
+                gs.GridCenter = gridCenter;
+                _objectGSList.Add(gs);
                 _objectDatas.Add(data);
             }
         }
@@ -189,14 +191,16 @@ namespace ParticlePhysics.Solver
         private void CalculateObjectCollision(ref GranularParticle particle)
         {
             ObjectData data = _objectDatas[0];
+            GridSearchBase objectGS = _objectGSList[0];
 
-            _fieldGS.GridSort(ref data.particle.state);
+            objectGS.GridSort(ref data.particle.state);
 
             int kernelID = _shader.FindKernel("ObjectCollisionCS");
             _shader.SetBuffer(kernelID, "_ElementBuffer", particle.substance.Elements);
             _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.state);
+            _shader.SetBuffer(kernelID, "_ObjectElementBuffer", data.particle.substance.Elements);
             _shader.SetBuffer(kernelID, "_ObjectParticleBufferRead", data.particle.state);
-            _shader.SetBuffer(kernelID, "_GridIndicesBufferRead", _fieldGS.GridIndicesBuffer);
+            _shader.SetBuffer(kernelID, "_GridIndicesBufferRead", objectGS.GridIndicesBuffer);
             _shader.SetBuffer(kernelID, "_ObjectCollisionForce", _objectCollisionForce);
             //_shader.SetBuffer(kernelID, "_DebugBuffer", _debugger);
             _shader.GetKernelThreadGroupSizes(kernelID, out uint x, out _, out _);

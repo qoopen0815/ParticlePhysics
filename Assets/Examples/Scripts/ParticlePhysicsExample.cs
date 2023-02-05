@@ -32,7 +32,6 @@ public class ParticlePhysicsExample : MonoBehaviour
     // ComputeShader
     private ParticlePhysics.Solver.MDSolver _solver;
     private ParticlePhysics.GranularParticle _particle;
-    private ParticlePhysics.GranularParticle _objectParticle;
     private GraphicsBuffer _terrainBuffer;
 
     private void Start()
@@ -41,10 +40,6 @@ public class ParticlePhysicsExample : MonoBehaviour
         _particle = ParticlePhysics.GranularParticle.SetAsTetrahedronParticle(
             ParticlePhysics.Type.ParticleState.GenerateSphere((int)_maxParticle, _spornPos, 5),
             radius: _particleRadius);
-
-        // Init Object Particle Buffer
-        _objectParticle = ParticlePhysics.GranularParticle.SetAsSimpleParticle(
-            ParticlePhysics.Type.ParticleState.GenerateFromMesh(_objects[0].GetComponent<MeshFilter>().mesh));
 
         // Init Terrain Bufer
         var t = ParticlePhysics.Type.TerrainType.GenerateFromTerrain(_terrain);
@@ -57,7 +52,7 @@ public class ParticlePhysicsExample : MonoBehaviour
         // Solver
         _solver = new ParticlePhysics.Solver.MDSolver(Physics.gravity);
         _solver.SetMainParticle(_particle);
-        _solver.SetCollisionObjects(_objects);
+        _solver.SetCollisionObjects(_objects, _gridSize, _gridCellSize, _spornPos);
         _solver.SetFieldTerrain(_terrain, _gridSize, _gridCellSize, _spornPos);
 
         // Visual Effect
@@ -76,7 +71,6 @@ public class ParticlePhysicsExample : MonoBehaviour
     private void OnDestroy()
     {
         _particle.Release();
-        _objectParticle.Release();
         _terrainBuffer.Release();
         _solver.Release();
     }
