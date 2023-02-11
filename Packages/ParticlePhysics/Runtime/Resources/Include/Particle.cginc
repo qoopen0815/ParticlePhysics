@@ -28,11 +28,13 @@ cbuffer ParticleCB
 	float4x4 _ParticleInertialMoment;
 };
 
-// 物性値のバッファ
+// Main Particle Buffer
 StructuredBuffer<ElementType> _ElementBuffer;
-
-// 粒状体のバッファ
 StructuredBuffer<ParticleType> _ParticleBufferRead;
 RWStructuredBuffer<ParticleType> _ParticleBufferWrite;
+
+// Collision Object Particle Buffer(Read Only)
+StructuredBuffer<ElementType> _ObjectElementBuffer;
+StructuredBuffer<ParticleType> _ObjectParticleBufferRead;
 
 #endif

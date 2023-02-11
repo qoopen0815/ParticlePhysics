@@ -1,0 +1,18 @@
+#pragma kernel CopyToBuffer
+ 
+Texture3D<float4> voxels;
+RWStructuredBuffer<float4> voxelsBuffer;
+uint3 size;
+
+uint id3(uint i, uint j, uint k)
+{
+	return (uint) (i + size.x * j + size.x * size.y * k);
+}
+
+[numthreads(8,8,8)]
+void CopyToBuffer(uint3 id : SV_DispatchThreadID)
+{
+	voxels.GetDimensions(size.x, size.y, size.z);
+	if (id.x >= (uint) size.x || id.y >= (uint) size.y || id.z >= (uint) size.z) return;
+	voxelsBuffer[id3(id.x, id.y, id.z)] = voxels[int3(id.x, id.y, id.z)];
+}

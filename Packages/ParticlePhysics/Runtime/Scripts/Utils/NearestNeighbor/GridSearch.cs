@@ -37,6 +37,8 @@ namespace ParticlePhysics.Utils.NearestNeighbour
 
         protected override void InitializeBuffer(int objectNum)
         {
+            // ここで宣言しているBufferの要素数を動的に変更できるといい。
+            // GridSort()の入力Bufferをコピーする形で対応できないか？
             gridBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objectNum, Marshal.SizeOf(typeof(Uint2)));
             gridPingPongBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objectNum, Marshal.SizeOf(typeof(Uint2)));
             gridIndicesBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, totalCellNum, Marshal.SizeOf(typeof(Uint2)));
@@ -57,9 +59,10 @@ namespace ParticlePhysics.Utils.NearestNeighbour
             shader.SetVector("_GridResolution", gridResolution);
 
             Debug.Log("=== Initialized GridSearch Buffer === \n" +
-                      "_GridCenter : \t" + this.gridCenter + "\n" +
-                      "_GridCellSize : \t" + this.cellSize + "\n" +
-                      "_GridResolution : \t" + this.gridResolution);
+                      "Target Shader : \t" + shader.name + "\n" +
+                      "GridCenter : \t" + this.gridCenter + "\n" +
+                      "GridCellSize : \t" + this.cellSize + "\n" +
+                      "GridResolution : \t" + this.gridResolution);
         }
 
         internal void ShowGridOnGizmo(Vector3 gridCenter, float cellSize, Vector3Int gridResolution, Color gridColor)

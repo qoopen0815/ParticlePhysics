@@ -2,9 +2,11 @@
 using Unity.Mathematics;
 using System.Runtime.InteropServices;
 
-namespace ParticlePhysics.Particle.Substance
+using ParticlePhysics.Type;
+
+namespace ParticlePhysics.ParticleSubstance
 {
-    public class SimpleSubstance : ParticleSubstance
+    public class SimpleSubstance : ParticleSubstanceBase
     {
         public SimpleSubstance(float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
@@ -18,14 +20,14 @@ namespace ParticlePhysics.Particle.Substance
             elements = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 e.Length,
-                Marshal.SizeOf(typeof(Element)));
+                Marshal.SizeOf(typeof(ParticleElement)));
             elements.SetData(e);
         }
 
-        protected override Element[] SetElements(float particleRadius, float particleDensity)
+        protected override ParticleElement[] SetElements(float particleRadius, float particleDensity)
         {
-            Element[] e = new Element[] {
-                new Element(particleRadius, CalculateElementMass(particleRadius, particleDensity), new float3(0.0f, 0.0f, 0.0f) * particleRadius),
+            ParticleElement[] e = new ParticleElement[] {
+                new ParticleElement(particleRadius, CalculateElementMass(particleRadius, particleDensity), new float3(0.0f, 0.0f, 0.0f) * particleRadius),
             };
             return e;
         }

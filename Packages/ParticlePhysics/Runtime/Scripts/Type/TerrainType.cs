@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ParticlePhysics.Utils
+namespace ParticlePhysics.Type
 {
     public struct TerrainType
     {
