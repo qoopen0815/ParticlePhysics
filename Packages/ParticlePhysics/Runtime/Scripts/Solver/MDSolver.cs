@@ -46,12 +46,15 @@ namespace ParticlePhysics.Solver
         private GraphicsBuffer _objectCollisionForce;
         private GraphicsBuffer _terrainCollisionForce;
         private GraphicsBuffer _tmpBufferWrite;
+        private GraphicsBuffer _objWorld;
 
         //private GridSearch<ParticleState> _nearestNeighbor;
         private GridSearch<ParticleState> _fieldGS = null;
         private List<GridSearch<ParticleState>> _objectGSList = null;
 
         public GraphicsBuffer _debugger;
+
+        Matrix4x4 _objectTF = Matrix4x4.identity;
 
 
         #region Accessor
@@ -99,11 +102,14 @@ namespace ParticlePhysics.Solver
             ObjectData data;
             foreach (GameObject obj in objects)
             {
-                data = new ObjectData(obj, GranularParticle.SetAsSimpleParticle(ParticleState.GenerateFromGameObject(obj), radius: 0.2f));
+                data = new ObjectData(
+                    gameObject: obj,
+                    particle: GranularParticle.SetAsSimpleParticle(ParticleState.GenerateFromMesh(obj.GetComponent<MeshFilter>().mesh), radius: 0.1f));
+                _objectDatas.Add(data);
+                
                 var gs = new GridSearch<ParticleState>(data.particle.num, gridSize, gridCellSize);
                 gs.GridCenter = gridCenter;
                 _objectGSList.Add(gs);
-                _objectDatas.Add(data);
             }
         }
 
@@ -161,6 +167,7 @@ namespace ParticlePhysics.Solver
             _terrainCollisionForce.Release();
             _objectCollisionForce.Release();
             _tmpBufferWrite.Release();
+            _objWorld.Release();
             _fieldGS.Release();
             _debugger.Release();
         }
@@ -193,9 +200,15 @@ namespace ParticlePhysics.Solver
             ObjectData data = _objectDatas[0];
             GridSearchBase objectGS = _objectGSList[0];
 
+            _objectTF.SetTRS(
+                data.gameObject.transform.position,
+                data.gameObject.transform.rotation,
+                data.gameObject.transform.localScale);
+
             objectGS.GridSort(ref data.particle.state);
 
             int kernelID = _shader.FindKernel("ObjectCollisionCS");
+            _shader.SetMatrix("_ObjectTF", _objectTF);
             _shader.SetBuffer(kernelID, "_ElementBuffer", particle.substance.Elements);
             _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.state);
             _shader.SetBuffer(kernelID, "_ObjectElementBuffer", data.particle.substance.Elements);

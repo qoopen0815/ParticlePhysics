@@ -1,31 +1,70 @@
-#pragma kernel CSMain
+#pragma kernel InitCS
+#pragma kernel MainCS
 
-struct Test
+struct ParticleType
 {
-	float x;
-	float y;
-	float z;
-};
-struct Test2
-{
-	Test t;
-	float w;
+	float3 position;
+	float3 velocity;
+	float4 orientation;
+	float3 angularVelocity;
 };
 
-cbuffer Hoge
+cbuffer CB
 {
-	float fuga[2];
+	float4x4 _ObjectTF;
 };
 
-RWStructuredBuffer<Test2> _test;
+shared float4 hoge;
 
-[numthreads(10,10,10)]
-void CSMain (uint3 threadID : SV_DispatchThreadID)
+interface iBaseLight
 {
-	float3 hoge = float3(1, 0, 0);
+	float3 IlluminateAmbient(float3 vNormal);
+	float3 IlluminateDiffuse(float3 vNormal);
+	float3 IlluminateSpecular(float3 vNormal, int specularPower);
+};
+
+interface iBaseMaterial
+{
+	float3 GetAmbientColor(float2 vTexcoord);
+   
+	float3 GetDiffuseColor(float2 vTexcoord);
+
+	int GetSpecularPower();
+
+};
+
+class cAmbientLight : iBaseLight
+{
+	float3 m_vLightColor;
+	bool m_bEnable;
+	float3 IlluminateAmbient(float3 vNormal);
+	float3 IlluminateDiffuse(float3 vNormal);
+	float3 IlluminateSpecular(float3 vNormal, int specularPower);
+};
+
+class cHemiAmbientLight : cAmbientLight
+{
+	float4 m_vGroundColor;
+	float4 m_vDirUp;
+	float3 IlluminateAmbient(float3 vNormal);
+};
+
+StructuredBuffer<ParticleType> _bufferRead;
+RWStructuredBuffer<ParticleType> _bufferWrite;
+
+RWStructuredBuffer<float4> _debug;
+
+[numthreads(1024,1,1)]
+void InitCS (uint3 threadID : SV_DispatchThreadID)
+{
 	
-	_test[threadID.x].t.x = 1;
-	_test[threadID.x].t.y = 2;
-	_test[threadID.x].t.z = 3;
-	_test[threadID.x].w = 4;
+	hoge = float4(1, 2, 3, 4);
+	//_debug[threadID.x] = hoge;
+}
+
+[numthreads(1024, 1, 1)]
+void MainCS(uint3 threadID : SV_DispatchThreadID)
+{
+	_debug[threadID.x] = hoge;
+	_bufferWrite[threadID.x].position = mul(_ObjectTF, float4(_bufferRead[threadID.x].position, 1)).xyz;
 }

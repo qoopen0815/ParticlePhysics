@@ -73,21 +73,16 @@ namespace ParticlePhysics.Type
             var verts = ParticleCollider.GetVertsOnMeshSurface(obj.GetComponent<MeshFilter>().mesh, 128);
             var particles = new ParticleState[verts.Count];
             var identityOrientation = Quaternion.identity;
-            var q = obj.transform.rotation;
+            var m = Matrix4x4.identity;
+            m.SetTRS(obj.transform.position, obj.transform.rotation, obj.transform.localScale);
             for (int i = 0; i < verts.Count; i++)
             {
-                particles[i].position = RotatePosition(verts[i], q) + obj.transform.position;
+                particles[i].position = m.MultiplyPoint3x4(verts[i]);
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
                 particles[i].angularVelocity = Vector3.zero;
             }
             return particles;
-        }
-
-        private static Vector3 RotatePosition(Vector3 position, Quaternion rotateQuaternion)
-        {
-            var tmp = rotateQuaternion * new Quaternion(position.x, position.y, position.z, 1) * Quaternion.Inverse(rotateQuaternion);
-            return new(tmp.x, tmp.y, tmp.z);
         }
     };
 }

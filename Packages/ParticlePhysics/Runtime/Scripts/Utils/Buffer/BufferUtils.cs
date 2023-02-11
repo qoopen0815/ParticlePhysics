@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal class BufferUtils
+public class BufferUtils
 {
     /// <summary>
     /// 引数に指定されたバッファの入れ替え
@@ -48,11 +48,11 @@ internal class BufferUtils
             }
         }
     }
-    internal static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups)
+    internal static void DebugBuffer<T>(GraphicsBuffer buffer)
     {
         if (buffer != null)
         {
-            var result = new T[threadGroups];
+            var result = new T[buffer.count];
             buffer.GetData(result);
             foreach (var eachResult in result)
             {
@@ -60,11 +60,11 @@ internal class BufferUtils
             }
         }
     }
-    internal static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups, int index)
+    public static void DebugBuffer<T>(GraphicsBuffer buffer, int index)
     {
         if (buffer != null)
         {
-            var result = new T[threadGroups];
+            var result = new T[buffer.count];
             buffer.GetData(result);
             if (index >= result.Length)
             {

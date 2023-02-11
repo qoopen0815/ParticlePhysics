@@ -1,3 +1,4 @@
+#pragma kernel LocalToWorldCS
 #pragma kernel ParticleCollisionCS
 #pragma kernel TerrainCollisionCS
 #pragma kernel ObjectCollisionCS
@@ -17,6 +18,8 @@
 
 RWStructuredBuffer<float4> _DebugBuffer;
 
+StructuredBuffer<ParticleType> _bufferRead;
+RWStructuredBuffer<ParticleType> _bufferWrite;
 
 struct ParticleCollisionForce
 {
@@ -44,6 +47,11 @@ cbuffer MolecularDynamicsCB
 {
 	float3 _Gravity;
 	float _TimeStep;
+};
+
+cbuffer TransformCB
+{
+	float4x4 _ObjectTF;
 };
 
 inline float calculate_normal_force(float overlap, float normal_velocity,
@@ -115,6 +123,11 @@ inline ParticleCollisionForce get_particle_collision_force(ParticleType p, Eleme
 	return force;
 }
 
+[numthreads(1024, 1, 1)]
+void LocalToWorldCS(uint3 dispatchID : SV_DispatchThreadID)
+{
+	_bufferWrite[dispatchID.x].position = mul(_ObjectTF, float4(_bufferRead[dispatchID.x].position, 1)).xyz;
+}
 
 [numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
 void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : SV_GroupThreadID)
