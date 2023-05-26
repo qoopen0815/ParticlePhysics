@@ -211,7 +211,7 @@ void IntegrateCS(uint3 dispatchID : SV_DispatchThreadID)
 	if (particle.position.y < height)
 	{
 		particle.position.y = height;
-		norm = _TerrainBuffer[pos.x + pos.y * _Resolution].normal; // 法線ベクトル
+		norm = GetInterpolatedNormal(particle.position.x * _Ratio.x, particle.position.z * _Ratio.z); // 法線ベクトル
 		particle.velocity = particle.velocity + dot(-particle.velocity, norm) * norm; // 速度ベクトルを壁に沿った向きに変換
 		particle.velocity = _Friction * particle.velocity; // 摩擦
 	}
