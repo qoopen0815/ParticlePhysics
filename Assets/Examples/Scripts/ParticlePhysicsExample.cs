@@ -23,42 +23,56 @@ public class ParticlePhysicsExample : MonoBehaviour
 
     [Header("Collision Objects")]
     [SerializeField] private Terrain _terrain;
-    [SerializeField] private GameObject[] _objects;
+    [SerializeField] private List<GameObject> _objects;
 
     [Header("Option Setting")]  // Will be erased in the future.
     [SerializeField] private Vector3 _gridSize = new(64, 64, 64);
     [SerializeField] private float _gridCellSize = 0.5f;
 
+
+    // Objects
+    private ParticlePhysics.Solver.SandPhysicsSolver _solver;
+    private Mesh _mesh;
+
     // ComputeShader
-    private ParticlePhysics.Solver.MDSolver _solver;
-    private ParticlePhysics.GranularParticle _particle;
+    private ParticlePhysics.Particle.Data _particle;
+    private ParticlePhysics.Particle.Data _objectParticle;
     private GraphicsBuffer _terrainBuffer;
 
     private void Start()
     {
         // Init Particle Buffer
-        _particle = ParticlePhysics.GranularParticle.SetAsTetrahedronParticle(
-            ParticlePhysics.Type.ParticleState.GenerateSphere((int)_maxParticle, _spornPos, 5),
+        _particle = ParticlePhysics.Particle.Data.SetAsTetrahedronParticle(
+            ParticlePhysics.Particle.State.GenerateSphere((int)_maxParticle, _spornPos, 5),
             radius: _particleRadius);
 
+        // Init Object Particle Buffer
+        _objectParticle = ParticlePhysics.Particle.Data.SetAsSimpleParticle(
+            ParticlePhysics.Particle.State.GenerateFromMesh((int)_maxParticle, _mesh));
+
         // Init Terrain Bufer
-        var t = ParticlePhysics.Type.TerrainType.GenerateFromTerrain(_terrain);
+        var t = ParticlePhysics.Utils.TerrainType.GenerateFromTerrain(_terrain);
         _terrainBuffer = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
             t.Length,
-            Marshal.SizeOf(typeof(ParticlePhysics.Type.TerrainType)));
+            Marshal.SizeOf(typeof(ParticlePhysics.Utils.TerrainType)));
         _terrainBuffer.SetData(t);
 
-        // Solver
-        _solver = new ParticlePhysics.Solver.MDSolver(Physics.gravity);
-        _solver.SetMainParticle(_particle);
-        _solver.SetCollisionObjects(_objects, _gridSize, _gridCellSize, _spornPos);
-        _solver.SetFieldTerrain(_terrain, _gridSize, _gridCellSize, _spornPos);
 
-        // Visual Effect
-        _effect.SetGraphicsBuffer("ParticleBuffer", _particle.state);
+        _solver = new ParticlePhysics.Solver.SandPhysicsSolver(
+            particle: _particle,
+            gridSize: _gridSize,
+            gridCellSize: _gridCellSize,
+            gridCenter: _spornPos,
+            terrainResolution: _terrain.terrainData.heightmapResolution,
+            terrainRatio: new Vector3(_terrain.terrainData.heightmapResolution / _terrain.terrainData.size.x,
+                                1 / _terrain.terrainData.size.y,
+                                _terrain.terrainData.heightmapResolution / _terrain.terrainData.size.z),
+            terrainFriction: 0.955f);
+
+        _effect.SetGraphicsBuffer("ParticleBuffer", _particle.status);
         _effect.SetGraphicsBuffer("debugBuffer", _solver._debugger);
-        _effect.SetUInt("ParticleNum", (uint)_particle.state.count);
+        _effect.SetUInt("ParticleNum", (uint)_particle.status.count);
         _effect.SetFloat("ParticleSize", _particleRadius);
         _effect.SetInt("RenderType", (int)_renderType);
     }
@@ -71,6 +85,7 @@ public class ParticlePhysicsExample : MonoBehaviour
     private void OnDestroy()
     {
         _particle.Release();
+        _objectParticle.Release();
         _terrainBuffer.Release();
         _solver.Release();
     }
