@@ -1,11 +1,9 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-using ParticlePhysics.Type;
-
-namespace ParticlePhysics.ParticleSubstance
+namespace ParticlePhysics.Particle.Substance
 {
-    public abstract class ParticleSubstanceBase
+    public abstract class ParticleSubstance
     {
         protected GraphicsBuffer elements;
 
@@ -46,11 +44,11 @@ namespace ParticlePhysics.ParticleSubstance
             return mass;
         }
 
-        protected float3x3 CalculateInverseInertialMoment(ParticleElement[] elements)
+        protected float3x3 CalculateInverseInertialMoment(Element[] elements)
         {
             float3x3 inertialMoment = float3x3.zero;
 
-            foreach (ParticleElement element in elements)
+            foreach (Element element in elements)
             {
                 float3x3 elementInertialMoment = float3x3.identity * (2.0f / 5.0f) * element.mass * math.pow(element.radius, 2);
 
@@ -64,26 +62,26 @@ namespace ParticlePhysics.ParticleSubstance
             return inertialMoment;
         }
 
-        protected float CalculateTotalMass(ParticleElement[] elements, float density)
+        protected float CalculateTotalMass(Element[] elements, float density)
         {
             float totalMass = 0;
-            foreach (ParticleElement element in elements)
+            foreach (Element element in elements)
             {
                 totalMass += CalculateElementMass(element.radius, density);
             }
             return totalMass;
         }
 
-        protected float3 CalculateCenterOfMass(ParticleElement[] elements)
+        protected float3 CalculateCenterOfMass(Element[] elements)
         {
             float3 centerOfMass = float3.zero;
-            foreach (ParticleElement element in elements)
+            foreach (Element element in elements)
             {
                 centerOfMass += new float3(element.offsetFromParticleCenter);
             }
             return centerOfMass / (float)elements.Length;
         }
 
-        protected abstract ParticleElement[] SetElements(float particleRadius, float particleDensity);
+        protected abstract Element[] SetElements(float particleRadius, float particleDensity);
     }
 }

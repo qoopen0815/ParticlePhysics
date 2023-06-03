@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.VFX;
 
+using ParticlePhysics.Particle;
+using ParticlePhysics.Solver;
+
 public enum RenderType
 {
     SandLike = 0,
@@ -30,25 +33,18 @@ public class ParticlePhysicsExample : MonoBehaviour
     [SerializeField] private float _gridCellSize = 0.5f;
 
 
-    // Objects
-    private ParticlePhysics.Solver.SandPhysicsSolver _solver;
-    private Mesh _mesh;
-
     // ComputeShader
-    private ParticlePhysics.Particle.Data _particle;
-    private ParticlePhysics.Particle.Data _objectParticle;
+    private Data _particle;
+    private Data _objectParticle;
     private GraphicsBuffer _terrainBuffer;
+    private SandPhysicsSolver _solver;
 
     private void Start()
     {
         // Init Particle Buffer
-        _particle = ParticlePhysics.Particle.Data.SetAsTetrahedronParticle(
-            ParticlePhysics.Particle.State.GenerateSphere((int)_maxParticle, _spornPos, 5),
+        _particle = Data.SetAsTetrahedronParticle(
+            State.GenerateSphere((int)_maxParticle, _spornPos, 5),
             radius: _particleRadius);
-
-        // Init Object Particle Buffer
-        _objectParticle = ParticlePhysics.Particle.Data.SetAsSimpleParticle(
-            ParticlePhysics.Particle.State.GenerateFromMesh((int)_maxParticle, _mesh));
 
         // Init Terrain Bufer
         var t = ParticlePhysics.Utils.TerrainType.GenerateFromTerrain(_terrain);
@@ -59,7 +55,7 @@ public class ParticlePhysicsExample : MonoBehaviour
         _terrainBuffer.SetData(t);
 
 
-        _solver = new ParticlePhysics.Solver.SandPhysicsSolver(
+        _solver = new SandPhysicsSolver(
             particle: _particle,
             gridSize: _gridSize,
             gridCellSize: _gridCellSize,

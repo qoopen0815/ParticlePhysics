@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-using ParticlePhysics.Type;
 using ParticlePhysics.Utils.NearestNeighbour;
 
 namespace ParticlePhysics.Solver
@@ -12,9 +11,9 @@ namespace ParticlePhysics.Solver
     internal struct ObjectData
     {
         public GameObject gameObject;
-        public GranularParticle particle;
+        public Particle.Data particle;
 
-        public ObjectData(GameObject gameObject, GranularParticle particle)
+        public ObjectData(GameObject gameObject, Particle.Data particle)
         {
             this.gameObject = gameObject;
             this.particle = particle;
@@ -31,7 +30,7 @@ namespace ParticlePhysics.Solver
         public readonly float maxAllowableTimestep = 0.005f;
 
         // Registered Items
-        private GranularParticle _particle = null;
+        private Particle.Data _particle = null;
         private List<ObjectData> _objectDatas = null;
         private Terrain _terrain = null;
 
@@ -49,8 +48,8 @@ namespace ParticlePhysics.Solver
         private GraphicsBuffer _objWorld;
 
         //private GridSearch<ParticleState> _nearestNeighbor;
-        private GridSearch<ParticleState> _fieldGS = null;
-        private List<GridSearch<ParticleState>> _objectGSList = null;
+        private GridSearch<Particle.State> _fieldGS = null;
+        private List<GridSearch<Particle.State>> _objectGSList = null;
 
         public GraphicsBuffer _debugger;
 
@@ -58,7 +57,7 @@ namespace ParticlePhysics.Solver
 
 
         #region Accessor
-        public GranularParticle RegisteredParticles => _particle;
+        public Particle.Data RegisteredParticles => _particle;
         public List<GameObject> RegisteredObjects => _objectDatas.Select(x => x.gameObject).ToList();
         public ParticleCollisionForce[] ParticleCollisionForce => BufferUtils.GetData<ParticleCollisionForce>(_particleCollisionForce);
         public ObjectCollisionForce[] ObjectCollisionForce => BufferUtils.GetData<ObjectCollisionForce>(_particleCollisionForce);
@@ -83,7 +82,7 @@ namespace ParticlePhysics.Solver
                       "Max Allowable Timestep : \t" + this.maxAllowableTimestep);
         }
 
-        public void SetMainParticle(GranularParticle particle)
+        public void SetMainParticle(Particle.Data particle)
         {
             _particle = particle;
             _shader.SetInt("_ElementNum", _particle.substance.Elements.count);
@@ -96,7 +95,7 @@ namespace ParticlePhysics.Solver
 
         public void SetCollisionObjects(GameObject[] objects, Vector3 gridSize, float gridCellSize, Vector3 gridCenter)
         {
-            _objectGSList = new List<GridSearch<ParticleState>>();
+            _objectGSList = new List<GridSearch<Particle.State>>();
             _objectDatas = new List<ObjectData>();
 
             ObjectData data;
@@ -104,10 +103,10 @@ namespace ParticlePhysics.Solver
             {
                 data = new ObjectData(
                     gameObject: obj,
-                    particle: GranularParticle.SetAsSimpleParticle(ParticleState.GenerateFromMesh(obj.GetComponent<MeshFilter>().mesh), radius: 0.1f));
+                    particle: Particle.Data.SetAsSimpleParticle(Particle.State.GenerateFromMesh(obj.GetComponent<MeshFilter>().mesh), radius: 0.1f));
                 _objectDatas.Add(data);
                 
-                var gs = new GridSearch<ParticleState>(data.particle.num, gridSize, gridCellSize);
+                var gs = new GridSearch<Particle.State>(data.particle.num, gridSize, gridCellSize);
                 gs.GridCenter = gridCenter;
                 _objectGSList.Add(gs);
             }
@@ -133,7 +132,7 @@ namespace ParticlePhysics.Solver
 
             if (_particle != null)
             {
-                _fieldGS = new GridSearch<ParticleState>(_particle.num, gridSize, gridCellSize);
+                _fieldGS = new GridSearch<Particle.State>(_particle.num, gridSize, gridCellSize);
                 _fieldGS.GridCenter = gridCenter;
                 _fieldGS.SetCSVariables(_shader);
             }
@@ -153,7 +152,7 @@ namespace ParticlePhysics.Solver
             _terrainCollisionForce = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(TerrainCollisionForce)));
 
             // Init temp buffer
-            _tmpBufferWrite = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(ParticleState)));
+            _tmpBufferWrite = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(Particle.State)));
             _debugger = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(Vector4)));
         }
 
@@ -172,20 +171,20 @@ namespace ParticlePhysics.Solver
             _debugger.Release();
         }
 
-        public void UpdateParticle(ref GranularParticle particles, GraphicsBuffer terrain)
+        public void UpdateParticle(ref Particle.Data particles, GraphicsBuffer terrain)
         {
             CalculateParticleCollisionForce(ref particles);
             CalculateObjectCollision(ref particles);
             //CalculateTerrainCollision(ref _terrainCollisionForce, _particleBuffer, _terrainBuffer);
-            Integrate(ref particles.state, terrain);
+            Integrate(ref particles.status, terrain);
         }
 
-        private void CalculateParticleCollisionForce(ref GranularParticle particle)
+        private void CalculateParticleCollisionForce(ref Particle.Data particle)
         {
-            _fieldGS.GridSort(ref particle.state);
+            _fieldGS.GridSort(ref particle.status);
             int kernelID = _shader.FindKernel("ParticleCollisionCS");
             _shader.SetBuffer(kernelID, "_ElementBuffer", particle.substance.Elements);
-            _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.state);
+            _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.status);
             _shader.SetBuffer(kernelID, "_GridIndicesBufferRead", _fieldGS.GridIndicesBuffer);
             _shader.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
             //_shader.SetBuffer(kernelID, "_DebugBuffer", _debugger);
@@ -195,7 +194,7 @@ namespace ParticlePhysics.Solver
             //BufferUtils.DebugBuffer<Vector4>(_debugger, _particleNum, 10);
         }
 
-        private void CalculateObjectCollision(ref GranularParticle particle)
+        private void CalculateObjectCollision(ref Particle.Data particle)
         {
             ObjectData data = _objectDatas[0];
             GridSearchBase objectGS = _objectGSList[0];
@@ -205,14 +204,14 @@ namespace ParticlePhysics.Solver
                 data.gameObject.transform.rotation,
                 data.gameObject.transform.localScale);
 
-            objectGS.GridSort(ref data.particle.state);
+            objectGS.GridSort(ref data.particle.status);
 
             int kernelID = _shader.FindKernel("ObjectCollisionCS");
             _shader.SetMatrix("_ObjectTF", _objectTF);
             _shader.SetBuffer(kernelID, "_ElementBuffer", particle.substance.Elements);
-            _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.state);
+            _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.status);
             _shader.SetBuffer(kernelID, "_ObjectElementBuffer", data.particle.substance.Elements);
-            _shader.SetBuffer(kernelID, "_ObjectParticleBufferRead", data.particle.state);
+            _shader.SetBuffer(kernelID, "_ObjectParticleBufferRead", data.particle.status);
             _shader.SetBuffer(kernelID, "_GridIndicesBufferRead", objectGS.GridIndicesBuffer);
             _shader.SetBuffer(kernelID, "_ObjectCollisionForce", _objectCollisionForce);
             //_shader.SetBuffer(kernelID, "_DebugBuffer", _debugger);

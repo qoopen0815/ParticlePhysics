@@ -38,10 +38,36 @@ namespace ParticlePhysics.Particle
             }
             return particles;
         }
-    
-        public static State[] GenerateFromMesh(int particleNum, Mesh mesh)
+
+        public static State[] GenerateFromMesh(Mesh mesh)
         {
-            var particles = new State[particleNum];
+            var verts = ParticleCollider.GetVertsOnMeshSurface(mesh, 128);
+            var particles = new State[verts.Count];
+            var identityOrientation = Quaternion.identity;
+            for (int i = 0; i < verts.Count; i++)
+            {
+                particles[i].position = verts[i];
+                particles[i].velocity = Vector3.zero;
+                particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
+                particles[i].angularVelocity = Vector3.zero;
+            }
+            return particles;
+        }
+
+        public static State[] GenerateFromGameObject(GameObject obj)
+        {
+            var verts = ParticleCollider.GetVertsOnMeshSurface(obj.GetComponent<MeshFilter>().mesh, 128);
+            var particles = new State[verts.Count];
+            var identityOrientation = Quaternion.identity;
+            var m = Matrix4x4.identity;
+            m.SetTRS(obj.transform.position, obj.transform.rotation, obj.transform.localScale);
+            for (int i = 0; i < verts.Count; i++)
+            {
+                particles[i].position = m.MultiplyPoint3x4(verts[i]);
+                particles[i].velocity = Vector3.zero;
+                particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
+                particles[i].angularVelocity = Vector3.zero;
+            }
             return particles;
         }
     };
