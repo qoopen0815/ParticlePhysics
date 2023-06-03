@@ -2,7 +2,7 @@
 using Unity.Mathematics;
 using System.Runtime.InteropServices;
 
-namespace ParticlePhysics.Particle.Substance
+namespace ParticlePhysics.Substance
 {
     public class TetrahedronSubstance : ParticleSubstance
     {
@@ -20,17 +20,17 @@ namespace ParticlePhysics.Particle.Substance
             elements = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 e.Length,
-                Marshal.SizeOf(typeof(Element)));
+                Marshal.SizeOf(typeof(ParticleElement)));
             elements.SetData(e);
         }
 
-        protected override Element[] SetElements(float particleRadius, float particleDensity)
+        protected override ParticleElement[] SetElements(float particleRadius, float particleDensity)
         {
-            Element[] e = new Element[] {
-                new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(1.0f, 0.0f, -1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio),
-                new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(-1.0f, 0.0f, -1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio),
-                new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(0.0f, 1.0f, 1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio),
-                new Element(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(0.0f, -1.0f, 1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio)
+            ParticleElement[] e = new ParticleElement[] {
+                new ParticleElement(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(1.0f, 0.0f, -1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio),
+                new ParticleElement(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(-1.0f, 0.0f, -1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio),
+                new ParticleElement(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(0.0f, 1.0f, 1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio),
+                new ParticleElement(particleRadius * _elementRatio, CalculateElementMass(particleRadius * _elementRatio, particleDensity), new float3(0.0f, -1.0f, 1.0f / math.sqrt(2.0f)) * particleRadius * _elementRatio)
             };
             return e;
         }

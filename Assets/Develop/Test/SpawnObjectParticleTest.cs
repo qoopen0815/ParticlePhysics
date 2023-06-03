@@ -11,7 +11,7 @@ public class SpawnObjectParticleTest : MonoBehaviour
     public VisualEffect effect;
     public GameObject obj;
 
-    public ParticlePhysics.Particle.Data particle;
+    public ParticleBuffer particle;
 
     ComputeShader _shader;
     GraphicsBuffer _buffer;
@@ -21,13 +21,13 @@ public class SpawnObjectParticleTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        particle = ParticlePhysics.Particle.Data.SetAsTetrahedronParticle(ParticlePhysics.Particle.State.GenerateFromMesh(obj.GetComponent<MeshFilter>().mesh));
+        particle = ParticleBuffer.SetAsTetrahedronParticle(ParticleState.GenerateFromMesh(obj.GetComponent<MeshFilter>().mesh));
 
         _shader = (ComputeShader)Resources.Load("Test");
         _buffer = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
             particle.num,
-            Marshal.SizeOf(typeof(ParticlePhysics.Particle.State)));
+            Marshal.SizeOf(typeof(ParticlePhysics.ParticleState)));
         _debug = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
             particle.num,

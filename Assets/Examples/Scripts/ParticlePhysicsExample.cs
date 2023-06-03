@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.VFX;
 
-using ParticlePhysics.Particle;
+using ParticlePhysics;
 using ParticlePhysics.Solver;
 
 public enum RenderType
@@ -26,7 +26,7 @@ public class ParticlePhysicsExample : MonoBehaviour
 
     [Header("Collision Objects")]
     [SerializeField] private Terrain _terrain;
-    [SerializeField] private List<GameObject> _objects;
+    [SerializeField] private GameObject[] _objects;
 
     [Header("Option Setting")]  // Will be erased in the future.
     [SerializeField] private Vector3 _gridSize = new(64, 64, 64);
@@ -34,16 +34,15 @@ public class ParticlePhysicsExample : MonoBehaviour
 
 
     // ComputeShader
-    private Data _particle;
-    private Data _objectParticle;
+    private ParticleBuffer _particle;
     private GraphicsBuffer _terrainBuffer;
     private SandPhysicsSolver _solver;
 
     private void Start()
     {
         // Init Particle Buffer
-        _particle = Data.SetAsTetrahedronParticle(
-            State.GenerateSphere((int)_maxParticle, _spornPos, 5),
+        _particle = ParticleBuffer.SetAsTetrahedronParticle(
+            ParticleState.GenerateSphere((int)_maxParticle, _spornPos, 5),
             radius: _particleRadius);
 
         // Init Terrain Bufer
@@ -54,20 +53,13 @@ public class ParticlePhysicsExample : MonoBehaviour
             Marshal.SizeOf(typeof(ParticlePhysics.Utils.TerrainType)));
         _terrainBuffer.SetData(t);
 
+        _solver = new SandPhysicsSolver(Physics.gravity);
+        _solver.SetMainParticle(_particle);
+        _solver.SetCollisionObjects(_objects, _gridSize, _gridCellSize, _spornPos);
+        _solver.SetFieldTerrain(_terrain, _gridSize, _gridCellSize, _spornPos);
 
-        _solver = new SandPhysicsSolver(
-            particle: _particle,
-            gridSize: _gridSize,
-            gridCellSize: _gridCellSize,
-            gridCenter: _spornPos,
-            terrainResolution: _terrain.terrainData.heightmapResolution,
-            terrainRatio: new Vector3(_terrain.terrainData.heightmapResolution / _terrain.terrainData.size.x,
-                                1 / _terrain.terrainData.size.y,
-                                _terrain.terrainData.heightmapResolution / _terrain.terrainData.size.z),
-            terrainFriction: 0.955f);
-
-        _effect.SetGraphicsBuffer("ParticleBuffer", _particle.status);
         _effect.SetGraphicsBuffer("debugBuffer", _solver._debugger);
+        _effect.SetGraphicsBuffer("ParticleBuffer", _particle.status);
         _effect.SetUInt("ParticleNum", (uint)_particle.status.count);
         _effect.SetFloat("ParticleSize", _particleRadius);
         _effect.SetInt("RenderType", (int)_renderType);
@@ -81,7 +73,6 @@ public class ParticlePhysicsExample : MonoBehaviour
     private void OnDestroy()
     {
         _particle.Release();
-        _objectParticle.Release();
         _terrainBuffer.Release();
         _solver.Release();
     }

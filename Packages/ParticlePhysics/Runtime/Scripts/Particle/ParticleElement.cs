@@ -1,14 +1,14 @@
 using UnityEngine;
 
-namespace ParticlePhysics.Particle
+namespace ParticlePhysics
 {
-    public struct Element
+    public struct ParticleElement
     {
         public float radius;
         public float mass;
         public Vector3 offsetFromParticleCenter;
 
-        public Element(float radius, float mass, Vector3 offsetFromParticleCenter)
+        public ParticleElement(float radius, float mass, Vector3 offsetFromParticleCenter)
         {
             this.radius = radius;
             this.mass = mass;
