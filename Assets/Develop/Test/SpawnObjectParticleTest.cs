@@ -5,14 +5,13 @@ using UnityEngine;
 using UnityEngine.VFX;
 
 using ParticlePhysics;
-using ParticlePhysics.Type;
 
 public class SpawnObjectParticleTest : MonoBehaviour
 {
     public VisualEffect effect;
     public GameObject obj;
 
-    public GranularParticle particle;
+    public ParticleBuffer particle;
 
     ComputeShader _shader;
     GraphicsBuffer _buffer;
@@ -22,13 +21,13 @@ public class SpawnObjectParticleTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        particle = GranularParticle.SetAsTetrahedronParticle(ParticleState.GenerateFromMesh(obj.GetComponent<MeshFilter>().mesh));
+        particle = ParticleBuffer.SetAsTetrahedronParticle(ParticleState.GenerateFromMesh(obj.GetComponent<MeshFilter>().mesh));
 
         _shader = (ComputeShader)Resources.Load("Test");
         _buffer = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
             particle.num,
-            Marshal.SizeOf(typeof(ParticleState)));
+            Marshal.SizeOf(typeof(ParticlePhysics.ParticleState)));
         _debug = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
             particle.num,
@@ -51,7 +50,7 @@ public class SpawnObjectParticleTest : MonoBehaviour
 
         kernelID = _shader.FindKernel("MainCS");
         _shader.SetMatrix("_ObjectTF", _objectTF);
-        _shader.SetBuffer(kernelID, "_bufferRead", particle.state);
+        _shader.SetBuffer(kernelID, "_bufferRead", particle.status);
         _shader.SetBuffer(kernelID, "_bufferWrite", _buffer);
         _shader.SetBuffer(kernelID, "_debug", _debug);
         _shader.GetKernelThreadGroupSizes(kernelID, out x, out var _, out var _);

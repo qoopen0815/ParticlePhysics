@@ -2,11 +2,9 @@
 using Unity.Mathematics;
 using System.Runtime.InteropServices;
 
-using ParticlePhysics.Type;
-
-namespace ParticlePhysics.ParticleSubstance
+namespace ParticlePhysics.Substance
 {
-    public class CubeSubstance : ParticleSubstanceBase
+    public class CubeSubstance : ParticleSubstance
     {
         private static float _elementRatio = 0.3f;
 

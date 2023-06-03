@@ -36,4 +36,22 @@ inline float GetInterpolatedHeight(float pos_x, float pos_z)
 	return dst + 0.1f;
 }
 
+// Normalmap‚ð•âŠ®‚·‚é
+inline float3 GetInterpolatedNormal(float pos_x, float pos_z)
+{
+	uint int_x = uint(pos_x);
+	uint int_z = uint(pos_z);
+
+	float dist_x = float(int_x + 1) - pos_x;
+	float dist_z = float(int_z + 1) - pos_z;
+
+	float3 norm0 = _TerrainBuffer[int_x + int_z * _Resolution].normal * dist_x * dist_z;
+	float3 norm1 = _TerrainBuffer[(int_x + 1) + int_z * _Resolution].normal * (1.0f - dist_x) * dist_z;
+	float3 norm2 = _TerrainBuffer[int_x + (int_z + 1) * _Resolution].normal * dist_x * (1.0f - dist_z);
+	float3 norm3 = _TerrainBuffer[(int_x + 1) + (int_z + 1) * _Resolution].normal * (1.0f - dist_x) * (1.0f - dist_z);
+
+	float3 norm = norm0 + norm1 + norm2 + norm3;
+	return norm / length(norm);
+}
+
 #endif

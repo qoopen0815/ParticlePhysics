@@ -2,11 +2,9 @@
 using Unity.Mathematics;
 using System.Runtime.InteropServices;
 
-using ParticlePhysics.Type;
-
-namespace ParticlePhysics.ParticleSubstance
+namespace ParticlePhysics.Substance
 {
-    public class TetrahedronSubstance : ParticleSubstanceBase
+    public class TetrahedronSubstance : ParticleSubstance
     {
         private static float _elementRatio = 0.5f;
 

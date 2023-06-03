@@ -1,11 +1,9 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-using ParticlePhysics.Type;
-
-namespace ParticlePhysics.ParticleSubstance
+namespace ParticlePhysics.Substance
 {
-    public abstract class ParticleSubstanceBase
+    public abstract class ParticleSubstance
     {
         protected GraphicsBuffer elements;
 

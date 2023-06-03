@@ -1,22 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.VFX;
 
-namespace ParticlePhysics.Type
+namespace ParticlePhysics
 {
-    public struct ParticleElement
-    {
-        public float radius;
-        public float mass;
-        public Vector3 offsetFromParticleCenter;
-
-        public ParticleElement(float radius, float mass, Vector3 offsetFromParticleCenter)
-        {
-            this.radius = radius;
-            this.mass = mass;
-            this.offsetFromParticleCenter = offsetFromParticleCenter;
-        }
-    }
-
     [VFXType(VFXTypeAttribute.Usage.GraphicsBuffer)]
     public struct ParticleState
     {
@@ -52,7 +38,7 @@ namespace ParticlePhysics.Type
             }
             return particles;
         }
-    
+
         public static ParticleState[] GenerateFromMesh(Mesh mesh)
         {
             var verts = ParticleCollider.GetVertsOnMeshSurface(mesh, 128);

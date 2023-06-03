@@ -2,11 +2,9 @@
 using Unity.Mathematics;
 using System.Runtime.InteropServices;
 
-using ParticlePhysics.Type;
-
-namespace ParticlePhysics.ParticleSubstance
+namespace ParticlePhysics.Substance
 {
-    public class SimpleSubstance : ParticleSubstanceBase
+    public class SimpleSubstance : ParticleSubstance
     {
         public SimpleSubstance(float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
