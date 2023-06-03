@@ -32,7 +32,6 @@ namespace ParticlePhysics.Solver
         // Registered Items
         private ParticleBuffer _particle = null;
         private List<ObjectData> _objectDatas = null;
-        private Terrain _terrain = null;
 
         // Terrain
         private int _terrainResolution; // 地形の解像度

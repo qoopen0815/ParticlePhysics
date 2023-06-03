@@ -17,8 +17,8 @@ public enum RenderType
 public class ParticlePhysicsExample : MonoBehaviour
 {
     [Header("Particle Setting")]
-    [SerializeField] private ParticlePhysics.Particle.Enum.ParticleNum _maxParticle = ParticlePhysics.Particle.Enum.ParticleNum.NUM_8K;
-    [SerializeField] private ParticlePhysics.Particle.Enum.ParticleType _particleType = ParticlePhysics.Particle.Enum.ParticleType.Tetrahedron;
+    [SerializeField] private ParticlePhysics.Enum.ParticleNum _maxParticle = ParticlePhysics.Enum.ParticleNum.NUM_8K;
+    [SerializeField] private ParticlePhysics.Enum.ParticleType _particleType = ParticlePhysics.Enum.ParticleType.Tetrahedron;
     [SerializeField] private RenderType _renderType = RenderType.SandLike;
     [SerializeField, Range(0.04f, 0.2f)] private float _particleRadius = 0.1f;
     [SerializeField] private Vector3 _spornPos = Vector3.one;     // When a debugging component is available, this variable will be moved there.
