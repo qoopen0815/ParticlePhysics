@@ -18,7 +18,7 @@ public class ParticlePhysicsExample : MonoBehaviour
 {
     [Header("Particle Setting")]
     [SerializeField] private ParticlePhysics.Enum.ParticleNum _maxParticle = ParticlePhysics.Enum.ParticleNum.NUM_8K;
-    [SerializeField] private ParticlePhysics.Enum.ParticleType _particleType = ParticlePhysics.Enum.ParticleType.Tetrahedron;
+    //[SerializeField] private ParticlePhysics.Enum.ParticleType _particleType = ParticlePhysics.Enum.ParticleType.Tetrahedron;
     [SerializeField] private RenderType _renderType = RenderType.SandLike;
     [SerializeField, Range(0.04f, 0.2f)] private float _particleRadius = 0.1f;
     [SerializeField] private Vector3 _spornPos = Vector3.one;     // When a debugging component is available, this variable will be moved there.
@@ -28,51 +28,41 @@ public class ParticlePhysicsExample : MonoBehaviour
     [SerializeField] private Terrain _terrain;
     [SerializeField] private GameObject[] _objects;
 
-    [Header("Option Setting")]  // Will be erased in the future.
-    [SerializeField] private Vector3 _gridSize = new(64, 64, 64);
-    [SerializeField] private float _gridCellSize = 0.5f;
-
-
     // ComputeShader
-    private ParticleBuffer _particle;
-    private GraphicsBuffer _terrainBuffer;
+    private ParticleBuffer _particleBuffer;
+    private TerrainBuffer _terrainBuffer;
     private SandPhysicsSolver _solver;
 
     private void Start()
     {
-        // Init Particle Buffer
-        _particle = ParticleBuffer.SetAsTetrahedronParticle(
-            ParticleState.GenerateSphere((int)_maxParticle, _spornPos, 5),
+        // Init Buffer
+        _particleBuffer = ParticleBuffer.SetAsTetrahedronParticle(
+            particles: ParticleState.GenerateSphere((int)_maxParticle, _spornPos, 5),
             radius: _particleRadius);
+        _terrainBuffer = new TerrainBuffer(_terrain);
 
-        // Init Terrain Bufer
-        var t = ParticlePhysics.Utils.TerrainType.GenerateFromTerrain(_terrain);
-        _terrainBuffer = new GraphicsBuffer(
-            GraphicsBuffer.Target.Structured,
-            t.Length,
-            Marshal.SizeOf(typeof(ParticlePhysics.Utils.TerrainType)));
-        _terrainBuffer.SetData(t);
-
+        // Setup Solver
         _solver = new SandPhysicsSolver(Physics.gravity);
-        _solver.SetMainParticle(_particle);
-        _solver.SetCollisionObjects(_objects, _gridSize, _gridCellSize, _spornPos);
-        _solver.SetFieldTerrain(_terrain, _gridSize, _gridCellSize, _spornPos);
+        _solver.SetMainParticle(_particleBuffer);
+        _solver.SetCollisionObjects(_objects);
+        _solver.SetFieldTerrain(_terrain, _spornPos);
 
+        // Setup VFX Graph
         _effect.SetGraphicsBuffer("debugBuffer", _solver._debugger);
-        _effect.SetGraphicsBuffer("ParticleBuffer", _particle.status);
-        _effect.SetUInt("ParticleNum", (uint)_particle.status.count);
+        _effect.SetGraphicsBuffer("ParticleBuffer", _particleBuffer.status);
+        _effect.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
         _effect.SetFloat("ParticleSize", _particleRadius);
         _effect.SetInt("RenderType", (int)_renderType);
     }
 
     private void Update()
     {
-        _solver.UpdateParticle(ref _particle, _terrainBuffer);
+        _solver.UpdateParticle(ref _particleBuffer, _terrainBuffer.buffer);
     }
 
     private void OnDestroy()
     {
-        _particle.Release();
+        _particleBuffer.Release();
         _terrainBuffer.Release();
         _solver.Release();
     }
@@ -81,6 +71,6 @@ public class ParticlePhysicsExample : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(_spornPos, 5);
-        Gizmos.DrawWireCube(_spornPos, _gridSize);
+        Gizmos.DrawWireCube(_spornPos, SandPhysicsSolver.gridSize);
     }
 }

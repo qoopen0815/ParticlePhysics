@@ -1,15 +1,15 @@
 ﻿using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace ParticlePhysics.Utils.NearestNeighbour
+namespace ParticlePhysics.Utils
 {
-    internal struct Uint2
+    public struct Uint2
     {
         public uint x;
         public uint y;
     }
 
-    internal class GridSearch<T> : GridSearchBase where T : struct
+    public class GridSearch<T> : GridSearchBase where T : struct
     {
         /// <summary>
         /// GridSearch manage nearest neighbour search task.
@@ -19,7 +19,6 @@ namespace ParticlePhysics.Utils.NearestNeighbour
         /// <param name="gridCellSize"></param>
         public GridSearch(int objNum, Vector3 gridSize, float gridCellSize) : base(objNum)
         {
-            this.gridCenter = gridSize / 2;
             this.gridResolution = gridSize / gridCellSize;
             this.cellSize = gridCellSize;
             this.totalCellNum = (int)(gridResolution.x * gridResolution.y * gridResolution.z);
@@ -47,20 +46,17 @@ namespace ParticlePhysics.Utils.NearestNeighbour
 
         protected override void SetCSVariables()
         {
-            GridSearchCS.SetVector("_GridCenter", gridCenter);
             GridSearchCS.SetFloat("_GridCellSize", cellSize);
             GridSearchCS.SetVector("_GridResolution", gridResolution);
         }
 
         internal override void SetCSVariables(ComputeShader shader)
         {
-            shader.SetVector("_GridCenter", gridCenter);
             shader.SetFloat("_GridCellSize", cellSize);
             shader.SetVector("_GridResolution", gridResolution);
 
             Debug.Log("=== Initialized GridSearch Buffer === \n" +
                       "Target Shader : \t" + shader.name + "\n" +
-                      "GridCenter : \t" + this.gridCenter + "\n" +
                       "GridCellSize : \t" + this.cellSize + "\n" +
                       "GridResolution : \t" + this.gridResolution);
         }
@@ -71,9 +67,8 @@ namespace ParticlePhysics.Utils.NearestNeighbour
             Gizmos.DrawWireCube(gridCenter, gridResolution);
         }
 
-        internal void UpdateGridVariables(Vector3 center, Vector3 size, Vector3 resolution)
+        internal void UpdateGridVariables(Vector3 size, Vector3 resolution)
         {
-            this.gridCenter = center;
             this.cellSize = size.x / resolution.x;
             this.gridResolution = resolution;
             SetCSVariables();

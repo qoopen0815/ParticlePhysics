@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace ParticlePhysics.Utils.NearestNeighbour
+namespace ParticlePhysics.Utils
 {
-    internal abstract class GridSearchBase
+    public abstract class GridSearchBase
     {
         protected ComputeShader GridSearchCS;
         protected GraphicsBuffer gridBuffer;
@@ -17,7 +17,6 @@ namespace ParticlePhysics.Utils.NearestNeighbour
         protected int totalCellNum;
         protected float cellSize;
         protected Vector3 gridResolution;
-        protected Vector3 gridCenter;
 
         private SortTool.BitonicSort _bitonicSort = new SortTool.BitonicSort();
 
@@ -28,10 +27,9 @@ namespace ParticlePhysics.Utils.NearestNeighbour
         }
 
         #region Accessor
-        internal GraphicsBuffer GridIndicesBuffer => gridIndicesBuffer;
-        internal Vector3 GridCenter { get => gridCenter; set => gridCenter = value; }
-        internal float CellSize => cellSize;
-        internal Vector3 GridResolution => gridResolution;
+        public GraphicsBuffer TargetGridIndicesBuffer => gridIndicesBuffer;
+        public float CellSize => cellSize;
+        public Vector3 GridResolution => gridResolution;
         #endregion
 
         public void Release()
@@ -54,6 +52,51 @@ namespace ParticlePhysics.Utils.NearestNeighbour
             kernelID = GridSearchCS.FindKernel("BuildGridCS");
             GridSearchCS.SetBuffer(kernelID, "_ParticleBufferRead", objectsBufferInput);
             GridSearchCS.SetBuffer(kernelID, "_GridBufferWrite", gridBuffer);
+            GridSearchCS.Dispatch(kernelID, threadGroupSize, 1, 1);
+
+            // Sort Grid
+            _bitonicSort.Sort(ref gridBuffer, ref gridPingPongBuffer);
+
+            // Build Grid Indices
+            kernelID = GridSearchCS.FindKernel("ClearGridIndicesCS");
+            GridSearchCS.SetBuffer(kernelID, "_GridIndicesBufferWrite", gridIndicesBuffer);
+            GridSearchCS.Dispatch(kernelID, (int)(totalCellNum / SIMULATION_BLOCK_SIZE_FOR_GRID), 1, 1);
+
+            kernelID = GridSearchCS.FindKernel("BuildGridIndicesCS");
+            GridSearchCS.SetBuffer(kernelID, "_GridBufferRead", gridBuffer);
+            GridSearchCS.SetBuffer(kernelID, "_GridIndicesBufferWrite", gridIndicesBuffer);
+            GridSearchCS.Dispatch(kernelID, threadGroupSize, 1, 1);
+
+            // Rearrange
+            kernelID = GridSearchCS.FindKernel("RearrangeParticlesCS");
+            GridSearchCS.SetBuffer(kernelID, "_GridBufferRead", gridBuffer);
+            GridSearchCS.SetBuffer(kernelID, "_ParticleBufferRead", objectsBufferInput);
+            GridSearchCS.SetBuffer(kernelID, "_ParticleBufferWrite", sortedObjectsBufferOutput);
+            GridSearchCS.Dispatch(kernelID, threadGroupSize, 1, 1);
+            #endregion GridOptimization
+
+            (sortedObjectsBufferOutput, objectsBufferInput) = (objectsBufferInput, sortedObjectsBufferOutput);
+        }
+
+        public void GridSort(ref GraphicsBuffer objectsBufferInput, Transform gridTF)
+        {
+            GridSearchCS.SetInt("_ParticleNum", objectsBufferInput.count);
+            SetCSVariables();
+
+            Matrix4x4 gridtf = Matrix4x4.TRS(
+                pos: gridTF.position,
+                q: gridTF.rotation,
+                s: gridTF.localScale);
+            GridSearchCS.SetVector("_GridPos", gridTF.position);
+
+            int kernelID = -1;
+
+            #region GridOptimization
+            // Build Grid
+            kernelID = GridSearchCS.FindKernel("BuildGridCS");
+            GridSearchCS.SetBuffer(kernelID, "_ParticleBufferRead", objectsBufferInput);
+            GridSearchCS.SetBuffer(kernelID, "_GridBufferWrite", gridBuffer);
+            GridSearchCS.SetMatrix("_GridTF", gridtf.inverse);
             GridSearchCS.Dispatch(kernelID, threadGroupSize, 1, 1);
 
             // Sort Grid

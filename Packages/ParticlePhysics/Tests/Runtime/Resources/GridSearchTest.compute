@@ -1,0 +1,67 @@
+﻿#pragma kernel Update
+#pragma kernel DebugTest
+
+#define SIMULATION_BLOCK_SIZE 1024
+
+#include "./../../../Runtime/Resources/Include/Particle.cginc"
+#include "./../../../Runtime/Resources/Include/GridSearch.cginc"
+
+cbuffer cb
+{
+	int _DispIdx;
+	int _NumParticles;
+	float4x4 _GridTF = MAT4x4_IDENTITY;
+};
+
+[numthreads(SIMULATION_BLOCK_SIZE, 1, 1)]
+void DebugTest(uint3 DTid : SV_DispatchThreadID)
+{
+	uint id = DTid.x;
+	float3 position = _ParticleBufferRead[id].position;
+	_ParticleBufferWrite[id].position = mul(_GridTF, float4(position, 1)).xyz;
+	_ParticleBufferWrite[id].color = float3(0.3, 0.3, 0.3);
+}
+
+[numthreads(SIMULATION_BLOCK_SIZE, 1, 1)]
+void Update(uint3 DTid : SV_DispatchThreadID)
+{
+
+	uint id = DTid.x;
+
+	_ParticleBufferWrite[id].color = float3(0, 0, 0);
+
+	uint d = (uint) (_DispIdx > _NumParticles ? 0 : _DispIdx);
+	if (id == d)
+	{
+		// Neighbor Search Area
+		LOOP_AROUND_NEIGHBOR(_ParticleBufferRead[id].position, _GridTF)
+				{
+					unsigned int G_CELL = GridKey(uint3(X, Y, Z)); // Calculate Neighbor (or own) Cell ID
+
+					// inside own cell
+					if (G_CELL == GridKey(G_XYZ))
+					{
+
+						// fill red
+						uint2 G_START_END = _GridIndicesBufferRead[G_CELL];
+						for (unsigned int N_ID = G_START_END.x; N_ID < G_START_END.y; N_ID++)
+						{
+							_ParticleBufferWrite[N_ID].color = float3(1, 0, 0);
+						}
+					}
+					else
+					{
+						// if neighbor cell, fill blue
+						uint2 G_START_END = _GridIndicesBufferRead[G_CELL];
+						for (unsigned int N_ID = G_START_END.x; N_ID < G_START_END.y; N_ID++)
+						{
+							_ParticleBufferWrite[N_ID].color = float3(0, 1, 1);
+						}
+					}
+
+				}
+	}
+
+	_ParticleBufferWrite[id].position = _ParticleBufferRead[id].position;
+}
+

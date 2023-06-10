@@ -41,7 +41,10 @@ public class SpawnObjectParticleTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _objectTF.SetTRS(obj.transform.position, obj.transform.rotation, obj.transform.localScale);
+        _objectTF.SetTRS(
+            obj.transform.position,
+            obj.transform.rotation,
+            obj.transform.localScale);
 
         int kernelID = _shader.FindKernel("InitCS");
         //_shader.SetBuffer(kernelID, "_debug", _debug);
