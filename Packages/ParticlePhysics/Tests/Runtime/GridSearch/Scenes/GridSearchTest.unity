@@ -398,7 +398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183667f55cefd1a41b33f79d302f63eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayCellId: 0
+  displayCellId: 22
   effect: {fileID: 800131443}
 --- !u!850595691 &1873836718
 LightingSettings:

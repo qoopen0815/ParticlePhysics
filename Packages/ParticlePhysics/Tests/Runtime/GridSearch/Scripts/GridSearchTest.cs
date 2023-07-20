@@ -1,105 +1,66 @@
-﻿using ParticlePhysics;
+using ParticlePhysics;
 using ParticlePhysics.Enum;
 using ParticlePhysics.Utils;
-using System.Runtime.InteropServices;
+using System;
 using UnityEngine;
 using UnityEngine.VFX;
 
-namespace PackageTest
+public class GridSearchTest : MonoBehaviour
 {
-    /// <summary>
-    /// Particle system with Grid Optimization
-    /// </summary>
-    internal class GridSearchTest : MonoBehaviour
+    [Range(0, 999)]
+    public int displayCellId = 0;
+    public VisualEffect effect;
+
+    private float _particleRadius = 0.1f;
+    private ParticleNum _particleNum = ParticleNum.NUM_128K;
+
+    private float _particleSphereRadius = 5.0f;
+    private float _gridSize = 10.0f;
+    private float _gridCellSize = 1.0f;
+
+    private ParticleBuffer _particleBuffer;
+    private GridSearch<ParticleState> _gridSearch;
+
+    // Start is called before the first frame update
+    void Start()
     {
-        public ParticleNum particleNum = ParticleNum.NUM_8K;
-        public Vector3 particleSpornPos;
-        public int dispIdx;
+        _particleBuffer = ParticleBuffer.SetAsTetrahedronParticle(
+                            particles: ParticleState.GenerateCube((int)_particleNum, Vector3.one * _particleSphereRadius, _particleSphereRadius * 2),
+                            radius: _particleRadius);
+        _gridSearch = new GridSearch<ParticleState>(_particleBuffer.num, new Vector3(_gridSize, _gridSize, _gridSize), _gridCellSize);
 
-        private ComputeShader _shader;
-        private ParticleBuffer _particleBuffer;
-        private GraphicsBuffer _tmpBufferWrite;
-        private GridSearch<ParticleState> _gridSearch;
-
-        public GameObject gridObj;
-        public Vector3 gridSize = new Vector3(128, 128, 128); // grid size
-        public float gridCellSize = 16;  // cell size
-
-        public VisualEffect effect;
-        public VisualEffect effect2;
-        private GraphicsBuffer _debugBufferWrite;
-
-        void Start()
-        {
-            _particleBuffer = ParticleBuffer.SetAsTetrahedronParticle(
-                particles: ParticleState.GenerateCube((int)particleNum, particleSpornPos, 5),
-                radius: 0.1f);
-            _gridSearch = new GridSearch<ParticleState>(_particleBuffer.num, gridSize, gridCellSize);
-            _shader = (ComputeShader)Resources.Load("GridSearchTest");
-
-            _tmpBufferWrite = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _particleBuffer.num, Marshal.SizeOf(typeof(ParticleState)));
-            _debugBufferWrite = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _particleBuffer.num, Marshal.SizeOf(typeof(ParticleState)));
-
-            // Setup VFX Graph
-            effect.SetGraphicsBuffer("ParticleBuffer", _particleBuffer.status);
-            effect.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
-            effect.SetFloat("ParticleSize", 0.1f);
-
-            //effect2.SetGraphicsBuffer("ParticleBuffer", _debugBufferWrite);
-            //effect2.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
-            //effect2.SetFloat("ParticleSize", 0.1f);
-        }
-
-        void Update()
-        {
-            Matrix4x4 gridtf = Matrix4x4.TRS(
-                pos: gridObj.transform.position,
-                q: gridObj.transform.rotation,
-                s: gridObj.transform.localScale);
-
-            //int _kernelID = _shader.FindKernel("DebugTest");
-            //_shader.SetBuffer(_kernelID, "_ParticleBufferRead", _particleBuffer.status);
-            //_shader.SetBuffer(_kernelID, "_ParticleBufferWrite", _debugBufferWrite);
-            //_shader.SetMatrix("_GridTF", gridtf.inverse);
-            //_shader.GetKernelThreadGroupSizes(_kernelID, out var _x, out _, out _);
-            //_shader.Dispatch(_kernelID, (int)(_particleBuffer.num / _x), 1, 1);
-
-            _gridSearch.GridSort(ref _particleBuffer.status, gridObj.transform);
-
-            // ---- Your Particle Process -------------------------------------------------------------------
-            _shader.SetInt("_NumParticles", _particleBuffer.num);
-            _shader.SetInt("_DispIdx", (int)(dispIdx * (int)particleNum * 0.001f));
-            _shader.SetVector("_GridResolution", gridSize);
-            _shader.SetFloat("_GridCellSize", gridCellSize);
-
-            int kernelID = _shader.FindKernel("Update");
-            _shader.SetMatrix("_GridTF", gridtf.inverse);
-            _shader.SetBuffer(kernelID, "_ParticleBufferRead", _particleBuffer.status);
-            _shader.SetBuffer(kernelID, "_ParticleBufferWrite", _tmpBufferWrite);
-            _shader.SetBuffer(kernelID, "_GridIndicesBufferRead", _gridSearch.TargetGridIndicesBuffer);   // Get and use a GridIndicesBuffer to find neighbor
-            _shader.GetKernelThreadGroupSizes(kernelID, out var x, out _, out _);
-            _shader.Dispatch(kernelID, (int)(_particleBuffer.num / x), 1, 1);
-            // ---- Your Particle Process -------------------------------------------------------------------
-
-            (_particleBuffer.status, _tmpBufferWrite) = (_tmpBufferWrite, _particleBuffer.status);
-        }
-
-        void OnDestroy()
-        {
-            _tmpBufferWrite.Release();
-            _debugBufferWrite.Release();
-            _particleBuffer.Release();
-            _gridSearch.Release();
-        }
-        private void OnDrawGizmos()
-        {
-            var cache = Gizmos.matrix;
-            Gizmos.color = Color.cyan;
-            Gizmos.matrix = Matrix4x4.TRS(gridObj.transform.position, gridObj.transform.rotation, gridObj.transform.lossyScale);
-            Gizmos.DrawWireCube(gridSize / 2, gridSize);
-            Gizmos.matrix = cache;
-        }
+        // Setup VFX Graph
+        effect.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
+        effect.SetFloat("ParticleSize", 0.1f);
+        effect.SetGraphicsBuffer("ParticleBuffer", _particleBuffer.status);
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        _gridSearch.GridSort(ref _particleBuffer.status, this.transform);
+        var index = _gridSearch.GetCellIndices((uint)displayCellId);
+        effect.SetUInt("FirstIndex", index.x);
+        effect.SetUInt("LastIndex", index.y);
+    }
 
+    private void OnDestroy()
+    {
+        _particleBuffer.Release();
+        _gridSearch.Release();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireCube(Vector3.one * _particleSphereRadius, Vector3.one * _gridSize);
+        Gizmos.DrawWireCube(
+            new Vector3(
+                x: (int)((displayCellId % (_gridSize))),
+                y: (int)((displayCellId % (_gridSize * _gridSize)) / _gridSize),
+                z: (int)((displayCellId % (_gridSize * _gridSize * _gridSize)) / (_gridSize * _gridSize))
+                ) + Vector3.one * 0.5f,
+                Vector3.one * _gridCellSize
+            );
+    }
 }
