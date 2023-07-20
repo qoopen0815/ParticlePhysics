@@ -51,6 +51,6 @@ inline uint GridGetValue(uint2 pair)
 	return pair.y;
 }
 
-#define LOOP_AROUND_NEIGHBOR(pos, tf) int3 G_XYZ = (int3)GridCalculateCell(pos, tf); for(int Z = max(G_XYZ.z - 1, 0); Z <= min(G_XYZ.z + 1, _GridResolution.z - 1); Z++) for (int Y = max(G_XYZ.y - 1, 0); Y <= min(G_XYZ.y + 1, _GridResolution.y - 1); Y++)  for (int X = max(G_XYZ.x - 1, 0); X <= min(G_XYZ.x + 1, _GridResolution.x - 1); X++)
+#define LOOP_AROUND_NEIGHBOR(pos) int3 G_XYZ = (int3)GridCalculateCell(pos); for(int Z = max(G_XYZ.z - 1, 0); Z <= min(G_XYZ.z + 1, _GridResolution.z - 1); Z++) for (int Y = max(G_XYZ.y - 1, 0); Y <= min(G_XYZ.y + 1, _GridResolution.y - 1); Y++)  for (int X = max(G_XYZ.x - 1, 0); X <= min(G_XYZ.x + 1, _GridResolution.x - 1); X++)
 
 #endif

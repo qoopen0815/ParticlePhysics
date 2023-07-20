@@ -1,10 +1,9 @@
-﻿using System.Runtime.InteropServices;
-using UnityEngine;
-using UnityEngine.VFX;
-
-using ParticlePhysics;
+﻿using ParticlePhysics;
 using ParticlePhysics.Enum;
 using ParticlePhysics.Utils;
+using System.Runtime.InteropServices;
+using UnityEngine;
+using UnityEngine.VFX;
 
 namespace PackageTest
 {
@@ -23,8 +22,8 @@ namespace PackageTest
         private GridSearch<ParticleState> _gridSearch;
 
         public GameObject gridObj;
-        public Vector3 range = new Vector3(128, 128, 128); // grid size
-        public float gridDim = 16;  // cell size
+        public Vector3 gridSize = new Vector3(128, 128, 128); // grid size
+        public float gridCellSize = 16;  // cell size
 
         public VisualEffect effect;
         public VisualEffect effect2;
@@ -35,7 +34,7 @@ namespace PackageTest
             _particleBuffer = ParticleBuffer.SetAsTetrahedronParticle(
                 particles: ParticleState.GenerateCube((int)particleNum, particleSpornPos, 5),
                 radius: 0.1f);
-            _gridSearch = new GridSearch<ParticleState>(_particleBuffer.num, range, gridDim);
+            _gridSearch = new GridSearch<ParticleState>(_particleBuffer.num, gridSize, gridCellSize);
             _shader = (ComputeShader)Resources.Load("GridSearchTest");
 
             _tmpBufferWrite = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _particleBuffer.num, Marshal.SizeOf(typeof(ParticleState)));
@@ -70,8 +69,8 @@ namespace PackageTest
             // ---- Your Particle Process -------------------------------------------------------------------
             _shader.SetInt("_NumParticles", _particleBuffer.num);
             _shader.SetInt("_DispIdx", (int)(dispIdx * (int)particleNum * 0.001f));
-            _shader.SetVector("_GridResolution", range);
-            _shader.SetFloat("_GridCellSize", gridDim);
+            _shader.SetVector("_GridResolution", gridSize);
+            _shader.SetFloat("_GridCellSize", gridCellSize);
 
             int kernelID = _shader.FindKernel("Update");
             _shader.SetMatrix("_GridTF", gridtf.inverse);
@@ -97,7 +96,7 @@ namespace PackageTest
             var cache = Gizmos.matrix;
             Gizmos.color = Color.cyan;
             Gizmos.matrix = Matrix4x4.TRS(gridObj.transform.position, gridObj.transform.rotation, gridObj.transform.lossyScale);
-            Gizmos.DrawWireCube(range / 2, range);
+            Gizmos.DrawWireCube(gridSize / 2, gridSize);
             Gizmos.matrix = cache;
         }
     }

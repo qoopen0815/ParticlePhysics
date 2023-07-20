@@ -34,6 +34,10 @@ namespace ParticlePhysics.Utils
                       "Size of each grid cells : \t" + this.cellSize);
         }
 
+        #region Accessor
+        public Uint2 GetCellIndices(uint cellNum) => BufferUtils.GetData<Uint2>(gridIndicesBuffer)[cellNum];
+        #endregion
+
         protected override void InitializeBuffer(int objectNum)
         {
             // ここで宣言しているBufferの要素数を動的に変更できるといい。

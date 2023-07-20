@@ -7,7 +7,6 @@ namespace ParticlePhysics
     public struct ParticleState
     {
         public uint isActive;   // 0: false, 1: true
-        public Vector3 color;
         public Vector3 position;
         public Vector3 velocity;
         public Vector4 orientation;
@@ -20,7 +19,6 @@ namespace ParticlePhysics
             for (int i = 0; i < particleNum; i++)
             {
                 particles[i].isActive = 1;
-                particles[i].color = new Vector3(0.1f, 0.05f, 0.03f);
                 particles[i].position = centerPos;
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
@@ -36,7 +34,6 @@ namespace ParticlePhysics
             for (int i = 0; i < particleNum; i++)
             {
                 particles[i].isActive = 1;
-                particles[i].color = new Vector3(0.1f, 0.05f, 0.03f);
                 particles[i].position = centerPos + Random.insideUnitSphere * radius;
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
@@ -52,7 +49,6 @@ namespace ParticlePhysics
             for (int i = 0; i < particleNum; i++)
             {
                 particles[i].isActive = 1;
-                particles[i].color = new Vector3(0.1f, 0.05f, 0.03f);
                 particles[i].position = new Vector3(Random.Range(-size / 2, size / 2), Random.Range(-size / 2, size / 2), Random.Range(-size / 2, size / 2)) + centerPos;
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
@@ -69,7 +65,6 @@ namespace ParticlePhysics
             for (int i = 0; i < verts.Count; i++)
             {
                 particles[i].isActive = 1;
-                particles[i].color = new Vector3(0.1f, 0.05f, 0.03f);
                 particles[i].position = verts[i];
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
@@ -88,7 +83,6 @@ namespace ParticlePhysics
             for (int i = 0; i < verts.Count; i++)
             {
                 particles[i].isActive = 1;
-                particles[i].color = new Vector3(0.1f, 0.05f, 0.03f);
                 particles[i].position = m.MultiplyPoint3x4(verts[i]);
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);

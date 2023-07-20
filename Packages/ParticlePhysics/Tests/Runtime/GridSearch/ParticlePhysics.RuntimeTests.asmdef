@@ -1,5 +1,5 @@
 {
-    "name": "ParticlePhysics.Runtime.Tests",
+    "name": "ParticlePhysics.Runtime.Tests.GridSearch",
     "rootNamespace": "",
     "references": [
         "ParticlePhysics.Runtime",

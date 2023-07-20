@@ -13,7 +13,6 @@ struct ElementType
 struct ParticleType
 {
 	uint isActive;
-	float3 color;
 	float3 position;
 	float3 velocity;
 	float4 orientation;
@@ -31,7 +30,7 @@ cbuffer ParticleCB
 };
 
 // 物性値のバッファ
-StructuredBuffer<ElementType> _ElementBuffer;
+StructuredBuffer<ElementType> _ParticleElementBuffer;
 
 // 粒状体のバッファ
 StructuredBuffer<ParticleType> _ParticleBufferRead;

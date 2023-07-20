@@ -13,7 +13,10 @@ namespace ParticlePhysics.Solver
         public GameObject gameObject;
         public ParticleBuffer objParticleBuffer;
         public GridSearch<ParticleState> objectGS;
-        public readonly GraphicsBuffer objGridIndicesBuffer;
+        private GraphicsBuffer _objGridIndicesBuffer;
+
+        public GraphicsBuffer ObjectGridIndicesBuffer => _objGridIndicesBuffer;
+        public GraphicsBuffer ParticleGridIndicesBuffer => objectGS.TargetGridIndicesBuffer;
 
         public CollisionObjectBuffer(GameObject gameObject, Vector3 gridSize, float gridCellSize)
         {
@@ -25,13 +28,13 @@ namespace ParticlePhysics.Solver
                 radius: 0.1f);
             this.objectGS = new(this.objParticleBuffer.num, gridSize, gridCellSize);
             this.objectGS.GridSort(ref this.objParticleBuffer.status);
-            this.objGridIndicesBuffer = this.objectGS.TargetGridIndicesBuffer;
+            this._objGridIndicesBuffer = this.objectGS.TargetGridIndicesBuffer;
         }
 
         public void Release()
         {
             objParticleBuffer.Release();
-            objGridIndicesBuffer.Release();
+            _objGridIndicesBuffer.Release();
             objectGS.Release();
         }
     }
@@ -122,7 +125,7 @@ namespace ParticlePhysics.Solver
             {
                 data = new CollisionObjectBuffer(
                     gameObject: obj,
-                    gridSize: gridSize,
+                    gridSize: new(10, 10, 10),
                     gridCellSize: gridCellSize);
                 _objectBuffers.Add(data);
             }
@@ -196,7 +199,7 @@ namespace ParticlePhysics.Solver
         {
             _fieldGS.GridSort(ref particle.status);
             int kernelID = _shader.FindKernel("ParticleCollisionCS");
-            _shader.SetBuffer(kernelID, "_ElementBuffer", particle.substance.Elements);
+            _shader.SetBuffer(kernelID, "_ParticleElementBuffer", particle.substance.Elements);
             _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.status);
             _shader.SetBuffer(kernelID, "_GridIndicesBufferRead", _fieldGS.TargetGridIndicesBuffer);
             _shader.SetBuffer(kernelID, "_ParticleCollisionForce", _particleCollisionForce);
@@ -219,14 +222,18 @@ namespace ParticlePhysics.Solver
                 data.objectGS.GridSort(ref particle.status, data.gameObject.transform);
 
                 int kernelID = _shader.FindKernel("ObjectCollisionCS");
+
                 _shader.SetMatrix("_ObjectTF", _objectTF);
-                _shader.SetBuffer(kernelID, "_ElementBuffer", particle.substance.Elements);
+                _shader.SetBuffer(kernelID, "_ObjectCollisionForce", _objectCollisionForce);
+
+                _shader.SetBuffer(kernelID, "_ParticleElementBuffer", particle.substance.Elements);
                 _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.status);
+                _shader.SetBuffer(kernelID, "_ParticleGridIndicesBufferRead", data.ParticleGridIndicesBuffer);
+
                 _shader.SetBuffer(kernelID, "_ObjectElementBuffer", data.objParticleBuffer.substance.Elements);
                 _shader.SetBuffer(kernelID, "_ObjectParticleBufferRead", data.objParticleBuffer.status);
-                _shader.SetBuffer(kernelID, "_ObjGridIndicesBufferRead", data.objGridIndicesBuffer);
-                _shader.SetBuffer(kernelID, "_ParticleGridIndicesBufferRead", data.objectGS.TargetGridIndicesBuffer);
-                _shader.SetBuffer(kernelID, "_ObjectCollisionForce", _objectCollisionForce);
+                _shader.SetBuffer(kernelID, "_ObjGridIndicesBufferRead", data.ObjectGridIndicesBuffer);
+
                 //_shader.SetBuffer(kernelID, "_DebugBuffer", _debugger);
                 _shader.GetKernelThreadGroupSizes(kernelID, out var x, out _, out _);
                 _shader.Dispatch(kernelID, (int)(particle.num / x), 1, 1);
