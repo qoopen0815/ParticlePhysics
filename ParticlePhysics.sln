@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qoopen.ParticlePhysics", "Qoopen.ParticlePhysics.csproj", "{92B6EE48-4213-CF2D-B513-A907E04EFB5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticlePhysics.Runtime", "ParticlePhysics.Runtime.csproj", "{6D43D5A7-7002-4642-8C5D-AFE4F4EDDF21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticlePhysics.Runtime.Tests.Particle", "ParticlePhysics.Runtime.Tests.Particle.csproj", "{7E9A82CB-5A0B-ECE3-A69B-5973A749AD12}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{A0410313-FD7D-9292-54BE-088165902B49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticlePhysics.Runtime.Tests.GridSearch", "ParticlePhysics.Runtime.Tests.GridSearch.csproj", "{CE813526-1FAB-2195-502E-E7299DB220B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{913C0736-FFC9-BB5C-8F39-E220A8BC5D6F}"
 EndProject
@@ -13,14 +17,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{92B6EE48-4213-CF2D-B513-A907E04EFB5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92B6EE48-4213-CF2D-B513-A907E04EFB5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{92B6EE48-4213-CF2D-B513-A907E04EFB5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{92B6EE48-4213-CF2D-B513-A907E04EFB5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D43D5A7-7002-4642-8C5D-AFE4F4EDDF21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D43D5A7-7002-4642-8C5D-AFE4F4EDDF21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D43D5A7-7002-4642-8C5D-AFE4F4EDDF21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D43D5A7-7002-4642-8C5D-AFE4F4EDDF21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E9A82CB-5A0B-ECE3-A69B-5973A749AD12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E9A82CB-5A0B-ECE3-A69B-5973A749AD12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E9A82CB-5A0B-ECE3-A69B-5973A749AD12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E9A82CB-5A0B-ECE3-A69B-5973A749AD12}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A0410313-FD7D-9292-54BE-088165902B49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A0410313-FD7D-9292-54BE-088165902B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0410313-FD7D-9292-54BE-088165902B49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0410313-FD7D-9292-54BE-088165902B49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE813526-1FAB-2195-502E-E7299DB220B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE813526-1FAB-2195-502E-E7299DB220B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE813526-1FAB-2195-502E-E7299DB220B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE813526-1FAB-2195-502E-E7299DB220B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{913C0736-FFC9-BB5C-8F39-E220A8BC5D6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{913C0736-FFC9-BB5C-8F39-E220A8BC5D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{913C0736-FFC9-BB5C-8F39-E220A8BC5D6F}.Release|Any CPU.ActiveCfg = Release|Any CPU

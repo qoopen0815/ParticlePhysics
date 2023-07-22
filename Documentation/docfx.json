@@ -3,18 +3,20 @@
         {
             "src": [
                 {
-                    "src": "..",
-                    "files": [
-                        "Assets/**/*.cs"
-                    ],
-                    "exclude": [
-                        "Assets/Plugins/**"
-                    ]
+                    "src": "../Packages/ParticlePhysics/Runtime",
+                    "files": [ "**/*.cs" ],
+                    "exclude": [ ]
+                },
+                {
+                    "src": "../Packages/ParticlePhysics/Editor",
+                    "files": [ "**/*.cs" ],
+                    "exclude": [ ]
                 }
             ],
             "globalNamespaceId": "Global",
             "filter": "filterConfig.yml",
-            "dest": "api"
+            "dest": "api",
+            "version": "latest"
         }
     ],
     "build": {
@@ -48,14 +50,19 @@
         ],
         "overwrite": [
             {
-                "src": "..",
-                "files": [
-                    "Assets/Scripts/**/*.md"
-                ]
+                "src": "../Packages/ParticlePhysics/Runtime",
+                "files": [ "**/*.cs" ],
+                "exclude": [ ]
+            },
+            {
+                "src": "../Packages/ParticlePhysics/Editor",
+                "files": [ "**/*.cs" ],
+                "exclude": [ ]
             }
         ],
         "resource": [
             {
+                "src": ".",
                 "files": [
                     "resources/**/*"
                 ]
