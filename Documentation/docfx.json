@@ -5,7 +5,7 @@
                 {
                     "src": "..",
                     "files": [
-                        "Assets/**/*.cs"
+                        "Packages/ParticlePhysics/**/*.cs"
                     ],
                     "exclude": [
                         "Assets/Plugins/**"
