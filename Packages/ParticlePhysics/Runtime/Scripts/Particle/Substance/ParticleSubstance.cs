@@ -1,7 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-namespace ParticlePhysics.Particle.Substance
+namespace ParticlePhysics.Substance
 {
     public abstract class ParticleSubstance
     {
@@ -44,11 +44,11 @@ namespace ParticlePhysics.Particle.Substance
             return mass;
         }
 
-        protected float3x3 CalculateInverseInertialMoment(Element[] elements)
+        protected float3x3 CalculateInverseInertialMoment(ParticleElement[] elements)
         {
             float3x3 inertialMoment = float3x3.zero;
 
-            foreach (Element element in elements)
+            foreach (ParticleElement element in elements)
             {
                 float3x3 elementInertialMoment = float3x3.identity * (2.0f / 5.0f) * element.mass * math.pow(element.radius, 2);
 
@@ -62,26 +62,26 @@ namespace ParticlePhysics.Particle.Substance
             return inertialMoment;
         }
 
-        protected float CalculateTotalMass(Element[] elements, float density)
+        protected float CalculateTotalMass(ParticleElement[] elements, float density)
         {
             float totalMass = 0;
-            foreach (Element element in elements)
+            foreach (ParticleElement element in elements)
             {
                 totalMass += CalculateElementMass(element.radius, density);
             }
             return totalMass;
         }
 
-        protected float3 CalculateCenterOfMass(Element[] elements)
+        protected float3 CalculateCenterOfMass(ParticleElement[] elements)
         {
             float3 centerOfMass = float3.zero;
-            foreach (Element element in elements)
+            foreach (ParticleElement element in elements)
             {
                 centerOfMass += new float3(element.offsetFromParticleCenter);
             }
             return centerOfMass / (float)elements.Length;
         }
 
-        protected abstract Element[] SetElements(float particleRadius, float particleDensity);
+        protected abstract ParticleElement[] SetElements(float particleRadius, float particleDensity);
     }
 }

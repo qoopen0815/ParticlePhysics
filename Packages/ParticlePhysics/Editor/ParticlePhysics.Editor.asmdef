@@ -1,11 +1,14 @@
 {
-    "name": "Qoopen.ParticlePhysics.Editor",
+    "name": "ParticlePhysics.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:b3e94bd2ff72d1c468c04bb56352f59a",
-        "Unity.VisualEffectGraph.Runtime"
+        "GUID:d04eb9c554ad44ceab303cecf0c0cf82"
     ],
-    "includePlatforms": ["Editor"],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],

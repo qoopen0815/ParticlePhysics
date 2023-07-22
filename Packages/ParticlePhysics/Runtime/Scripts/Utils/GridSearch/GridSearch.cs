@@ -1,15 +1,15 @@
 ﻿using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace ParticlePhysics.Utils.NearestNeighbour
+namespace ParticlePhysics.Utils
 {
-    internal struct Uint2
+    public struct Uint2
     {
         public uint x;
         public uint y;
     }
 
-    internal class GridSearch<T> : GridSearchBase where T : struct
+    public class GridSearch<T> : GridSearchBase where T : struct
     {
         /// <summary>
         /// GridSearch manage nearest neighbour search task.
@@ -19,7 +19,6 @@ namespace ParticlePhysics.Utils.NearestNeighbour
         /// <param name="gridCellSize"></param>
         public GridSearch(int objNum, Vector3 gridSize, float gridCellSize) : base(objNum)
         {
-            this.gridCenter = gridSize / 2;
             this.gridResolution = gridSize / gridCellSize;
             this.cellSize = gridCellSize;
             this.totalCellNum = (int)(gridResolution.x * gridResolution.y * gridResolution.z);
@@ -35,8 +34,14 @@ namespace ParticlePhysics.Utils.NearestNeighbour
                       "Size of each grid cells : \t" + this.cellSize);
         }
 
+        #region Accessor
+        public Uint2 GetCellIndices(uint cellNum) => BufferUtils.GetData<Uint2>(gridIndicesBuffer)[cellNum];
+        #endregion
+
         protected override void InitializeBuffer(int objectNum)
         {
+            // ここで宣言しているBufferの要素数を動的に変更できるといい。
+            // GridSort()の入力Bufferをコピーする形で対応できないか？
             gridBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objectNum, Marshal.SizeOf(typeof(Uint2)));
             gridPingPongBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objectNum, Marshal.SizeOf(typeof(Uint2)));
             gridIndicesBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, totalCellNum, Marshal.SizeOf(typeof(Uint2)));
@@ -45,21 +50,19 @@ namespace ParticlePhysics.Utils.NearestNeighbour
 
         protected override void SetCSVariables()
         {
-            GridSearchCS.SetVector("_GridCenter", gridCenter);
             GridSearchCS.SetFloat("_GridCellSize", cellSize);
             GridSearchCS.SetVector("_GridResolution", gridResolution);
         }
 
         internal override void SetCSVariables(ComputeShader shader)
         {
-            shader.SetVector("_GridCenter", gridCenter);
             shader.SetFloat("_GridCellSize", cellSize);
             shader.SetVector("_GridResolution", gridResolution);
 
             Debug.Log("=== Initialized GridSearch Buffer === \n" +
-                      "_GridCenter : \t" + this.gridCenter + "\n" +
-                      "_GridCellSize : \t" + this.cellSize + "\n" +
-                      "_GridResolution : \t" + this.gridResolution);
+                      "Target Shader : \t" + shader.name + "\n" +
+                      "GridCellSize : \t" + this.cellSize + "\n" +
+                      "GridResolution : \t" + this.gridResolution);
         }
 
         internal void ShowGridOnGizmo(Vector3 gridCenter, float cellSize, Vector3Int gridResolution, Color gridColor)
@@ -68,9 +71,8 @@ namespace ParticlePhysics.Utils.NearestNeighbour
             Gizmos.DrawWireCube(gridCenter, gridResolution);
         }
 
-        internal void UpdateGridVariables(Vector3 center, Vector3 size, Vector3 resolution)
+        internal void UpdateGridVariables(Vector3 size, Vector3 resolution)
         {
-            this.gridCenter = center;
             this.cellSize = size.x / resolution.x;
             this.gridResolution = resolution;
             SetCSVariables();

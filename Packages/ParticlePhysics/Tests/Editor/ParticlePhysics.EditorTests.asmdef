@@ -1,0 +1,16 @@
+{
+    "name": "ParticlePhysics.Editor.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ad629cda748053c45bb1e53d849fcae2"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

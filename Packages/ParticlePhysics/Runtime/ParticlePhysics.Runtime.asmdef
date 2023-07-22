@@ -1,0 +1,17 @@
+{
+    "name": "ParticlePhysics.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Mathematics",
+        "Unity.VisualEffectGraph.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

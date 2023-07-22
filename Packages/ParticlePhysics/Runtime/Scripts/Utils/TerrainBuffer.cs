@@ -1,7 +1,28 @@
 ﻿using UnityEngine;
+using System.Runtime.InteropServices;
 
-namespace ParticlePhysics.Utils
+namespace ParticlePhysics
 {
+    public class TerrainBuffer
+    {
+        public GraphicsBuffer buffer;
+
+        public TerrainBuffer(Terrain terrain)
+        {
+            var t = TerrainType.GenerateFromTerrain(terrain);
+            buffer = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                t.Length,
+                Marshal.SizeOf(typeof(TerrainType))); ;
+            buffer.SetData(t);
+        }
+
+        public void Release()
+        {
+            buffer.Release();
+        }
+    }
+
     public struct TerrainType
     {
         public float height;

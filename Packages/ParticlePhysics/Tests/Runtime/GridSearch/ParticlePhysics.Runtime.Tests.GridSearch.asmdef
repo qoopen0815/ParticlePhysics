@@ -1,8 +1,8 @@
 {
-    "name": "Qoopen.ParticlePhysics",
+    "name": "ParticlePhysics.Runtime.Tests.GridSearch",
     "rootNamespace": "",
     "references": [
-        "Unity.Mathematics",
+        "ParticlePhysics.Runtime",
         "Unity.VisualEffectGraph.Runtime"
     ],
     "includePlatforms": [],
