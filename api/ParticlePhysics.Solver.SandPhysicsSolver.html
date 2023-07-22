@@ -1,0 +1,576 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class SandPhysicsSolver
+   | Particle Physics </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class SandPhysicsSolver
+   | Particle Physics ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="ParticlePhysics.Solver.SandPhysicsSolver">
+  
+  
+  <h1 id="ParticlePhysics_Solver_SandPhysicsSolver" data-uid="ParticlePhysics.Solver.SandPhysicsSolver" class="text-break">Class SandPhysicsSolver
+  </h1>
+  <div class="markdown level0 summary"><p>This class simulates particle behaviour based on the MolecularDynamics method.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">Object</a></div>
+    <div class="level1"><span class="xref">SandPhysicsSolver</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="ParticlePhysics.Solver.html">ParticlePhysics.Solver</a></h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h5 id="ParticlePhysics_Solver_SandPhysicsSolver_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SandPhysicsSolver</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver__ctor_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.#ctor*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver__ctor_Vector3_System_Single_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.#ctor(Vector3,System.Single)">SandPhysicsSolver(Vector3, Single)</h4>
+  <div class="markdown level1 summary"><p>Note: Please call SetMainParticle(), SetCollisionObjects() and SetTerrain() to register the required data before execution.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SandPhysicsSolver(Vector3 gravity, float maxAllowableTimestep = 0.005F)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Vector3</span></td>
+        <td><span class="parametername">gravity</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">Single</a></td>
+        <td><span class="parametername">maxAllowableTimestep</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="fields">Fields
+  </h3>
+  
+  
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver__debugger" data-uid="ParticlePhysics.Solver.SandPhysicsSolver._debugger">_debugger</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GraphicsBuffer _debugger</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">GraphicsBuffer</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_gravity" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.gravity">gravity</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Vector3 gravity</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Vector3</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_gridCellSize" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.gridCellSize">gridCellSize</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static float gridCellSize</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">Single</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_gridSize" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.gridSize">gridSize</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector3 gridSize</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Vector3</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_maxAllowableTimestep" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.maxAllowableTimestep">maxAllowableTimestep</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly float maxAllowableTimestep</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">Single</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_ObjectCollisionForce_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.ObjectCollisionForce*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_ObjectCollisionForce" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.ObjectCollisionForce">ObjectCollisionForce</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ObjectCollisionForce[] ObjectCollisionForce { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ParticlePhysics.Solver.ObjectCollisionForce.html">ObjectCollisionForce</a>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_ParticleCollisionForce_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.ParticleCollisionForce*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_ParticleCollisionForce" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.ParticleCollisionForce">ParticleCollisionForce</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ParticleCollisionForce[] ParticleCollisionForce { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ParticlePhysics.Solver.ParticleCollisionForce.html">ParticleCollisionForce</a>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_RegisteredCollisionObjectArray_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.RegisteredCollisionObjectArray*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_RegisteredCollisionObjectArray" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.RegisteredCollisionObjectArray">RegisteredCollisionObjectArray</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GameObject[] RegisteredCollisionObjectArray { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">GameObject</span>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_RegisteredCollisionObjectList_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.RegisteredCollisionObjectList*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_RegisteredCollisionObjectList" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.RegisteredCollisionObjectList">RegisteredCollisionObjectList</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;GameObject&gt; RegisteredCollisionObjectList { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">List</span>&lt;<span class="xref">GameObject</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_RegisteredParticles_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.RegisteredParticles*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_RegisteredParticles" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.RegisteredParticles">RegisteredParticles</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ParticleBuffer RegisteredParticles { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ParticlePhysics.ParticleBuffer.html">ParticleBuffer</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_TerrainCollisionForce_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.TerrainCollisionForce*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_TerrainCollisionForce" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.TerrainCollisionForce">TerrainCollisionForce</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCollisionForce[] TerrainCollisionForce { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ParticlePhysics.Solver.TerrainCollisionForce.html">TerrainCollisionForce</a>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_Release_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.Release*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_Release" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.Release">Release()</h4>
+  <div class="markdown level1 summary"><p>Must be called at the end of execution.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Release()</code></pre>
+  </div>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_SetCollisionObjects_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetCollisionObjects*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_SetCollisionObjects_GameObject___" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetCollisionObjects(GameObject[])">SetCollisionObjects(GameObject[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCollisionObjects(GameObject[] objects)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">GameObject</span>[]</td>
+        <td><span class="parametername">objects</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_SetFieldTerrain_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetFieldTerrain*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_SetFieldTerrain_Terrain_Vector3_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetFieldTerrain(Terrain,Vector3)">SetFieldTerrain(Terrain, Vector3)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetFieldTerrain(Terrain terrain, Vector3 gridCenter)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Terrain</span></td>
+        <td><span class="parametername">terrain</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">Vector3</span></td>
+        <td><span class="parametername">gridCenter</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_SetMainParticle_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetMainParticle*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_SetMainParticle_ParticlePhysics_ParticleBuffer_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetMainParticle(ParticlePhysics.ParticleBuffer)">SetMainParticle(ParticleBuffer)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetMainParticle(ParticleBuffer particle = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ParticlePhysics.ParticleBuffer.html">ParticleBuffer</a></td>
+        <td><span class="parametername">particle</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ParticlePhysics_Solver_SandPhysicsSolver_UpdateParticle_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.UpdateParticle*"></a>
+  <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_UpdateParticle_ParticlePhysics_ParticleBuffer__GraphicsBuffer_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.UpdateParticle(ParticlePhysics.ParticleBuffer@,GraphicsBuffer)">UpdateParticle(ref ParticleBuffer, GraphicsBuffer)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateParticle(ref ParticleBuffer particles, GraphicsBuffer terrain)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ParticlePhysics.ParticleBuffer.html">ParticleBuffer</a></td>
+        <td><span class="parametername">particles</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">GraphicsBuffer</span></td>
+        <td><span class="parametername">terrain</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Particle Physics
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
