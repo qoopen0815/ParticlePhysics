@@ -1,9 +1,6 @@
 apiRules:
 - include:
-    uidRegex: ^DocFxForUnity
-    type: Namespace
-- include:
-    uidRegex: ^Global
+    uidRegex: ^ParticlePhysics\.*
     type: Namespace
 - exclude:
     uidRegex: .*
