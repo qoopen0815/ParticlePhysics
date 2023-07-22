@@ -1,6 +1,7 @@
+#pragma kernel LocalToWorldCS
 #pragma kernel ParticleCollisionCS
 #pragma kernel TerrainCollisionCS
-//#pragma kernel ObjectCollisionCS
+#pragma kernel ObjectCollisionCS
 #pragma kernel IntegrateCS
 
 #pragma enable_d3d11_debug_symbols
@@ -15,46 +16,40 @@
 #include "./Include/Terrain.cginc"
 #include "./Include/Math.cginc"
 
-// デバッグ用バッファ
 RWStructuredBuffer<float4> _DebugBuffer;
 
-struct ParticleCollisionForce
+StructuredBuffer<ParticleType> _bufferRead;
+RWStructuredBuffer<ParticleType> _bufferWrite;
+
+StructuredBuffer<ElementType> _ObjectElementBuffer;
+StructuredBuffer<ParticleType> _ObjectParticleBufferRead;
+
+struct CollisionForce
 {
 	float3 force;
 	float3 torque;
 };
-struct ObjectCollisionForce
-{
-	float3 force;
-	float3 torque;
-};
-struct TerrainCollisionForce
-{
-	float3 force;
-	float3 torque;
-};
+RWStructuredBuffer<CollisionForce> _ParticleCollisionForce;
+RWStructuredBuffer<CollisionForce> _ObjectCollisionForce;
+RWStructuredBuffer<CollisionForce> _TerrainCollisionForce;
+groupshared CollisionForce sharedBuffer[PARTICLE_NUM][MAX_ELEMENT_NUM][MAX_ELEMENT_NUM];
 
-RWStructuredBuffer<ParticleCollisionForce> _ParticleCollisionForce;
-RWStructuredBuffer<ObjectCollisionForce> _ObjectCollisionForce;
-RWStructuredBuffer<TerrainCollisionForce> _TerrainCollisionForce;
+float3 _Gravity;
+float _TimeStep;
+float4x4 _ObjectTF;
+StructuredBuffer<uint2> _ParticleGridIndicesBufferRead;
+StructuredBuffer<uint2> _ObjGridIndicesBufferRead;
 
-groupshared ParticleCollisionForce sharedBuffer[PARTICLE_NUM][MAX_ELEMENT_NUM][MAX_ELEMENT_NUM];
-
-cbuffer MolecularDynamicsCB
-{
-	float3 _Gravity;
-	float _TimeStep;
-};
 
 inline float calculate_normal_force(float overlap, float normal_velocity,
-								  float alpha = 0.5f, float beta = 1.5f,
-								  float kd = 200.0f, float kr = 10000.0f, float kt = 10000.0f)
+									float alpha = 0.5f, float beta = 1.5f,
+									float kd = 200.0f, float kr = 10000.0f, float kt = 10000.0f)
 {
 	return -(kd * pow(overlap, alpha) * normal_velocity + kr * pow(overlap, beta)); // fn + kd * E^alpha * E. + kr * E ^ beta = 0
 }
 
 inline float3 calculate_shear_force(float normal_force, float normal_vel, float3 normal_vec,
-								  float3 velocity_vec, float kt = 10000.0f)
+									float3 velocity_vec, float kt = 10000.0f)
 {
 	float3 shear_force = float3(0, 0, 0);
 	float4 tangent_velocity = float4(0, 0, 0, 0);
@@ -66,7 +61,7 @@ inline float3 calculate_shear_force(float normal_force, float normal_vel, float3
 }
 
 inline float3 calculate_contact_force(float this_particle_radius, float3 this_particle_position, float3 this_particle_velocity,
-									float other_particle_radius, float3 other_particle_position, float3 other_particle_velocity)
+									  float other_particle_radius, float3 other_particle_position, float3 other_particle_velocity)
 {
 	float3 contact_force = float3(0, 0, 0);
 	
@@ -94,6 +89,36 @@ inline float3 calculate_contact_force(float this_particle_radius, float3 this_pa
 	return contact_force;
 }
 
+inline CollisionForce get_particle_collision_force(ParticleType p, ElementType pe, ParticleType n, ElementType ne)
+{
+	// ▼ Reference
+	// https://github.com/WestRyanK/Particle-Simulator/blob/93da771838b3d02f45c3aec964ef4a04bbef6fd4/GranularSimulator/GranularSubstanceSimulator.cpp#L203-L214
+						
+	const float3 offset = normalize(n.position - p.position);
+	const float3 P_element_position = p.position + rotate_vector(pe.offsetFromParticleCenter, p.orientation);
+	const float3 P_contact_offset_from_center = pe.offsetFromParticleCenter + offset * pe.radius;
+	const float3 P_contact_velocity = p.velocity + cross(p.angularVelocity, P_contact_offset_from_center);
+	const float3 N_element_position = n.position + rotate_vector(ne.offsetFromParticleCenter, n.orientation);
+	const float3 N_contact_offset_from_center = ne.offsetFromParticleCenter + offset * ne.radius;
+	const float3 N_contact_velocity = n.velocity + cross(n.angularVelocity, -N_contact_offset_from_center);
+	
+	CollisionForce force;
+	force.force = calculate_contact_force(pe.radius, P_element_position, P_contact_velocity,
+											ne.radius, N_element_position, N_contact_velocity);
+	force.torque = cross(P_contact_offset_from_center, force.force);
+	
+	return force;
+}
+
+
+[numthreads(PARTICLE_NUM, 1, 1)]
+void LocalToWorldCS(uint3 dispatchID : SV_DispatchThreadID)
+{
+	const unsigned int P_ID = dispatchID.x; // 現在処理しているパーティクルID
+	_bufferWrite[P_ID].position = mul(_ObjectTF, float4(_bufferRead[P_ID].position, 1)).xyz;
+}
+
+
 [numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
 void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : SV_GroupThreadID)
 {
@@ -103,6 +128,7 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 	
 	const uint P_ID = dispatchID.x; // 現在処理しているパーティクルID
 	
+	CollisionForce buf;
 	LOOP_AROUND_NEIGHBOR(_ParticleBufferRead[P_ID].position)
 			{
 				if (threadID.y < _ElementNum && threadID.z < _ElementNum)
@@ -115,29 +141,12 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 						if (N_ID == P_ID)
 							continue; // 自身を計算対象とした場合スキップ
 						
-						// ▼ 接触力の計算
-						// https://github.com/WestRyanK/Particle-Simulator/blob/93da771838b3d02f45c3aec964ef4a04bbef6fd4/GranularSimulator/GranularSubstanceSimulator.cpp#L203-L214
-						
-						const float3 offset = normalize(_ParticleBufferRead[N_ID].position - _ParticleBufferRead[P_ID].position);
-						
 						const uint P_elementIndice = threadID.y;
-						
-						const float3 P_element_position = _ParticleBufferRead[P_ID].position + rotate_vector(_ElementBuffer[P_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[P_ID].orientation);
-						const float3 P_contact_offset_from_center = _ElementBuffer[P_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[P_elementIndice].radius;
-						const float3 P_contact_velocity = _ParticleBufferRead[P_ID].velocity + cross(_ParticleBufferRead[P_ID].angularVelocity, P_contact_offset_from_center);
-						
 						const uint N_elementIndice = threadID.z;
-						
-						const float3 N_element_position = _ParticleBufferRead[N_ID].position + rotate_vector(_ElementBuffer[N_elementIndice].offsetFromParticleCenter, _ParticleBufferRead[N_ID].orientation);
-						const float3 N_contact_offset_from_center = _ElementBuffer[N_elementIndice].offsetFromParticleCenter + offset * _ElementBuffer[N_elementIndice].radius;
-						const float3 N_contact_velocity = _ParticleBufferRead[N_ID].velocity + cross(_ParticleBufferRead[N_ID].angularVelocity, -N_contact_offset_from_center);
-						
-						const float3 contact_force = calculate_contact_force(_ElementBuffer[P_elementIndice].radius, P_element_position, P_contact_velocity,
-																			 _ElementBuffer[N_elementIndice].radius, N_element_position, N_contact_velocity);
-						const float3 contact_torque = cross(P_contact_offset_from_center, contact_force);
-						
-						sharedBuffer[threadID.x][threadID.y][threadID.z].force += contact_force;
-						sharedBuffer[threadID.x][threadID.y][threadID.z].torque += contact_torque;
+						buf = get_particle_collision_force(_ParticleBufferRead[P_ID], _ParticleElementBuffer[P_elementIndice],
+														   _ParticleBufferRead[N_ID], _ParticleElementBuffer[N_elementIndice]);
+						sharedBuffer[threadID.x][threadID.y][threadID.z].force += buf.force;
+						sharedBuffer[threadID.x][threadID.y][threadID.z].torque += buf.torque;
 					}
 				}
 			}
@@ -146,21 +155,82 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 	
 	if (threadID.y == 0 && threadID.z == 0)
 	{
-		ParticleCollisionForce sum;
-		sum.force = float3(0, 0, 0);
-		sum.torque = float3(0, 0, 0);
+		buf.force = float3(0, 0, 0);
+		buf.torque = float3(0, 0, 0);
 		
 		for (int y = 0; y < MAX_ELEMENT_NUM; y++)
 		{
 			for (int z = 0; z < MAX_ELEMENT_NUM; z++)
 			{
-				sum.force += sharedBuffer[threadID.x][y][z].force;
-				sum.torque += sharedBuffer[threadID.x][y][z].torque;
+				buf.force += sharedBuffer[threadID.x][y][z].force;
+				buf.torque += sharedBuffer[threadID.x][y][z].torque;
 			}
 		}
-		_ParticleCollisionForce[P_ID] = sum;
+		_ParticleCollisionForce[P_ID] = buf;
 	}
+	
+	GroupMemoryBarrierWithGroupSync();
 }
+
+
+[numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
+void ObjectCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : SV_GroupThreadID)
+{
+	sharedBuffer[threadID.x][threadID.y][threadID.z].force = float3(0, 0, 0);
+	sharedBuffer[threadID.x][threadID.y][threadID.z].torque = float3(0, 0, 0);
+	GroupMemoryBarrierWithGroupSync();
+	
+	const uint P_ID = dispatchID.x;
+	
+	CollisionForce buf;
+	uint3 G_XYZ = (uint3) GridCalculateCell(_ParticleBufferRead[P_ID].position, _ObjectTF);
+	for (int Z = max(G_XYZ.z - 1, 0); Z <= min(G_XYZ.z + 1, _GridResolution.z - 1); Z++)
+		for (int Y = max(G_XYZ.y - 1, 0); Y <= min(G_XYZ.y + 1, _GridResolution.y - 1); Y++)
+			for (int X = max(G_XYZ.x - 1, 0); X <= min(G_XYZ.x + 1, _GridResolution.x - 1); X++)
+			{
+				if (threadID.y < _ElementNum && threadID.z < _ElementNum)
+				{
+					const unsigned int G_CELL = GridKey(uint3(X, Y, Z)); // Calculate Neighbor (or own) Cell ID
+					const uint2 PG_START_END = _ParticleGridIndicesBufferRead[G_CELL];
+					const uint2 NG_START_END = _ObjGridIndicesBufferRead[G_CELL];
+					
+					for (unsigned int P_ID = PG_START_END.x; P_ID < PG_START_END.y; P_ID++)
+					{
+						for (unsigned int N_ID = NG_START_END.x; N_ID < NG_START_END.y; N_ID++)
+						{
+							const uint P_elementIndice = threadID.y;
+							const uint N_elementIndice = threadID.z;
+							buf = get_particle_collision_force(
+								_ParticleBufferRead[P_ID], _ParticleElementBuffer[P_elementIndice],
+								_ObjectParticleBufferRead[N_ID], _ObjectElementBuffer[N_elementIndice]);
+							sharedBuffer[threadID.x][threadID.y][threadID.z].force += buf.force;
+							sharedBuffer[threadID.x][threadID.y][threadID.z].torque += buf.torque;
+						}
+					}
+				}
+			}
+	
+	GroupMemoryBarrierWithGroupSync();
+	
+	if (threadID.y == 0 && threadID.z == 0)
+	{
+		buf.force = float3(0, 0, 0);
+		buf.torque = float3(0, 0, 0);
+		
+		for (int y = 0; y < MAX_ELEMENT_NUM; y++)
+		{
+			for (int z = 0; z < MAX_ELEMENT_NUM; z++)
+			{
+				buf.force += sharedBuffer[threadID.x][y][z].force;
+				buf.torque += sharedBuffer[threadID.x][y][z].torque;
+			}
+		}
+		_ObjectCollisionForce[P_ID] = buf;
+	}
+	
+	GroupMemoryBarrierWithGroupSync();
+}
+
 
 [numthreads(PARTICLE_NUM, 1, 1)]
 void TerrainCollisionCS(uint3 dispatchID : SV_DispatchThreadID)
@@ -189,9 +259,9 @@ void IntegrateCS(uint3 dispatchID : SV_DispatchThreadID)
 	
 	// 更新前情報
 	ParticleType particle = _ParticleBufferRead[P_ID];
-	ParticleCollisionForce pcf = _ParticleCollisionForce[P_ID];
-	ObjectCollisionForce ocf = _ObjectCollisionForce[P_ID];
-	TerrainCollisionForce tcf = _TerrainCollisionForce[P_ID];
+	CollisionForce pcf = _ParticleCollisionForce[P_ID];
+	CollisionForce ocf = _ObjectCollisionForce[P_ID];
+	CollisionForce tcf = _TerrainCollisionForce[P_ID];
 	
 	// 重力を付加
 	float3 acceleration = _Gravity * _ParticleTotalMass;
@@ -211,7 +281,7 @@ void IntegrateCS(uint3 dispatchID : SV_DispatchThreadID)
 	if (particle.position.y < height)
 	{
 		particle.position.y = height;
-		norm = _TerrainBuffer[pos.x + pos.y * _Resolution].normal; // 法線ベクトル
+		norm = GetInterpolatedNormal(particle.position.x * _Ratio.x, particle.position.z * _Ratio.z); // 法線ベクトル
 		particle.velocity = particle.velocity + dot(-particle.velocity, norm) * norm; // 速度ベクトルを壁に沿った向きに変換
 		particle.velocity = _Friction * particle.velocity; // 摩擦
 	}

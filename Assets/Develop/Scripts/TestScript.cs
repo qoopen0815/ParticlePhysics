@@ -10,6 +10,12 @@ public struct Test
     public float z;
 }
 
+public struct Test2
+{
+    public Test t;
+    public float w;
+}
+
 public class TestScript : MonoBehaviour
 {
     uint _objNum = 10;
@@ -24,7 +30,7 @@ public class TestScript : MonoBehaviour
         _buffer = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
             (int)_objNum,
-            Marshal.SizeOf(typeof(Test)));
+            Marshal.SizeOf(typeof(Test2)));
 
         DispatchShader(isDebugLog: true);
     }
@@ -49,11 +55,14 @@ public class TestScript : MonoBehaviour
 
         if (!isDebugLog) return;
 
-        var result = new Test[_objNum];
+        var result = new Test2[_objNum];
         _buffer.GetData(result);
         foreach (var eachResult in result)
         {
-            Debug.Log(eachResult.x);
+            Debug.Log(eachResult.t.x);
+            Debug.Log(eachResult.t.y);
+            Debug.Log(eachResult.t.z);
+            Debug.Log(eachResult.w);
         }
     }
 }

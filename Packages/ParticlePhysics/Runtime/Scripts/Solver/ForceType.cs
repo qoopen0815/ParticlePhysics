@@ -13,7 +13,7 @@ namespace ParticlePhysics.Solver
             this.torque = torque;
         }
 
-        public static ParticleCollisionForce zero() => new ParticleCollisionForce(Vector3.zero, Vector3.zero);
+        public static ParticleCollisionForce Zero() => new ParticleCollisionForce(Vector3.zero, Vector3.zero);
 
     }
 
@@ -28,7 +28,7 @@ namespace ParticlePhysics.Solver
             this.torque = torque;
         }
 
-        public static TerrainCollisionForce zero() => new TerrainCollisionForce(Vector3.zero, Vector3.zero);
+        public static TerrainCollisionForce Zero() => new TerrainCollisionForce(Vector3.zero, Vector3.zero);
     }
 
     public struct ObjectCollisionForce
@@ -42,6 +42,6 @@ namespace ParticlePhysics.Solver
             this.torque = torque;
         }
 
-        public static ObjectCollisionForce zero() => new ObjectCollisionForce(Vector3.zero, Vector3.zero);
+        public static ObjectCollisionForce Zero() => new ObjectCollisionForce(Vector3.zero, Vector3.zero);
     }
 }
