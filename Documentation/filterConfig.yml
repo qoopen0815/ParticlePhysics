@@ -1,5 +1,8 @@
 apiRules:
 - include:
+    uidRegex: ^ParticlePhysics
+    type: Namespace
+- include:
     uidRegex: ^ParticlePhysics\.*
     type: Namespace
 - exclude:
