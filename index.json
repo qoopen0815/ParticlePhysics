@@ -1,4 +1,109 @@
 {
+  "api/Global.BufferUtils.html": {
+    "href": "api/Global.BufferUtils.html",
+    "title": "Class BufferUtils | Particle Physics",
+    "keywords": "Class BufferUtils Inheritance Object BufferUtils Namespace : Global Assembly : cs.temp.dll.dll Syntax public class BufferUtils Methods DebugBuffer<T>(ComputeBuffer, Int32) �o�b�t�@�̃v�����g�f�o�b�O Declaration public static void DebugBuffer<T>(ComputeBuffer buffer, int threadGroups) Parameters Type Name Description ComputeBuffer buffer Int32 threadGroups Type Parameters Name Description T DebugBuffer<T>(GraphicsBuffer, Int32) Declaration public static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups) Parameters Type Name Description GraphicsBuffer buffer Int32 threadGroups Type Parameters Name Description T DebugBuffer<T>(GraphicsBuffer, Int32, Int32) Declaration public static void DebugBuffer<T>(GraphicsBuffer buffer, int threadGroups, int index) Parameters Type Name Description GraphicsBuffer buffer Int32 threadGroups Int32 index Type Parameters Name Description T ReleaseBuffer(ComputeBuffer) �o�b�t�@�̊J�� Declaration public static void ReleaseBuffer(ComputeBuffer buffer) Parameters Type Name Description ComputeBuffer buffer SwapComputeBuffer(ref ComputeBuffer, ref ComputeBuffer) �����Ɏw�肳�ꂽ�o�b�t�@�̓���ւ� Declaration public static void SwapComputeBuffer(ref ComputeBuffer ping, ref ComputeBuffer pong) Parameters Type Name Description ComputeBuffer ping ComputeBuffer pong"
+  },
+  "api/Global.html": {
+    "href": "api/Global.html",
+    "title": "Namespace Global | Particle Physics",
+    "keywords": "Namespace Global Classes BufferUtils"
+  },
+  "api/ParticlePhysics.Particle.Data.html": {
+    "href": "api/ParticlePhysics.Particle.Data.html",
+    "title": "Class Data | Particle Physics",
+    "keywords": "Class Data Inheritance Object Data Namespace : ParticlePhysics.Particle Assembly : cs.temp.dll.dll Syntax public class Data Constructors Data(Int32) Declaration public Data(int particleNum) Parameters Type Name Description Int32 particleNum Fields num Declaration public readonly int num Field Value Type Description Int32 status Declaration public GraphicsBuffer status Field Value Type Description GraphicsBuffer substance Declaration public ParticleSubstance substance Field Value Type Description ParticleSubstance Methods Release() Declaration public void Release() SetAsCubeParticle(State[], Single, Single, Single) Declaration public static Data SetAsCubeParticle(State[] particles, float radius = 0.04F, float density = 2000F, float mu = 0.05F) Parameters Type Name Description State [] particles Single radius Single density Single mu Returns Type Description Data SetAsSimpleParticle(State[], Single, Single, Single) Declaration public static Data SetAsSimpleParticle(State[] particles, float radius = 0.04F, float density = 2000F, float mu = 0.05F) Parameters Type Name Description State [] particles Single radius Single density Single mu Returns Type Description Data SetAsTetrahedronParticle(State[], Single, Single, Single) Declaration public static Data SetAsTetrahedronParticle(State[] particles, float radius = 0.04F, float density = 2000F, float mu = 0.05F) Parameters Type Name Description State [] particles Single radius Single density Single mu Returns Type Description Data"
+  },
+  "api/ParticlePhysics.Particle.Element.html": {
+    "href": "api/ParticlePhysics.Particle.Element.html",
+    "title": "Struct Element | Particle Physics",
+    "keywords": "Struct Element Namespace : ParticlePhysics.Particle Assembly : cs.temp.dll.dll Syntax public struct Element Constructors Element(Single, Single, Vector3) Declaration public Element(float radius, float mass, Vector3 offsetFromParticleCenter) Parameters Type Name Description Single radius Single mass Vector3 offsetFromParticleCenter Fields mass Declaration public float mass Field Value Type Description Single offsetFromParticleCenter Declaration public Vector3 offsetFromParticleCenter Field Value Type Description Vector3 radius Declaration public float radius Field Value Type Description Single"
+  },
+  "api/ParticlePhysics.Particle.Enum.html": {
+    "href": "api/ParticlePhysics.Particle.Enum.html",
+    "title": "Namespace ParticlePhysics.Particle.Enum | Particle Physics",
+    "keywords": "Namespace ParticlePhysics.Particle.Enum Enums ParticleNum ParticleType"
+  },
+  "api/ParticlePhysics.Particle.Enum.ParticleNum.html": {
+    "href": "api/ParticlePhysics.Particle.Enum.ParticleNum.html",
+    "title": "Enum ParticleNum | Particle Physics",
+    "keywords": "Enum ParticleNum Namespace : ParticlePhysics.Particle.Enum Assembly : cs.temp.dll.dll Syntax public enum ParticleNum Fields Name Description NUM_128K NUM_16K NUM_1K NUM_256K NUM_2K NUM_32K NUM_4K NUM_512K NUM_64K NUM_8K"
+  },
+  "api/ParticlePhysics.Particle.Enum.ParticleType.html": {
+    "href": "api/ParticlePhysics.Particle.Enum.ParticleType.html",
+    "title": "Enum ParticleType | Particle Physics",
+    "keywords": "Enum ParticleType Namespace : ParticlePhysics.Particle.Enum Assembly : cs.temp.dll.dll Syntax public enum ParticleType Fields Name Description Cube Simple Tetrahedron"
+  },
+  "api/ParticlePhysics.Particle.html": {
+    "href": "api/ParticlePhysics.Particle.html",
+    "title": "Namespace ParticlePhysics.Particle | Particle Physics",
+    "keywords": "Namespace ParticlePhysics.Particle Classes Data Structs Element State"
+  },
+  "api/ParticlePhysics.Particle.State.html": {
+    "href": "api/ParticlePhysics.Particle.State.html",
+    "title": "Struct State | Particle Physics",
+    "keywords": "Struct State Namespace : ParticlePhysics.Particle Assembly : cs.temp.dll.dll Syntax public struct State Fields angularVelocity Declaration public Vector3 angularVelocity Field Value Type Description Vector3 orientation Declaration public Vector4 orientation Field Value Type Description Vector4 position Declaration public Vector3 position Field Value Type Description Vector3 velocity Declaration public Vector3 velocity Field Value Type Description Vector3 Methods GenerateFromMesh(Int32, Mesh) Declaration public static State[] GenerateFromMesh(int particleNum, Mesh mesh) Parameters Type Name Description Int32 particleNum Mesh mesh Returns Type Description State [] GeneratePoint(Int32, Vector3) Declaration public static State[] GeneratePoint(int particleNum, Vector3 centerPos) Parameters Type Name Description Int32 particleNum Vector3 centerPos Returns Type Description State [] GenerateSphere(Int32, Vector3, Single) Declaration public static State[] GenerateSphere(int particleNum, Vector3 centerPos, float radius) Parameters Type Name Description Int32 particleNum Vector3 centerPos Single radius Returns Type Description State []"
+  },
+  "api/ParticlePhysics.Particle.Substance.CubeSubstance.html": {
+    "href": "api/ParticlePhysics.Particle.Substance.CubeSubstance.html",
+    "title": "Class CubeSubstance | Particle Physics",
+    "keywords": "Class CubeSubstance Inheritance Object ParticleSubstance CubeSubstance Inherited Members ParticleSubstance.elements ParticleSubstance.mu ParticleSubstance.totalMass ParticleSubstance.centerOfMass ParticleSubstance.inertialMoment ParticleSubstance.Elements ParticleSubstance.TotalMass ParticleSubstance.Mu ParticleSubstance.CenterOfMass ParticleSubstance.InertialMoment ParticleSubstance.InertialMoment4x4 ParticleSubstance.Release() ParticleSubstance.CalculateElementMass(Single, Single) ParticleSubstance.CalculateInverseInertialMoment(Element[]) ParticleSubstance.CalculateTotalMass(Element[], Single) ParticleSubstance.CalculateCenterOfMass(Element[]) Namespace : ParticlePhysics.Particle.Substance Assembly : cs.temp.dll.dll Syntax public class CubeSubstance : ParticleSubstance Constructors CubeSubstance(Single, Single, Single) Declaration public CubeSubstance(float radius = 0.04F, float density = 2000F, float mu = 0.05F) Parameters Type Name Description Single radius Single density Single mu Methods SetElements(Single, Single) Declaration protected override Element[] SetElements(float particleRadius, float particleDensity) Parameters Type Name Description Single particleRadius Single particleDensity Returns Type Description Element [] Overrides ParticleSubstance.SetElements(Single, Single)"
+  },
+  "api/ParticlePhysics.Particle.Substance.html": {
+    "href": "api/ParticlePhysics.Particle.Substance.html",
+    "title": "Namespace ParticlePhysics.Particle.Substance | Particle Physics",
+    "keywords": "Namespace ParticlePhysics.Particle.Substance Classes CubeSubstance ParticleSubstance SimpleSubstance TetrahedronSubstance"
+  },
+  "api/ParticlePhysics.Particle.Substance.ParticleSubstance.html": {
+    "href": "api/ParticlePhysics.Particle.Substance.ParticleSubstance.html",
+    "title": "Class ParticleSubstance | Particle Physics",
+    "keywords": "Class ParticleSubstance Inheritance Object ParticleSubstance CubeSubstance SimpleSubstance TetrahedronSubstance Namespace : ParticlePhysics.Particle.Substance Assembly : cs.temp.dll.dll Syntax public abstract class ParticleSubstance Fields centerOfMass Declaration protected float3 centerOfMass Field Value Type Description float3 elements Declaration protected GraphicsBuffer elements Field Value Type Description GraphicsBuffer inertialMoment Declaration protected float3x3 inertialMoment Field Value Type Description float3x3 mu Declaration protected float mu Field Value Type Description Single totalMass Declaration protected float totalMass Field Value Type Description Single Properties CenterOfMass Declaration public Vector3 CenterOfMass { get; } Property Value Type Description Vector3 Elements Declaration public GraphicsBuffer Elements { get; } Property Value Type Description GraphicsBuffer InertialMoment Declaration public float3x3 InertialMoment { get; } Property Value Type Description float3x3 InertialMoment4x4 Declaration public Matrix4x4 InertialMoment4x4 { get; } Property Value Type Description Matrix4x4 Mu Declaration public float Mu { get; } Property Value Type Description Single TotalMass Declaration public float TotalMass { get; } Property Value Type Description Single Methods CalculateCenterOfMass(Element[]) Declaration protected float3 CalculateCenterOfMass(Element[] elements) Parameters Type Name Description Element [] elements Returns Type Description float3 CalculateElementMass(Single, Single) Declaration protected float CalculateElementMass(float radius, float density) Parameters Type Name Description Single radius Single density Returns Type Description Single CalculateInverseInertialMoment(Element[]) Declaration protected float3x3 CalculateInverseInertialMoment(Element[] elements) Parameters Type Name Description Element [] elements Returns Type Description float3x3 CalculateTotalMass(Element[], Single) Declaration protected float CalculateTotalMass(Element[] elements, float density) Parameters Type Name Description Element [] elements Single density Returns Type Description Single Release() Declaration public void Release() SetElements(Single, Single) Declaration protected abstract Element[] SetElements(float particleRadius, float particleDensity) Parameters Type Name Description Single particleRadius Single particleDensity Returns Type Description Element []"
+  },
+  "api/ParticlePhysics.Particle.Substance.SimpleSubstance.html": {
+    "href": "api/ParticlePhysics.Particle.Substance.SimpleSubstance.html",
+    "title": "Class SimpleSubstance | Particle Physics",
+    "keywords": "Class SimpleSubstance Inheritance Object ParticleSubstance SimpleSubstance Inherited Members ParticleSubstance.elements ParticleSubstance.mu ParticleSubstance.totalMass ParticleSubstance.centerOfMass ParticleSubstance.inertialMoment ParticleSubstance.Elements ParticleSubstance.TotalMass ParticleSubstance.Mu ParticleSubstance.CenterOfMass ParticleSubstance.InertialMoment ParticleSubstance.InertialMoment4x4 ParticleSubstance.Release() ParticleSubstance.CalculateElementMass(Single, Single) ParticleSubstance.CalculateInverseInertialMoment(Element[]) ParticleSubstance.CalculateTotalMass(Element[], Single) ParticleSubstance.CalculateCenterOfMass(Element[]) Namespace : ParticlePhysics.Particle.Substance Assembly : cs.temp.dll.dll Syntax public class SimpleSubstance : ParticleSubstance Constructors SimpleSubstance(Single, Single, Single) Declaration public SimpleSubstance(float radius = 0.04F, float density = 2000F, float mu = 0.05F) Parameters Type Name Description Single radius Single density Single mu Methods SetElements(Single, Single) Declaration protected override Element[] SetElements(float particleRadius, float particleDensity) Parameters Type Name Description Single particleRadius Single particleDensity Returns Type Description Element [] Overrides ParticleSubstance.SetElements(Single, Single)"
+  },
+  "api/ParticlePhysics.Particle.Substance.TetrahedronSubstance.html": {
+    "href": "api/ParticlePhysics.Particle.Substance.TetrahedronSubstance.html",
+    "title": "Class TetrahedronSubstance | Particle Physics",
+    "keywords": "Class TetrahedronSubstance Inheritance Object ParticleSubstance TetrahedronSubstance Inherited Members ParticleSubstance.elements ParticleSubstance.mu ParticleSubstance.totalMass ParticleSubstance.centerOfMass ParticleSubstance.inertialMoment ParticleSubstance.Elements ParticleSubstance.TotalMass ParticleSubstance.Mu ParticleSubstance.CenterOfMass ParticleSubstance.InertialMoment ParticleSubstance.InertialMoment4x4 ParticleSubstance.Release() ParticleSubstance.CalculateElementMass(Single, Single) ParticleSubstance.CalculateInverseInertialMoment(Element[]) ParticleSubstance.CalculateTotalMass(Element[], Single) ParticleSubstance.CalculateCenterOfMass(Element[]) Namespace : ParticlePhysics.Particle.Substance Assembly : cs.temp.dll.dll Syntax public class TetrahedronSubstance : ParticleSubstance Constructors TetrahedronSubstance(Single, Single, Single) Declaration public TetrahedronSubstance(float radius = 0.04F, float density = 2000F, float mu = 0.05F) Parameters Type Name Description Single radius Single density Single mu Methods SetElements(Single, Single) Declaration protected override Element[] SetElements(float particleRadius, float particleDensity) Parameters Type Name Description Single particleRadius Single particleDensity Returns Type Description Element [] Overrides ParticleSubstance.SetElements(Single, Single)"
+  },
+  "api/ParticlePhysics.Solver.html": {
+    "href": "api/ParticlePhysics.Solver.html",
+    "title": "Namespace ParticlePhysics.Solver | Particle Physics",
+    "keywords": "Namespace ParticlePhysics.Solver Classes SandPhysicsSolver Structs ObjectCollisionForce ParticleCollisionForce TerrainCollisionForce"
+  },
+  "api/ParticlePhysics.Solver.ObjectCollisionForce.html": {
+    "href": "api/ParticlePhysics.Solver.ObjectCollisionForce.html",
+    "title": "Struct ObjectCollisionForce | Particle Physics",
+    "keywords": "Struct ObjectCollisionForce Namespace : ParticlePhysics.Solver Assembly : cs.temp.dll.dll Syntax public struct ObjectCollisionForce Constructors ObjectCollisionForce(Vector3, Vector3) Declaration public ObjectCollisionForce(Vector3 force, Vector3 torque) Parameters Type Name Description Vector3 force Vector3 torque Fields force Declaration public Vector3 force Field Value Type Description Vector3 torque Declaration public Vector3 torque Field Value Type Description Vector3 Methods zero() Declaration public static ObjectCollisionForce zero() Returns Type Description ObjectCollisionForce"
+  },
+  "api/ParticlePhysics.Solver.ParticleCollisionForce.html": {
+    "href": "api/ParticlePhysics.Solver.ParticleCollisionForce.html",
+    "title": "Struct ParticleCollisionForce | Particle Physics",
+    "keywords": "Struct ParticleCollisionForce Namespace : ParticlePhysics.Solver Assembly : cs.temp.dll.dll Syntax public struct ParticleCollisionForce Constructors ParticleCollisionForce(Vector3, Vector3) Declaration public ParticleCollisionForce(Vector3 force, Vector3 torque) Parameters Type Name Description Vector3 force Vector3 torque Fields force Declaration public Vector3 force Field Value Type Description Vector3 torque Declaration public Vector3 torque Field Value Type Description Vector3 Methods zero() Declaration public static ParticleCollisionForce zero() Returns Type Description ParticleCollisionForce"
+  },
+  "api/ParticlePhysics.Solver.SandPhysicsSolver.html": {
+    "href": "api/ParticlePhysics.Solver.SandPhysicsSolver.html",
+    "title": "Class SandPhysicsSolver | Particle Physics",
+    "keywords": "Class SandPhysicsSolver Inheritance Object SandPhysicsSolver Namespace : ParticlePhysics.Solver Assembly : cs.temp.dll.dll Syntax public class SandPhysicsSolver Constructors SandPhysicsSolver(Data, Vector3, Single, Vector3, Int32, Vector3, Single) Declaration public SandPhysicsSolver(Data particle, Vector3 gridSize, float gridCellSize, Vector3 gridCenter, int terrainResolution, Vector3 terrainRatio, float terrainFriction) Parameters Type Name Description Data particle Vector3 gridSize Single gridCellSize Vector3 gridCenter Int32 terrainResolution Vector3 terrainRatio Single terrainFriction Fields _debugger Declaration public GraphicsBuffer _debugger Field Value Type Description GraphicsBuffer Methods Release() Declaration public void Release() SetGridSearchCSParams(Vector3, Vector3, Vector3) Declaration public void SetGridSearchCSParams(Vector3 center, Vector3 size, Vector3 resolution) Parameters Type Name Description Vector3 center Vector3 size Vector3 resolution SetParticleCSParams(Data) Declaration public void SetParticleCSParams(Data particle) Parameters Type Name Description Data particle UpdateParticle(ref Data, GraphicsBuffer) Declaration public void UpdateParticle(ref Data particles, GraphicsBuffer terrain) Parameters Type Name Description Data particles GraphicsBuffer terrain UpdateTerrain(ref Terrain) Declaration public void UpdateTerrain(ref Terrain newTerrain) Parameters Type Name Description Terrain newTerrain"
+  },
+  "api/ParticlePhysics.Solver.TerrainCollisionForce.html": {
+    "href": "api/ParticlePhysics.Solver.TerrainCollisionForce.html",
+    "title": "Struct TerrainCollisionForce | Particle Physics",
+    "keywords": "Struct TerrainCollisionForce Namespace : ParticlePhysics.Solver Assembly : cs.temp.dll.dll Syntax public struct TerrainCollisionForce Constructors TerrainCollisionForce(Vector3, Vector3) Declaration public TerrainCollisionForce(Vector3 force, Vector3 torque) Parameters Type Name Description Vector3 force Vector3 torque Fields force Declaration public Vector3 force Field Value Type Description Vector3 torque Declaration public Vector3 torque Field Value Type Description Vector3 Methods zero() Declaration public static TerrainCollisionForce zero() Returns Type Description TerrainCollisionForce"
+  },
+  "api/ParticlePhysics.Utils.html": {
+    "href": "api/ParticlePhysics.Utils.html",
+    "title": "Namespace ParticlePhysics.Utils | Particle Physics",
+    "keywords": "Namespace ParticlePhysics.Utils Structs TerrainType"
+  },
+  "api/ParticlePhysics.Utils.TerrainType.html": {
+    "href": "api/ParticlePhysics.Utils.TerrainType.html",
+    "title": "Struct TerrainType | Particle Physics",
+    "keywords": "Struct TerrainType Namespace : ParticlePhysics.Utils Assembly : cs.temp.dll.dll Syntax public struct TerrainType Fields height Declaration public float height Field Value Type Description Single normal Declaration public Vector3 normal Field Value Type Description Vector3 Methods GenerateFromTerrain(Terrain) Declaration public static TerrainType[] GenerateFromTerrain(Terrain terrain) Parameters Type Name Description Terrain terrain Returns Type Description TerrainType []"
+  },
   "index.html": {
     "href": "index.html",
     "title": "ParticlePhysics | Particle Physics",

@@ -2,6 +2,7 @@
   "sitemap": {
     "fileOptions": {
       "api/*": {
+        "baseUrl": "https://qoopen0815.github.io/ParticlePhysics/",
         "changefreq": "daily"
       }
     },
@@ -20,6 +21,270 @@
         }
       },
       "is_incremental": false
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Global.BufferUtils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Global.BufferUtils.html",
+          "hash": "4K1aKXvX6R0Vd5t1oT6EuYmGpEk1x0ohhAskCL6BPdY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Global.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Global.html",
+          "hash": "sQeIW1Pf4xlPKXSil9zPyM298GpuauV4OQWaPjb0Zgk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Data.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Data.html",
+          "hash": "Td7/ASh+ZOjt1vvnsWNvTpzX2iXWBQ/CZ5paeLPG6fY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Element.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Element.html",
+          "hash": "pUw/sY7WbdU4Uz1thacHyjqFzZmzETJ8DqkUzTcR99w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Enum.ParticleNum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Enum.ParticleNum.html",
+          "hash": "XYRi+q8Mts7zHnRMK+KZ9ahIRZXEKFtqGhOvKKObrT8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Enum.ParticleType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Enum.ParticleType.html",
+          "hash": "TZlmoxDm0GGEoPxxjRxh8wUYfP49hMo7Vg87FwxxEpc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Enum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Enum.html",
+          "hash": "aVce1sY2IMvClOH9XDFLkcNHANo14D6PW9OLhJk8Uns="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.State.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.State.html",
+          "hash": "mu4DSFbrxluN6PvGhHToZ1Yv9J3cicZkRCcWxdmQd6M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Substance.CubeSubstance.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Substance.CubeSubstance.html",
+          "hash": "xFMkMdUtY3ziz2pgdEYuIchn0Znr81t/+ULETzE7Otg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Substance.ParticleSubstance.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Substance.ParticleSubstance.html",
+          "hash": "QKV7ybg4MtXNH35OhJiNXYY94oUEHzudI12CQZmsl8k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Substance.SimpleSubstance.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Substance.SimpleSubstance.html",
+          "hash": "LTO9t1UC0e/QnJvHn+5293HWnaLS0w4eYq7e2td+hI0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Substance.TetrahedronSubstance.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Substance.TetrahedronSubstance.html",
+          "hash": "TuixAbesgYpTyui3sxiEgOapJbuH78yZS/qFsOXnOnA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.Substance.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.Substance.html",
+          "hash": "vZPQWD6nZuFw+wcxkkyDp3XGtEZp38X3xJNJRlkV6Is="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Particle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Particle.html",
+          "hash": "HWV0uufFHodTCFlKIic9SWo92DysS60smpHFuCvbNag="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Solver.ObjectCollisionForce.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Solver.ObjectCollisionForce.html",
+          "hash": "V/ZbsY7ZF6FfwoPW1aiGv4R8W2CUJqO24MAAkxHQysE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Solver.ParticleCollisionForce.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Solver.ParticleCollisionForce.html",
+          "hash": "dLeRZKPmCPaSQmiQ8vRQrJ/BrCzPOpukUVqXYVcXOwk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Solver.SandPhysicsSolver.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Solver.SandPhysicsSolver.html",
+          "hash": "xYkuXPSUELB39noJVzRou4cgGAxggguJ7CzonBF6qJ8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Solver.TerrainCollisionForce.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Solver.TerrainCollisionForce.html",
+          "hash": "zyVSC9DwSJng0JTODqrS7MEQsXdl3rMbpaJ+G3ndSFM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Solver.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Solver.html",
+          "hash": "9dvhcv+f4/lGA8NPRSwS5cLR24DR2bQPTwhUsy7E+Gs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Utils.TerrainType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Utils.TerrainType.html",
+          "hash": "stYJyTvLPkcDdx3hoXD9w8lLsmm78+AnXL5NumUG5HU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ParticlePhysics.Utils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ParticlePhysics.Utils.html",
+          "hash": "Mifo7ZodW/lZSuQikrJl1ZfMwmZAI26oZt22NqPulak="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "NkuAQnCL8rfqRRR49gLbSpqVhRJbdghkywWx8rn0NOw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
     },
     {
       "type": "Conceptual",
@@ -97,7 +362,7 @@
       "output": {
         ".html": {
           "relative_path": "toc.html",
-          "hash": "g0KsbH+o6pUO8xMUdt1C1uTTcD6e7SeS8Eb3O6fOvEg="
+          "hash": "yJmrE3yX1pNdaVuwjza5/7HGejso5LoAwSufMStobAY="
         }
       },
       "is_incremental": false,
@@ -119,6 +384,12 @@
           "can_incremental": false,
           "incrementalPhase": "build",
           "total_file_count": 3,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 21,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {
