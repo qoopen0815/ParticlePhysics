@@ -857,9 +857,17 @@
       <Project>{A0410313-FD7D-9292-54BE-088165902B49}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="Qoopen.ParticlePhysics.csproj">
-      <Project>{92B6EE48-4213-CF2D-B513-A907E04EFB5A}</Project>
-      <Name>Qoopen.ParticlePhysics</Name>
+    <ProjectReference Include="ParticlePhysics.Runtime.csproj">
+      <Project>{6D43D5A7-7002-4642-8C5D-AFE4F4EDDF21}</Project>
+      <Name>ParticlePhysics.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="ParticlePhysics.Runtime.Tests.Particle.csproj">
+      <Project>{7E9A82CB-5A0B-ECE3-A69B-5973A749AD12}</Project>
+      <Name>ParticlePhysics.Runtime.Tests.Particle</Name>
+    </ProjectReference>
+    <ProjectReference Include="ParticlePhysics.Runtime.Tests.GridSearch.csproj">
+      <Project>{CE813526-1FAB-2195-502E-E7299DB220B5}</Project>
+      <Name>ParticlePhysics.Runtime.Tests.GridSearch</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
