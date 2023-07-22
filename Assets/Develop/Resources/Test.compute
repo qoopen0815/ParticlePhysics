@@ -1,45 +1,70 @@
-#pragma kernel CSMain
+#pragma kernel InitCS
+#pragma kernel MainCS
 
-struct Test
+struct ParticleType
 {
-	float x;
-	float y;
-	float z;
+	float3 position;
+	float3 velocity;
+	float4 orientation;
+	float3 angularVelocity;
 };
 
-RWStructuredBuffer<Test> _test;
-
-[numthreads(10,10,10)]
-void CSMain (uint3 threadID : SV_DispatchThreadID)
+cbuffer CB
 {
-	float3 hoge = float3(1, 0, 0);
+	float4x4 _ObjectTF;
+};
+
+shared float4 hoge;
+
+interface iBaseLight
+{
+	float3 IlluminateAmbient(float3 vNormal);
+	float3 IlluminateDiffuse(float3 vNormal);
+	float3 IlluminateSpecular(float3 vNormal, int specularPower);
+};
+
+interface iBaseMaterial
+{
+	float3 GetAmbientColor(float2 vTexcoord);
+   
+	float3 GetDiffuseColor(float2 vTexcoord);
+
+	int GetSpecularPower();
+
+};
+
+class cAmbientLight : iBaseLight
+{
+	float3 m_vLightColor;
+	bool m_bEnable;
+	float3 IlluminateAmbient(float3 vNormal);
+	float3 IlluminateDiffuse(float3 vNormal);
+	float3 IlluminateSpecular(float3 vNormal, int specularPower);
+};
+
+class cHemiAmbientLight : cAmbientLight
+{
+	float4 m_vGroundColor;
+	float4 m_vDirUp;
+	float3 IlluminateAmbient(float3 vNormal);
+};
+
+StructuredBuffer<ParticleType> _bufferRead;
+RWStructuredBuffer<ParticleType> _bufferWrite;
+
+RWStructuredBuffer<float4> _debug;
+
+[numthreads(1024,1,1)]
+void InitCS (uint3 threadID : SV_DispatchThreadID)
+{
 	
-	for (int i = 0; i < 100000; i++)
-	{
-		float3 fuga0 = float3(1, 1, 1);
-		float3 fuga1 = float3(1, 1, 1);
-		float3 fuga2 = float3(1, 1, 1);
-		float3 fuga3 = float3(1, 1, 1);
-		float3 fuga4 = float3(1, 1, 1);
-		float3 fuga5 = float3(1, 1, 1);
-		float3 fuga6 = float3(1, 1, 1);
-		float3 fuga7 = float3(1, 1, 1);
-		float3 fuga8 = float3(1, 1, 1);
-		float3 fuga9 = float3(1, 1, 1);
-		float3 fuga10 = float3(1, 1, 1);
-		float3 fuga11 = float3(1, 1, 1);
-		float3 fuga12 = float3(1, 1, 1);
-		float3 fuga13 = float3(1, 1, 1);
-		float3 fuga14 = float3(1, 1, 1);
-		float3 fuga15 = float3(1, 1, 1);
-		float3 fuga16 = float3(1, 1, 1);
-		float3 fuga17 = float3(1, 1, 1);
-		float3 fuga18 = float3(1, 1, 1);
-		float3 fuga19 = float3(1, 1, 1);
-		hoge += fuga19;
-	}
-	
-	_test[threadID.x].x = hoge.x;
-	_test[threadID.x].y = hoge.y;
-	_test[threadID.x].z = hoge.z;
+	hoge = float4(1, 2, 3, 4);
+	//_debug[threadID.x] = hoge;
+}
+
+[numthreads(1024, 1, 1)]
+void MainCS(uint3 threadID : SV_DispatchThreadID)
+{
+	_debug[threadID.x] = hoge;
+	_bufferWrite[threadID.x].position = mul(_ObjectTF, float4(_bufferRead[threadID.x].position, 1)).xyz;
 }

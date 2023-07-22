@@ -1,4 +1,4 @@
-﻿namespace ParticlePhysics.Particle.Enum
+﻿namespace ParticlePhysics.Enum
 {
     public enum ParticleType
     {

@@ -4,14 +4,15 @@
 // 粒状体を構成する粒子の物性
 struct ElementType
 {
-	float  radius;
-	float  mass;
+	float radius;
+	float mass;
 	float3 offsetFromParticleCenter;
 };
 
 // 粒状体のステータス
 struct ParticleType
 {
+	uint isActive;
 	float3 position;
 	float3 velocity;
 	float4 orientation;
@@ -21,15 +22,15 @@ struct ParticleType
 // 粒状体に関する定数
 cbuffer ParticleCB
 {
-	uint  _ElementNum;
-	uint  _ParticleNum;
+	uint _ElementNum;
+	uint _ParticleNum;
 	float _ParticleMu;
 	float _ParticleTotalMass;
 	float4x4 _ParticleInertialMoment;
 };
 
 // 物性値のバッファ
-StructuredBuffer<ElementType> _ElementBuffer;
+StructuredBuffer<ElementType> _ParticleElementBuffer;
 
 // 粒状体のバッファ
 StructuredBuffer<ParticleType> _ParticleBufferRead;

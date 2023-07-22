@@ -1,15 +1,15 @@
 ﻿using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace ParticlePhysics.Particle
+namespace ParticlePhysics
 {
-    public class Data
+    public class ParticleBuffer
     {
         public readonly int num;
         public GraphicsBuffer status;
-        public Particle.Substance.ParticleSubstance substance;
+        public Substance.ParticleSubstance substance;
 
-        public Data(int particleNum)
+        public ParticleBuffer(int particleNum)
         {
             this.num = particleNum;
         }
@@ -20,37 +20,37 @@ namespace ParticlePhysics.Particle
             substance.Release();
         }
 
-        public static Data SetAsSimpleParticle(State[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
+        public static ParticleBuffer SetAsSimpleParticle(ParticleState[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
-            Data p = new Data(particles.Length);
+            ParticleBuffer p = new ParticleBuffer(particles.Length);
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,
-                Marshal.SizeOf(typeof(State)));
+                Marshal.SizeOf(typeof(ParticleState)));
             p.status.SetData(particles);
             p.substance = new Substance.SimpleSubstance(radius, density, mu);
             return p;
         }
 
-        public static Data SetAsTetrahedronParticle(State[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
+        public static ParticleBuffer SetAsTetrahedronParticle(ParticleState[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
-            Data p = new Data(particles.Length);
+            ParticleBuffer p = new ParticleBuffer(particles.Length);
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,
-                Marshal.SizeOf(typeof(State)));
+                Marshal.SizeOf(typeof(ParticleState)));
             p.status.SetData(particles);
             p.substance = new Substance.TetrahedronSubstance(radius, density, mu);
             return p;
         }
 
-        public static Data SetAsCubeParticle(State[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
+        public static ParticleBuffer SetAsCubeParticle(ParticleState[] particles, float radius = 0.04f, float density = 2000.0f, float mu = 0.05f)
         {
-            Data p = new Data(particles.Length);
+            ParticleBuffer p = new ParticleBuffer(particles.Length);
             p.status = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particles.Length,
-                Marshal.SizeOf(typeof(State)));
+                Marshal.SizeOf(typeof(ParticleState)));
             p.status.SetData(particles);
             p.substance = new Substance.CubeSubstance(radius, density, mu);
             return p;
