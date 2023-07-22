@@ -2,7 +2,6 @@
   "sitemap": {
     "fileOptions": {
       "api/*": {
-        "baseUrl": "https://qoopen0815.github.io/ParticlePhysics/",
         "changefreq": "daily"
       }
     },
@@ -21,90 +20,6 @@
         }
       },
       "is_incremental": false
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Global.PackageExporter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Global.PackageExporter.html",
-          "hash": "8Civrec04MyHelK+WFEIiuZpRbahl2ak1H9jJ3iyL8k="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Global.ParticlePhysicsExample.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Global.ParticlePhysicsExample.html",
-          "hash": "W8eyh5b7hspfRp9N4Ej8OnpWCEuVJAw0edba/2O4Xgw="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Global.RenderType.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Global.RenderType.html",
-          "hash": "7WjXYArRIrLqc55eNvWwYJNk2uYQZS5+foj4bKRYCPc="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Global.Test.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Global.Test.html",
-          "hash": "tevB4LR8opzvNT/BOWeNIVzNO406Qj13zeimebIXAzU="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Global.TestScript.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Global.TestScript.html",
-          "hash": "R7ClM8+YaUI2UV3Caolvqz+T1jAStfiGgoiVkm/BEA0="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Global.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Global.html",
-          "hash": "z//qjPuC3tmmhajbeFQ1GHD/pHrVkb9oVByqlBRHxoM="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Toc",
-      "source_relative_path": "api/toc.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/toc.html",
-          "hash": "lVy1nGCx75P1F91AjNjRYBiinilx0opS1w8TjPzPh6E="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
     },
     {
       "type": "Conceptual",
@@ -182,7 +97,7 @@
       "output": {
         ".html": {
           "relative_path": "toc.html",
-          "hash": "yJmrE3yX1pNdaVuwjza5/7HGejso5LoAwSufMStobAY="
+          "hash": "g0KsbH+o6pUO8xMUdt1C1uTTcD6e7SeS8Eb3O6fOvEg="
         }
       },
       "is_incremental": false,
@@ -204,12 +119,6 @@
           "can_incremental": false,
           "incrementalPhase": "build",
           "total_file_count": 3,
-          "skipped_file_count": 0
-        },
-        "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build",
-          "total_file_count": 6,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {

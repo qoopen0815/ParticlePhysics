@@ -1,34 +1,4 @@
 {
-  "api/Global.html": {
-    "href": "api/Global.html",
-    "title": "Namespace Global | Particle Physics",
-    "keywords": "Namespace Global Classes PackageExporter ParticlePhysicsExample TestScript Structs Test Enums RenderType"
-  },
-  "api/Global.PackageExporter.html": {
-    "href": "api/Global.PackageExporter.html",
-    "title": "Class PackageExporter | Particle Physics",
-    "keywords": "Class PackageExporter Inheritance Object PackageExporter Namespace : Global Assembly : cs.temp.dll.dll Syntax public class PackageExporter"
-  },
-  "api/Global.ParticlePhysicsExample.html": {
-    "href": "api/Global.ParticlePhysicsExample.html",
-    "title": "Class ParticlePhysicsExample | Particle Physics",
-    "keywords": "Class ParticlePhysicsExample Inheritance Object ParticlePhysicsExample Namespace : Global Assembly : cs.temp.dll.dll Syntax public class ParticlePhysicsExample : MonoBehaviour"
-  },
-  "api/Global.RenderType.html": {
-    "href": "api/Global.RenderType.html",
-    "title": "Enum RenderType | Particle Physics",
-    "keywords": "Enum RenderType Namespace : Global Assembly : cs.temp.dll.dll Syntax public enum RenderType Fields Name Description Debug SandLike Velocity"
-  },
-  "api/Global.Test.html": {
-    "href": "api/Global.Test.html",
-    "title": "Struct Test | Particle Physics",
-    "keywords": "Struct Test Namespace : Global Assembly : cs.temp.dll.dll Syntax public struct Test Fields x Declaration public float x Field Value Type Description Single y Declaration public float y Field Value Type Description Single z Declaration public float z Field Value Type Description Single"
-  },
-  "api/Global.TestScript.html": {
-    "href": "api/Global.TestScript.html",
-    "title": "Class TestScript | Particle Physics",
-    "keywords": "Class TestScript Inheritance Object TestScript Namespace : Global Assembly : cs.temp.dll.dll Syntax public class TestScript : MonoBehaviour"
-  },
   "index.html": {
     "href": "index.html",
     "title": "ParticlePhysics | Particle Physics",
