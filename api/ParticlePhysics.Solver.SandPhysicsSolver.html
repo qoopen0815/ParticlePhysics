@@ -103,7 +103,8 @@
   
   <a id="ParticlePhysics_Solver_SandPhysicsSolver__ctor_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.#ctor*"></a>
   <h4 id="ParticlePhysics_Solver_SandPhysicsSolver__ctor_Vector3_System_Single_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.#ctor(Vector3,System.Single)">SandPhysicsSolver(Vector3, Single)</h4>
-  <div class="markdown level1 summary"><p>Note: Please call SetMainParticle(), SetCollisionObjects() and SetTerrain() to register the required data before execution.</p>
+  <div class="markdown level1 summary"><p>Constructor for SandPhysicsSolver.
+Note: Please call SetMainParticle(), SetCollisionObjects() and SetTerrain() to register the required data before execution.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -123,12 +124,14 @@
       <tr>
         <td><span class="xref">Vector3</span></td>
         <td><span class="parametername">gravity</span></td>
-        <td></td>
+        <td><p>The gravity vector to be applied in the simulation.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">Single</a></td>
         <td><span class="parametername">maxAllowableTimestep</span></td>
-        <td></td>
+        <td><p>The maximum allowable timestep for the simulation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -412,7 +415,7 @@
   
   <a id="ParticlePhysics_Solver_SandPhysicsSolver_Release_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.Release*"></a>
   <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_Release" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.Release">Release()</h4>
-  <div class="markdown level1 summary"><p>Must be called at the end of execution.</p>
+  <div class="markdown level1 summary"><p>Method to release the resources used by the SandPhysicsSolver.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -423,7 +426,8 @@
   
   <a id="ParticlePhysics_Solver_SandPhysicsSolver_SetCollisionObjects_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetCollisionObjects*"></a>
   <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_SetCollisionObjects_GameObject___" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetCollisionObjects(GameObject[])">SetCollisionObjects(GameObject[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Set the collision objects to be used in the simulation.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -442,7 +446,8 @@
       <tr>
         <td><span class="xref">GameObject</span>[]</td>
         <td><span class="parametername">objects</span></td>
-        <td></td>
+        <td><p>An array of GameObjects representing the collision objects.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -450,7 +455,8 @@
   
   <a id="ParticlePhysics_Solver_SandPhysicsSolver_SetFieldTerrain_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetFieldTerrain*"></a>
   <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_SetFieldTerrain_Terrain_Vector3_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetFieldTerrain(Terrain,Vector3)">SetFieldTerrain(Terrain, Vector3)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Set the terrain data to be used in the simulation.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -469,12 +475,14 @@
       <tr>
         <td><span class="xref">Terrain</span></td>
         <td><span class="parametername">terrain</span></td>
-        <td></td>
+        <td><p>The Terrain object representing the terrain data.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">Vector3</span></td>
         <td><span class="parametername">gridCenter</span></td>
-        <td></td>
+        <td><p>The center position of the grid for collision detection.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -482,7 +490,9 @@
   
   <a id="ParticlePhysics_Solver_SandPhysicsSolver_SetMainParticle_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetMainParticle*"></a>
   <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_SetMainParticle_ParticlePhysics_ParticleBuffer_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.SetMainParticle(ParticlePhysics.ParticleBuffer)">SetMainParticle(ParticleBuffer)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Set the main particle buffer for the simulation.
+Note: If no particle buffer is provided, a default tetrahedron particle buffer will be generated.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -501,7 +511,8 @@
       <tr>
         <td><a class="xref" href="ParticlePhysics.ParticleBuffer.html">ParticleBuffer</a></td>
         <td><span class="parametername">particle</span></td>
-        <td></td>
+        <td><p>The main particle buffer to be used for the simulation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -509,7 +520,8 @@
   
   <a id="ParticlePhysics_Solver_SandPhysicsSolver_UpdateParticle_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.UpdateParticle*"></a>
   <h4 id="ParticlePhysics_Solver_SandPhysicsSolver_UpdateParticle_ParticlePhysics_ParticleBuffer__GraphicsBuffer_" data-uid="ParticlePhysics.Solver.SandPhysicsSolver.UpdateParticle(ParticlePhysics.ParticleBuffer@,GraphicsBuffer)">UpdateParticle(ref ParticleBuffer, GraphicsBuffer)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Update the particle buffer with collision forces and integrate the particles&apos; positions.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -528,12 +540,14 @@
       <tr>
         <td><a class="xref" href="ParticlePhysics.ParticleBuffer.html">ParticleBuffer</a></td>
         <td><span class="parametername">particles</span></td>
-        <td></td>
+        <td><p>The ParticleBuffer to be updated.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">GraphicsBuffer</span></td>
         <td><span class="parametername">terrain</span></td>
-        <td></td>
+        <td><p>The GraphicsBuffer representing the terrain data.</p>
+</td>
       </tr>
     </tbody>
   </table>
