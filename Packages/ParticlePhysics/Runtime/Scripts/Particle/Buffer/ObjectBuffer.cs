@@ -43,7 +43,7 @@ namespace ParticlePhysics
             Debug.Log("extents: " + _mesh.bounds.extents);
 
             this._particle = ParticleBuffer.SetAsSimpleParticle(
-                particles: ParticleState.GenerateFromGameObject(_object, 32),
+                particles: ParticleState.GenerateFromGameObject(_object, 128),
                 radius: 0.1f);
 
             this._gridSearch = new GridSearch<ParticleState>(_particle.num, _gridSize, _gridCellSize);

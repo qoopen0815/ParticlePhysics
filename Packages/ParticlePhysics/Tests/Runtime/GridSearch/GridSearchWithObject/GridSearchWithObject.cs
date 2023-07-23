@@ -13,11 +13,11 @@ public class GridSearchWithObject : MonoBehaviour
     public VisualEffect effect;
     public GameObject targetObject;
 
-    private float _particleRadius = 0.01f;
+    private float _particleRadius = 0.1f;
 
     private Vector3 _gridCenter;
     private Vector3 _gridSize;
-    private float _gridCellSize = 0.1f;
+    private float _gridCellSize = 1.0f;
 
     private ObjectBuffer _objectBuffer;
 

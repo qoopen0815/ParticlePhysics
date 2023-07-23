@@ -485,7 +485,7 @@ MonoBehaviour:
   highlightCellId: 5
   particleNum: 131072
   effect: {fileID: 800131443}
-  targetObject: {fileID: 0}
+  targetObject: {fileID: 1966365198}
 --- !u!850595691 &1873836718
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -548,3 +548,9 @@ LightingSettings:
   m_PVRFilteringAtrousPositionSigmaIndirect: 2
   m_PVRFilteringAtrousPositionSigmaAO: 1
   m_PVRTiledBaking: 0
+--- !u!1 &1966365198 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2f544844c0be38c4798b17bce08fd07a,
+    type: 3}
+  m_PrefabInstance: {fileID: 340150586}
+  m_PrefabAsset: {fileID: 0}
