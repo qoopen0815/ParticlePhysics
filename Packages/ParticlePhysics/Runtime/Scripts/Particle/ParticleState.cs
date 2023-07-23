@@ -3,15 +3,43 @@ using UnityEngine.VFX;
 
 namespace ParticlePhysics
 {
+    /// <summary>
+    /// Represents the state of a particle.
+    /// </summary>
     [VFXType(VFXTypeAttribute.Usage.GraphicsBuffer)]
     public struct ParticleState
     {
-        public uint isActive;   // 0: false, 1: true
+        /// <summary>
+        /// Indicates if the particle is active. 0: false, 1: true.
+        /// </summary>
+        public uint isActive;
+
+        /// <summary>
+        /// The position of the particle in 3D space.
+        /// </summary>
         public Vector3 position;
+
+        /// <summary>
+        /// The velocity of the particle in 3D space.
+        /// </summary>
         public Vector3 velocity;
+
+        /// <summary>
+        /// The orientation of the particle represented by a Quaternion in the form of a Vector4 (x, y, z, w).
+        /// </summary>
         public Vector4 orientation;
+
+        /// <summary>
+        /// The angular velocity of the particle.
+        /// </summary>
         public Vector3 angularVelocity;
 
+        /// <summary>
+        /// Generates an array of particles at a specific center position, with default values for velocity and orientation.
+        /// </summary>
+        /// <param name="particleNum">The number of particles to generate.</param>
+        /// <param name="centerPos">The center position for generating particles.</param>
+        /// <returns>An array of ParticleState representing the generated particles.</returns>
         public static ParticleState[] GeneratePoint(int particleNum, Vector3 centerPos)
         {
             var particles = new ParticleState[particleNum];
@@ -27,6 +55,13 @@ namespace ParticlePhysics
             return particles;
         }
 
+        /// <summary>
+        /// Generates an array of particles distributed within a sphere with a specific center and radius.
+        /// </summary>
+        /// <param name="particleNum">The number of particles to generate.</param>
+        /// <param name="centerPos">The center position for generating particles.</param>
+        /// <param name="radius">The radius of the sphere.</param>
+        /// <returns>An array of ParticleState representing the generated particles.</returns>
         public static ParticleState[] GenerateSphere(int particleNum, Vector3 centerPos, float radius)
         {
             var particles = new ParticleState[particleNum];
@@ -42,6 +77,13 @@ namespace ParticlePhysics
             return particles;
         }
 
+        /// <summary>
+        /// Generates an array of particles distributed within a cube with a specific center and size.
+        /// </summary>
+        /// <param name="particleNum">The number of particles to generate.</param>
+        /// <param name="centerPos">The center position for generating particles.</param>
+        /// <param name="size">The size of the cube.</param>
+        /// <returns>An array of ParticleState representing the generated particles.</returns>
         public static ParticleState[] GenerateCube(int particleNum, Vector3 centerPos, float size)
         {
             var particles = new ParticleState[particleNum];
@@ -57,6 +99,11 @@ namespace ParticlePhysics
             return particles;
         }
 
+        /// <summary>
+        /// Generates an array of particles on the surface of a given mesh.
+        /// </summary>
+        /// <param name="mesh">The mesh to generate particles from.</param>
+        /// <returns>An array of ParticleState representing the generated particles.</returns>
         public static ParticleState[] GenerateFromMesh(Mesh mesh)
         {
             var verts = ParticleCollider.GetVertsOnMeshSurface(mesh, 128);
@@ -73,6 +120,11 @@ namespace ParticlePhysics
             return particles;
         }
 
+        /// <summary>
+        /// Generates an array of particles on the surface of a mesh attached to the given GameObject.
+        /// </summary>
+        /// <param name="obj">The GameObject with a mesh to generate particles from.</param>
+        /// <returns>An array of ParticleState representing the generated particles.</returns>
         public static ParticleState[] GenerateFromGameObject(GameObject obj)
         {
             var verts = ParticleCollider.GetVertsOnMeshSurface(obj.GetComponent<MeshFilter>().mesh, 128);

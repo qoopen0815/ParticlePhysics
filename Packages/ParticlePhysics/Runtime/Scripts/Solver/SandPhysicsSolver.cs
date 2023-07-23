@@ -8,16 +8,44 @@ using ParticlePhysics.Utils;
 
 namespace ParticlePhysics.Solver
 {
+    /// <summary>
+    /// Struct to store collision object data used by the SandPhysicsSolver.
+    /// </summary>
     internal struct CollisionObjectBuffer
     {
+        /// <summary>
+        /// The GameObject associated with the collision object.
+        /// </summary>
         public GameObject gameObject;
+
+        /// <summary>
+        /// Particle buffer for the collision object.
+        /// </summary>
         public ParticleBuffer objParticleBuffer;
+
+        /// <summary>
+        /// Grid search object for the collision object.
+        /// </summary>
         public GridSearch<ParticleState> objectGS;
+
         private GraphicsBuffer _objGridIndicesBuffer;
 
+        /// <summary>
+        /// Graphics buffer for the collision object's grid indices.
+        /// </summary>
         public GraphicsBuffer ObjectGridIndicesBuffer => _objGridIndicesBuffer;
+
+        /// <summary>
+        /// Graphics buffer for the particle grid indices.
+        /// </summary>
         public GraphicsBuffer ParticleGridIndicesBuffer => objectGS.TargetGridIndicesBuffer;
 
+        /// <summary>
+        /// Constructor to initialize the CollisionObjectBuffer.
+        /// </summary>
+        /// <param name="gameObject">The GameObject representing the collision object.</param>
+        /// <param name="gridSize">The size of the grid for collision detection.</param>
+        /// <param name="gridCellSize">The cell size of the grid for collision detection.</param>
         public CollisionObjectBuffer(GameObject gameObject, Vector3 gridSize, float gridCellSize)
         {
             //gridSizeはgameObjectのサイズで自動で決められるべき
@@ -31,6 +59,9 @@ namespace ParticlePhysics.Solver
             this._objGridIndicesBuffer = this.objectGS.TargetGridIndicesBuffer;
         }
 
+        /// <summary>
+        /// Method to release the resources held by the CollisionObjectBuffer.
+        /// </summary>
         public void Release()
         {
             objParticleBuffer.Release();
@@ -83,10 +114,11 @@ namespace ParticlePhysics.Solver
         #endregion
 
         /// <summary>
+        /// Constructor for SandPhysicsSolver.
         /// Note: Please call SetMainParticle(), SetCollisionObjects() and SetTerrain() to register the required data before execution.
         /// </summary>
-        /// <param name="gravity"></param>
-        /// <param name="maxAllowableTimestep"></param>
+        /// <param name="gravity">The gravity vector to be applied in the simulation.</param>
+        /// <param name="maxAllowableTimestep">The maximum allowable timestep for the simulation.</param>
         public SandPhysicsSolver(Vector3 gravity, float maxAllowableTimestep = 0.005f)
         {
             this.gravity = gravity;
@@ -100,6 +132,11 @@ namespace ParticlePhysics.Solver
                       "Max Allowable Timestep : \t" + this.maxAllowableTimestep);
         }
 
+        /// <summary>
+        /// Set the main particle buffer for the simulation.
+        /// Note: If no particle buffer is provided, a default tetrahedron particle buffer will be generated.
+        /// </summary>
+        /// <param name="particle">The main particle buffer to be used for the simulation.</param>
         public void SetMainParticle(ParticleBuffer particle=null)
         {
             if(particle==null)
@@ -116,6 +153,10 @@ namespace ParticlePhysics.Solver
             InitializeBuffer(_particle.num);
         }
 
+        /// <summary>
+        /// Set the collision objects to be used in the simulation.
+        /// </summary>
+        /// <param name="objects">An array of GameObjects representing the collision objects.</param>
         public void SetCollisionObjects(GameObject[] objects)
         {
             _objectBuffers = new List<CollisionObjectBuffer>();
@@ -131,6 +172,11 @@ namespace ParticlePhysics.Solver
             }
         }
 
+        /// <summary>
+        /// Set the terrain data to be used in the simulation.
+        /// </summary>
+        /// <param name="terrain">The Terrain object representing the terrain data.</param>
+        /// <param name="gridCenter">The center position of the grid for collision detection.</param>
         public void SetFieldTerrain(Terrain terrain, Vector3 gridCenter)
         {
             _terrainFriction = 0.955f;
@@ -174,7 +220,7 @@ namespace ParticlePhysics.Solver
         }
 
         /// <summary>
-        /// Must be called at the end of execution.
+        /// Method to release the resources used by the SandPhysicsSolver.
         /// </summary>
         public void Release()
         {
@@ -187,6 +233,11 @@ namespace ParticlePhysics.Solver
             _debugger.Release();
         }
 
+        /// <summary>
+        /// Update the particle buffer with collision forces and integrate the particles' positions.
+        /// </summary>
+        /// <param name="particles">The ParticleBuffer to be updated.</param>
+        /// <param name="terrain">The GraphicsBuffer representing the terrain data.</param>
         public void UpdateParticle(ref ParticleBuffer particles, GraphicsBuffer terrain)
         {
             CalculateParticleCollisionForce(ref particles);
