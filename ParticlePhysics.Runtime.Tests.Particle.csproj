@@ -56,7 +56,7 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Packages\ParticlePhysics\Tests\Runtime\Particle\SpawnObjectParticleTest.cs" />
+    <Compile Include="Packages\ParticlePhysics\Tests\Runtime\Particle\GenerateParticleTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Packages\ParticlePhysics\Tests\Runtime\Particle\ParticlePhysics.Runtime.Tests.Particle.asmdef" />

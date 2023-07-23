@@ -60,6 +60,7 @@
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\Substance\ParticleSubstance.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Enum\ParticleType.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\Substance\SimpleSubstance.cs" />
+    <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\Buffer\ObjectBuffer.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Solver\ForceType.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\ParticleState.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\BitonicSort\BitonicSort.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Solver\SandPhysicsSolver.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\Marching\MarchingTertahedron.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\Marching\VoxelArray.cs" />
-    <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\ParticleBuffer.cs" />
+    <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\Buffer\ParticleBuffer.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\Marching\Marching.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\Buffer\BufferUtils.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\Marching\MarchingCubes.cs" />

@@ -5,14 +5,14 @@ using System;
 using UnityEngine;
 using UnityEngine.VFX;
 
-public class GridSearchTest : MonoBehaviour
+public class GridSearchWithParticle : MonoBehaviour
 {
     [Range(0, 999)]
-    public int displayCellId = 0;
+    public int highlightCellId = 0;
+    public ParticleNum _particleNum = ParticleNum.NUM_128K;
     public VisualEffect effect;
 
     private float _particleRadius = 0.1f;
-    private ParticleNum _particleNum = ParticleNum.NUM_128K;
 
     private float _particleSphereRadius = 5.0f;
     private float _gridSize = 10.0f;
@@ -31,7 +31,7 @@ public class GridSearchTest : MonoBehaviour
 
         // Setup VFX Graph
         effect.SetUInt("ParticleNum", (uint)_particleBuffer.status.count);
-        effect.SetFloat("ParticleSize", 0.1f);
+        effect.SetFloat("ParticleSize", _particleRadius);
         effect.SetGraphicsBuffer("ParticleBuffer", _particleBuffer.status);
     }
 
@@ -39,7 +39,7 @@ public class GridSearchTest : MonoBehaviour
     void Update()
     {
         _gridSearch.GridSort(ref _particleBuffer.status, this.transform);
-        var index = _gridSearch.GetCellIndices((uint)displayCellId);
+        var index = _gridSearch.GetCellIndices((uint)highlightCellId);
         effect.SetUInt("FirstIndex", index.x);
         effect.SetUInt("LastIndex", index.y);
     }
@@ -56,9 +56,9 @@ public class GridSearchTest : MonoBehaviour
         Gizmos.DrawWireCube(Vector3.one * _particleSphereRadius, Vector3.one * _gridSize);
         Gizmos.DrawWireCube(
             new Vector3(
-                x: (int)((displayCellId % (_gridSize))),
-                y: (int)((displayCellId % (_gridSize * _gridSize)) / _gridSize),
-                z: (int)((displayCellId % (_gridSize * _gridSize * _gridSize)) / (_gridSize * _gridSize))
+                x: (int)((highlightCellId % (_gridSize))),
+                y: (int)((highlightCellId % (_gridSize * _gridSize)) / _gridSize),
+                z: (int)((highlightCellId % (_gridSize * _gridSize * _gridSize)) / (_gridSize * _gridSize))
                 ) + Vector3.one * 0.5f,
                 Vector3.one * _gridCellSize
             );

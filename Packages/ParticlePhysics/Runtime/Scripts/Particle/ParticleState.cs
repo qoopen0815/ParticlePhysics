@@ -57,9 +57,9 @@ namespace ParticlePhysics
             return particles;
         }
 
-        public static ParticleState[] GenerateFromMesh(Mesh mesh)
+        public static ParticleState[] GenerateFromMesh(Mesh mesh, int resolution = 128)
         {
-            var verts = ParticleCollider.GetVertsOnMeshSurface(mesh, 128);
+            var verts = ParticleCollider.GetVertsOnMeshSurface(mesh, resolution);
             var particles = new ParticleState[verts.Count];
             var identityOrientation = Quaternion.identity;
             for (int i = 0; i < verts.Count; i++)
@@ -73,9 +73,9 @@ namespace ParticlePhysics
             return particles;
         }
 
-        public static ParticleState[] GenerateFromGameObject(GameObject obj)
+        public static ParticleState[] GenerateFromGameObject(GameObject obj, int resolution = 128)
         {
-            var verts = ParticleCollider.GetVertsOnMeshSurface(obj.GetComponent<MeshFilter>().mesh, 128);
+            var verts = ParticleCollider.GetVertsOnMeshSurface(obj.GetComponent<MeshFilter>().mesh, resolution);
             var particles = new ParticleState[verts.Count];
             var identityOrientation = Quaternion.identity;
             var m = Matrix4x4.identity;
