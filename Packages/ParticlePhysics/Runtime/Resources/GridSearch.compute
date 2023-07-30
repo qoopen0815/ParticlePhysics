@@ -14,7 +14,6 @@ StructuredBuffer<uint2> _GridBufferRead;
 RWStructuredBuffer<uint2> _GridBufferWrite;
 
 float4x4 _GridTF = MAT4x4_IDENTITY;
-//float3 _GridPos = float3(0, 0, 0);
 
 //--------------------------------------------------------------------------------------
 // Build Grid : 各パーティクルの属するセルを計算し、紐づけてGridBufferに保存

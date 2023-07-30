@@ -162,7 +162,6 @@ namespace ParticlePhysics.Utils
                 pos: gridTF.position,
                 q: gridTF.rotation,
                 s: gridTF.localScale);
-            GridSearchCS.SetVector("_GridPos", gridTF.position);
 
             int kernelID = -1;
 

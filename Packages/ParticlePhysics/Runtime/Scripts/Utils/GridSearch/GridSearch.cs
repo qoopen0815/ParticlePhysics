@@ -63,6 +63,10 @@ namespace ParticlePhysics.Utils
         /// <param name="objectNum">The number of objects to search.</param>
         protected override void InitializeBuffer(int objectNum)
         {
+            var index = Mathf.CeilToInt(Mathf.Log(objectNum, 2));
+            var ceiledObjectNum = Mathf.Pow(2, index);
+
+
             // It would be great to dynamically change the size of the buffers declared here.
             // Is there a way to copy the input buffers of GridSort() to handle variable sizes?
             gridBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objectNum, Marshal.SizeOf(typeof(Uint2)));

@@ -122,6 +122,29 @@ namespace ParticlePhysics
         }
 
         /// <summary>
+        /// Generates an array of particles on the surface of a given mesh.
+        /// </summary>
+        /// <param name="mesh">The mesh to generate particles from.</param>
+        /// <param name="trs">The transformation matrix (translation, rotation, scale).</param>
+        /// <param name="resolution">The resolution of the generated particles. Default value is 128.</param>
+        /// <returns>An array of ParticleState representing the generated particles.</returns>
+        public static ParticleState[] GenerateFromMesh(Mesh mesh, Matrix4x4 trs, int resolution = 128)
+        {
+            var verts = ParticleCollider.GetVertsOnMeshSurface(mesh, resolution);
+            var particles = new ParticleState[verts.Count];
+            var identityOrientation = Quaternion.identity;
+            for (int i = 0; i < verts.Count; i++)
+            {
+                particles[i].isActive = 1;
+                particles[i].position = trs.MultiplyPoint3x4(verts[i]);
+                particles[i].velocity = Vector3.zero;
+                particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
+                particles[i].angularVelocity = Vector3.zero;
+            }
+            return particles;
+        }
+
+        /// <summary>
         /// Generates an array of particles on the surface of a mesh attached to the given GameObject.
         /// </summary>
         /// <param name="obj">The GameObject with a mesh to generate particles from.</param>
@@ -132,12 +155,12 @@ namespace ParticlePhysics
             var verts = ParticleCollider.GetVertsOnMeshSurface(obj.GetComponent<MeshFilter>().mesh, resolution);
             var particles = new ParticleState[verts.Count];
             var identityOrientation = Quaternion.identity;
-            var m = Matrix4x4.identity;
-            m.SetTRS(obj.transform.position, obj.transform.rotation, obj.transform.localScale);
+            var trs = Matrix4x4.identity;
+            trs.SetTRS(obj.transform.position, obj.transform.rotation, obj.transform.localScale);
             for (int i = 0; i < verts.Count; i++)
             {
                 particles[i].isActive = 1;
-                particles[i].position = m.MultiplyPoint3x4(verts[i]);
+                particles[i].position = trs.MultiplyPoint3x4(verts[i]);
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
                 particles[i].angularVelocity = Vector3.zero;
