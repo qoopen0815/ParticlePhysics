@@ -22,17 +22,15 @@ float4x4 _GridTF = MAT4x4_IDENTITY;
 void BuildGridCS(uint3 DTid : SV_DispatchThreadID)
 {
 	const uint P_ID = DTid.x; // Particle ID to operate on
-
+	_GridBufferWrite[P_ID] = uint2(0xffffff, P_ID);
+	
+	if (P_ID >= (uint) _ParticleNum)
+		return;
+	
 	float3 position = _ParticleBufferRead[P_ID].position;
 	float3 grid_xyz = GridCalculateCell(position, _GridTF);
 	
-	//_GridBufferWrite[P_ID] = MakeKeyValuePair((uint3) grid_xyz, P_ID);
-
-	if (grid_xyz.x < 0 | grid_xyz.y < 0 | grid_xyz.z < 0)
-	{
-		_GridBufferWrite[P_ID] = uint2(0xffffff, P_ID);
-	}
-	else
+	if (!(grid_xyz.x < 0 | grid_xyz.y < 0 | grid_xyz.z < 0))
 	{
 		_GridBufferWrite[P_ID] = MakeKeyValuePair((uint3) grid_xyz, P_ID);
 	}
@@ -51,7 +49,8 @@ void BuildGridCS(uint3 DTid : SV_DispatchThreadID)
 void ClearGridIndicesCS(uint3 DTid : SV_DispatchThreadID)
 {
 	// グリッドの個数分
-	_GridIndicesBufferWrite[DTid.x] = uint2(0, 0);
+	//_GridIndicesBufferWrite[DTid.x] = uint2(0, 0);
+	_GridIndicesBufferWrite[DTid.x] = uint2(0xffffff, 0xffffff);
 }
 
 [numthreads(THREAD_SIZE_X, 1, 1)]
@@ -96,5 +95,9 @@ void RearrangeParticlesCS(uint3 DTid : SV_DispatchThreadID)
 {
 	const unsigned int id = DTid.x; // Particle ID to operate on
 	const unsigned int P_ID = GridGetValue(_GridBufferRead[id]);
+	
+	if (id >= (uint) _ParticleNum)
+		return;
+	
 	_ParticleBufferWrite[id] = _ParticleBufferRead[P_ID]; // ソート済みに並び替える
 }
