@@ -121,6 +121,12 @@ namespace ParticlePhysics
             return particles;
         }
 
+        private static int FittingNum(int num)
+        {
+            var ceiledIndex = Mathf.CeilToInt(Mathf.Log(num, 2));
+            return (int)Mathf.Pow(2, ceiledIndex);
+        }
+
         /// <summary>
         /// Generates an array of particles on the surface of a given mesh.
         /// </summary>
@@ -131,12 +137,14 @@ namespace ParticlePhysics
         public static ParticleState[] GenerateFromMesh(Mesh mesh, Matrix4x4 trs, int resolution = 128)
         {
             var verts = ParticleCollider.GetVertsOnMeshSurface(mesh, resolution);
-            var particles = new ParticleState[verts.Count];
+            int vertsNum = verts.Count;
+            var particles = new ParticleState[FittingNum(vertsNum)];
             var identityOrientation = Quaternion.identity;
             for (int i = 0; i < verts.Count; i++)
             {
                 particles[i].isActive = 1;
                 particles[i].position = trs.MultiplyPoint3x4(verts[i]);
+                if (i >= vertsNum) particles[i].position = Vector3.zero;
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
                 particles[i].angularVelocity = Vector3.zero;
@@ -153,7 +161,8 @@ namespace ParticlePhysics
         public static ParticleState[] GenerateFromGameObject(GameObject obj, int resolution = 128)
         {
             var verts = ParticleCollider.GetVertsOnMeshSurface(obj.GetComponent<MeshFilter>().mesh, resolution);
-            var particles = new ParticleState[verts.Count];
+            int vertsNum = verts.Count;
+            var particles = new ParticleState[FittingNum(vertsNum)];
             var identityOrientation = Quaternion.identity;
             var trs = Matrix4x4.identity;
             trs.SetTRS(obj.transform.position, obj.transform.rotation, obj.transform.localScale);
@@ -161,6 +170,7 @@ namespace ParticlePhysics
             {
                 particles[i].isActive = 1;
                 particles[i].position = trs.MultiplyPoint3x4(verts[i]);
+                if (i >= vertsNum) particles[i].position = Vector3.zero;
                 particles[i].velocity = Vector3.zero;
                 particles[i].orientation = new Vector4(identityOrientation.x, identityOrientation.y, identityOrientation.z, identityOrientation.w);
                 particles[i].angularVelocity = Vector3.zero;

@@ -74,8 +74,9 @@ namespace ParticlePhysics.Utils
         /// <param name="objNum">The number of objects to be sorted.</param>
         public GridSearchBase(int objNum)
         {
-            this.numObjects = objNum;
-            this.threadGroupSize = objNum / SIMULATION_BLOCK_SIZE_FOR_GRID;
+            var ceiledIndex = Mathf.CeilToInt(Mathf.Log(objNum, 2));
+            this.numObjects = (int)Mathf.Pow(2, ceiledIndex);
+            this.threadGroupSize = this.numObjects / SIMULATION_BLOCK_SIZE_FOR_GRID;
         }
 
         #region Accessor
