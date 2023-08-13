@@ -25,8 +25,7 @@ public class GridSearchWithParticle : MonoBehaviour
     void Start()
     {
         _particleBuffer = ParticleBuffer.SetAsTetrahedronParticle(
-                            //particles: ParticleState.GenerateCube((int)_particleNum, Vector3.one * _particleSphereRadius, _particleSphereRadius * 2),
-                            particles: ParticleState.GenerateCube((int)1024*8, Vector3.one * _particleSphereRadius, _particleSphereRadius * 2),
+                            particles: ParticleState.GenerateCube((int)_particleNum, Vector3.one * _particleSphereRadius, _particleSphereRadius * 2),
                             radius: _particleRadius);
         _gridSearch = new GridSearch<ParticleState>(_particleBuffer.num, new Vector3(_gridSize, _gridSize, _gridSize), _gridCellSize);
 

@@ -24,7 +24,7 @@ public class GridSearchWithObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _objectBuffer = new ObjectBuffer(targetObject, (int)particleNum, _gridCellSize);
+        _objectBuffer = new ObjectBuffer(targetObject, (int)particleNum);
         _gridCenter = _objectBuffer.GridCenter;
         _gridSize = _objectBuffer.GridSize;
         _gridCellSize = _objectBuffer.GridCellSize;
@@ -38,8 +38,7 @@ public class GridSearchWithObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var index = BufferUtils.GetData<Uint2>(_objectBuffer.GetCollisionIndices())[highlightCellId];
-        //Debug.Log("x: " + index.x + ",y: " + index.y);
+        var index = BufferUtils.GetData<Uint2>(_objectBuffer.ObjectGridIndicesBuffer)[highlightCellId];
         effect.SetUInt("FirstIndex", index.x);
         effect.SetUInt("LastIndex", index.y);
     }
