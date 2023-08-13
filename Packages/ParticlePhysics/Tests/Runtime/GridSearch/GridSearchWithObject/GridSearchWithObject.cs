@@ -15,19 +15,12 @@ public class GridSearchWithObject : MonoBehaviour
 
     private float _particleRadius = 0.1f;
 
-    private Vector3 _gridCenter;
-    private Vector3 _gridSize;
-    private float _gridCellSize = 1.0f;
-
     private ObjectBuffer _objectBuffer;
 
     // Start is called before the first frame update
     void Start()
     {
         _objectBuffer = new ObjectBuffer(targetObject, (int)particleNum);
-        _gridCenter = _objectBuffer.GridCenter;
-        _gridSize = _objectBuffer.GridSize;
-        _gridCellSize = _objectBuffer.GridCellSize;
 
         // Setup VFX Graph
         effect.SetUInt("ParticleNum", (uint)_objectBuffer.ObjectParticle.num);
@@ -46,19 +39,5 @@ public class GridSearchWithObject : MonoBehaviour
     private void OnDestroy()
     {
         _objectBuffer.Release();
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(_gridCenter, _gridSize);
-        Gizmos.DrawWireCube(
-            new Vector3(
-                x: (int)((highlightCellId % (_gridSize.x))),
-                y: (int)((highlightCellId % (_gridSize.x * _gridSize.y)) / _gridSize.x),
-                z: (int)((highlightCellId % (_gridSize.x * _gridSize.y * _gridSize.z)) / (_gridSize.x * _gridSize.y))
-                ) + Vector3.one * 0.5f,
-                Vector3.one * _gridCellSize
-            );
     }
 }
