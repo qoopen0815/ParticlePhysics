@@ -31,7 +31,7 @@ public class GridSearchWithObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var index = BufferUtils.GetData<Uint2>(_objectBuffer.ObjectGridIndicesBuffer)[highlightCellId];
+        var index = BufferUtils.GetData<Uint2>(_objectBuffer.GridIndicesBuffer)[highlightCellId];
         effect.SetUInt("FirstIndex", index.x);
         effect.SetUInt("LastIndex", index.y);
     }

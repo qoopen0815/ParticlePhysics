@@ -121,12 +121,6 @@ namespace ParticlePhysics
             return particles;
         }
 
-        private static int FittingNum(int num)
-        {
-            var ceiledIndex = Mathf.CeilToInt(Mathf.Log(num, 2));
-            return (int)Mathf.Pow(2, ceiledIndex);
-        }
-
         /// <summary>
         /// Generates an array of particles on the surface of a given mesh.
         /// </summary>
@@ -138,7 +132,7 @@ namespace ParticlePhysics
         {
             var verts = ParticleCollider.GetVertsOnMeshSurface(mesh, resolution);
             int vertsNum = verts.Count;
-            var particles = new ParticleState[FittingNum(vertsNum)];
+            var particles = new ParticleState[NumFitting(vertsNum)];
             var identityOrientation = Quaternion.identity;
             for (int i = 0; i < verts.Count; i++)
             {
@@ -162,7 +156,7 @@ namespace ParticlePhysics
         {
             var verts = ParticleCollider.GetVertsOnMeshSurface(obj.GetComponent<MeshFilter>().mesh, resolution);
             int vertsNum = verts.Count;
-            var particles = new ParticleState[FittingNum(vertsNum)];
+            var particles = new ParticleState[NumFitting(vertsNum)];
             var identityOrientation = Quaternion.identity;
             var trs = Matrix4x4.identity;
             trs.SetTRS(obj.transform.position, obj.transform.rotation, obj.transform.localScale);
@@ -176,6 +170,12 @@ namespace ParticlePhysics
                 particles[i].angularVelocity = Vector3.zero;
             }
             return particles;
+        }
+
+        private static int NumFitting(int num)
+        {
+            var ceiledIndex = Mathf.CeilToInt(Mathf.Log(num, 2));
+            return (int)Mathf.Pow(2, ceiledIndex);
         }
     };
 }
