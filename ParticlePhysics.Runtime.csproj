@@ -61,7 +61,7 @@
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Enum\ParticleType.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\Substance\SimpleSubstance.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\Buffer\ObjectBuffer.cs" />
-    <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Solver\ForceType.cs" />
+    <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\Force\ForceType.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\ParticleState.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\BitonicSort\BitonicSort.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\Substance\TetrahedronSubstance.cs" />
@@ -77,7 +77,7 @@
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\RenderTextureUtils.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Utils\TerrainBuffer.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\ParticleElement.cs" />
-    <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\ParticleCollider.cs" />
+    <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Particle\MeshUtils.cs" />
     <Compile Include="Packages\ParticlePhysics\Runtime\Scripts\Enum\ParticleNum.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -9,14 +9,15 @@ namespace ParticlePhysics
         private GameObject _gameObject;
         private Mesh _mesh;
         private ParticleBuffer _particle;
-        private GraphicsBuffer _objectGridIndicesBuffer;
+        private GraphicsBuffer _objectParticleGridIndicesBuffer;
         private GridSearch<ParticleState> _gridSearch;
 
         #region Accessors
         public GameObject RegisteredObject => _gameObject;
         public ParticleBuffer ObjectParticle => _particle;
         public int ObjectParticleNum => _particle.num;
-        public GraphicsBuffer GridIndicesBuffer => _objectGridIndicesBuffer;
+        public GraphicsBuffer ObjectParticleGridIndicesBuffer => _objectParticleGridIndicesBuffer;
+        public GraphicsBuffer CollisionGridIndicesBuffer => _gridSearch.TargetGridIndicesBuffer;
         #endregion
 
         public ObjectBuffer(GameObject gameObject, int particleNum)
@@ -31,28 +32,39 @@ namespace ParticlePhysics
 
             this._gridSearch = new GridSearch<ParticleState>(
                 objNum: _particle.num,
-                gridSize: gameObject.GetComponent<MeshFilter>().mesh.bounds.extents * 2.2f,
+                gridSize: _gameObject.GetComponent<MeshFilter>().mesh.bounds.extents * 2.2f,
                 gridCellSize: 0.5f);
 
             this._gridSearch.GridSort(ref this._particle.status, objTRS);
 
             var buffer = BufferUtils.GetData<Uint2>(this._gridSearch.TargetGridIndicesBuffer);
-            this._objectGridIndicesBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, buffer.Length, Marshal.SizeOf(typeof(Uint2)));
-            this._objectGridIndicesBuffer.SetData(buffer);
+            this._objectParticleGridIndicesBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, buffer.Length, Marshal.SizeOf(typeof(Uint2)));
+            this._objectParticleGridIndicesBuffer.SetData(buffer);
 
             _gridSearch.Release();
 
             this._gridSearch = new GridSearch<ParticleState>(
                 objNum: particleNum,
-                gridSize: gameObject.GetComponent<MeshFilter>().mesh.bounds.extents * 2.2f,
+                gridSize: _gameObject.GetComponent<MeshFilter>().mesh.bounds.extents * 2.2f,
                 gridCellSize: 0.5f);
+        }
+
+        // GridSort
+        public GraphicsBuffer GridSort(ref GraphicsBuffer particle)
+        {
+            Matrix4x4 objTRS = Matrix4x4.TRS(
+                pos: _gameObject.transform.position,
+                q: _gameObject.transform.rotation,
+                s: _gameObject.transform.localScale);
+            _gridSearch.GridSort(ref _particle.status, objTRS);
+            return _gridSearch.TargetGridIndicesBuffer;
         }
 
         public void Release()
         {
             _particle.Release();
             _gridSearch.Release();
-            _objectGridIndicesBuffer.Release();
+            _objectParticleGridIndicesBuffer.Release();
         }
     }
 }
