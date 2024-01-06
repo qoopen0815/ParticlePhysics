@@ -171,7 +171,7 @@ namespace ParticlePhysics.Utils
             kernelID = GridSearchCS.FindKernel("BuildGridCS");
             GridSearchCS.SetBuffer(kernelID, "_ParticleBufferRead", objectsBufferInput);
             GridSearchCS.SetBuffer(kernelID, "_GridBufferWrite", gridBuffer);
-            GridSearchCS.SetMatrix("_GridTF", gridtf.inverse);
+            GridSearchCS.SetMatrix("_GridTF", gridtf);
             GridSearchCS.Dispatch(kernelID, threadGroupSize, 1, 1);
 
             // Sort Grid
@@ -198,6 +198,11 @@ namespace ParticlePhysics.Utils
             (sortedObjectsBufferOutput, objectsBufferInput) = (objectsBufferInput, sortedObjectsBufferOutput);
         }
 
+        /// <summary>
+        /// Sorts objects based on their positions using the grid-based search approach with a transformation.
+        /// </summary>
+        /// <param name="objectsBufferInput">The input buffer containing objects to be sorted.</param>
+        /// <param name="gridTRS">The TRS matrix of the grid.</param>
         public void GridSort(ref GraphicsBuffer objectsBufferInput, Matrix4x4 gridTRS)
         {
             GridSearchCS.SetInt("_ParticleNum", objectsBufferInput.count);
@@ -210,7 +215,7 @@ namespace ParticlePhysics.Utils
             kernelID = GridSearchCS.FindKernel("BuildGridCS");
             GridSearchCS.SetBuffer(kernelID, "_ParticleBufferRead", objectsBufferInput);
             GridSearchCS.SetBuffer(kernelID, "_GridBufferWrite", gridBuffer);
-            GridSearchCS.SetMatrix("_GridTF", gridTRS.inverse);
+            GridSearchCS.SetMatrix("_GridTF", gridTRS);
             GridSearchCS.Dispatch(kernelID, threadGroupSize, 1, 1);
 
             // Sort Grid

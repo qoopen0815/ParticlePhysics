@@ -24,7 +24,7 @@ inline float3 GridCalculateCell(float3 position)
 
 inline float3 GridCalculateCell(float3 position, float4x4 _gridTF)
 {
-	return mul(_gridTF, float4(position, 1)).xyz / _GridCellSize;
+	return mul(inverse(_gridTF), float4(position, 1)).xyz / _GridCellSize;
 }
 
 // セルの3次元インデックスから1次元インデックスを返す

@@ -38,6 +38,7 @@ namespace ParticlePhysics.Solver
 
         public GraphicsBuffer _debugger;
 
+        Matrix4x4 _gridTF = Matrix4x4.identity;
         Matrix4x4 _objectTF = Matrix4x4.identity;
 
 
@@ -182,8 +183,14 @@ namespace ParticlePhysics.Solver
 
         private void CalculateParticleCollisionForce(ref ParticleBuffer particle)
         {
-            _fieldGS.GridSort(ref particle.status);
+            _gridTF.SetTRS(
+                pos: new Vector3(50, 25, 50) - gridSize / 2,
+                q: Quaternion.identity,
+                s: Vector3.one);
+
+            _fieldGS.GridSort(ref particle.status, _gridTF);
             int kernelID = _shader.FindKernel("ParticleCollisionCS");
+            _shader.SetMatrix("_gridTF", _gridTF);
             _shader.SetBuffer(kernelID, "_ParticleElementBuffer", particle.substance.Elements);
             _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.status);
             _shader.SetBuffer(kernelID, "_GridIndicesBufferRead", _fieldGS.TargetGridIndicesBuffer);
