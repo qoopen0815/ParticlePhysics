@@ -176,7 +176,7 @@ namespace ParticlePhysics.Solver
         public void UpdateParticle(ref ParticleBuffer particles, GraphicsBuffer terrain)
         {
             CalculateParticleCollisionForce(ref particles);
-            //CalculateObjectCollision(ref particles);
+            CalculateObjectCollision(ref particles);
             //CalculateTerrainCollision(ref _terrainCollisionForce, _particleBuffer, _terrainBuffer);
             Integrate(ref particles.status, terrain);
         }
@@ -184,7 +184,7 @@ namespace ParticlePhysics.Solver
         private void CalculateParticleCollisionForce(ref ParticleBuffer particle)
         {
             _gridTF.SetTRS(
-                pos: new Vector3(50, 25, 50) - gridSize / 2,
+                pos: new Vector3(50, 15, 50) - gridSize / 2,
                 q: Quaternion.identity,
                 s: Vector3.one);
 
