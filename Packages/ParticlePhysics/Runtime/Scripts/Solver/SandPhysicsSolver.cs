@@ -94,7 +94,7 @@ namespace ParticlePhysics.Solver
         /// <summary>
         /// Set the collision objects to be used in the simulation.
         /// </summary>
-        /// <param name="objects">An array of GameObjects representing the collision objects.</param>
+        /// <param name="gameObjects">An array of GameObjects representing the collision objects.</param>
         public void SetCollisionObjects(GameObject[] gameObjects)
         {
             _objectBuffers = new List<ObjectBuffer>();
