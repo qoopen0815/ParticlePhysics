@@ -1,44 +1,12 @@
-using System.Collections;
-using System.Linq;
+using ParticlePhysics.Utils;
+using ParticlePhysics.Particle;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-using ParticlePhysics.Utils;
-
 namespace ParticlePhysics.Solver
 {
-    internal struct CollisionObjectBuffer
-    {
-        public GameObject gameObject;
-        public ParticleBuffer objParticleBuffer;
-        public GridSearch<ParticleState> objectGS;
-        private GraphicsBuffer _objGridIndicesBuffer;
-
-        public GraphicsBuffer ObjectGridIndicesBuffer => _objGridIndicesBuffer;
-        public GraphicsBuffer ParticleGridIndicesBuffer => objectGS.TargetGridIndicesBuffer;
-
-        public CollisionObjectBuffer(GameObject gameObject, Vector3 gridSize, float gridCellSize)
-        {
-            //gridSizeはgameObjectのサイズで自動で決められるべき
-            //gridCellSizeは砂のサイズで自動で決められるべき
-            this.gameObject = gameObject;
-            this.objParticleBuffer = ParticleBuffer.SetAsSimpleParticle(
-                particles: ParticleState.GenerateFromMesh(gameObject.GetComponent<MeshFilter>().mesh),
-                radius: 0.1f);
-            this.objectGS = new(this.objParticleBuffer.num, gridSize, gridCellSize);
-            this.objectGS.GridSort(ref this.objParticleBuffer.status);
-            this._objGridIndicesBuffer = this.objectGS.TargetGridIndicesBuffer;
-        }
-
-        public void Release()
-        {
-            objParticleBuffer.Release();
-            _objGridIndicesBuffer.Release();
-            objectGS.Release();
-        }
-    }
-
     /// <summary>
     /// This class simulates particle behaviour based on the MolecularDynamics method.
     /// </summary>
@@ -50,7 +18,7 @@ namespace ParticlePhysics.Solver
 
         // Registered Items
         private ParticleBuffer _particle = null;
-        private List<CollisionObjectBuffer> _objectBuffers = null;
+        private List<ObjectBuffer> _objectBuffers = null;
 
         // Terrain
         private int _terrainResolution; // 地形の解像度
@@ -70,23 +38,25 @@ namespace ParticlePhysics.Solver
 
         public GraphicsBuffer _debugger;
 
+        Matrix4x4 _gridTF = Matrix4x4.identity;
         Matrix4x4 _objectTF = Matrix4x4.identity;
 
 
         #region Accessor
         public ParticleBuffer RegisteredParticles => _particle;
-        public List<GameObject> RegisteredCollisionObjectList => _objectBuffers.Select(x => x.gameObject).ToList();
-        public GameObject[] RegisteredCollisionObjectArray => _objectBuffers.Select(x => x.gameObject).ToArray();
+        public List<GameObject> RegisteredCollisionObjectList => _objectBuffers.Select(x => x.RegisteredObject).ToList();
+        public GameObject[] RegisteredCollisionObjectArray => _objectBuffers.Select(x => x.RegisteredObject).ToArray();
         public ParticleCollisionForce[] ParticleCollisionForce => BufferUtils.GetData<ParticleCollisionForce>(_particleCollisionForce);
-        public ObjectCollisionForce[] ObjectCollisionForce => BufferUtils.GetData<ObjectCollisionForce>(_particleCollisionForce);
-        public TerrainCollisionForce[] TerrainCollisionForce => BufferUtils.GetData<TerrainCollisionForce>(_particleCollisionForce);
+        public ParticleCollisionForce[] ObjectCollisionForce => BufferUtils.GetData<ParticleCollisionForce>(_objectCollisionForce);
+        public ParticleCollisionForce[] TerrainCollisionForce => BufferUtils.GetData<ParticleCollisionForce>(_terrainCollisionForce);
         #endregion
 
         /// <summary>
+        /// Constructor for SandPhysicsSolver.
         /// Note: Please call SetMainParticle(), SetCollisionObjects() and SetTerrain() to register the required data before execution.
         /// </summary>
-        /// <param name="gravity"></param>
-        /// <param name="maxAllowableTimestep"></param>
+        /// <param name="gravity">The gravity vector to be applied in the simulation.</param>
+        /// <param name="maxAllowableTimestep">The maximum allowable timestep for the simulation.</param>
         public SandPhysicsSolver(Vector3 gravity, float maxAllowableTimestep = 0.005f)
         {
             this.gravity = gravity;
@@ -100,9 +70,14 @@ namespace ParticlePhysics.Solver
                       "Max Allowable Timestep : \t" + this.maxAllowableTimestep);
         }
 
-        public void SetMainParticle(ParticleBuffer particle=null)
+        /// <summary>
+        /// Set the main particle buffer for the simulation.
+        /// Note: If no particle buffer is provided, a default tetrahedron particle buffer will be generated.
+        /// </summary>
+        /// <param name="particle">The main particle buffer to be used for the simulation.</param>
+        public void SetMainParticle(ParticleBuffer particle = null)
         {
-            if(particle==null)
+            if (particle == null)
             {
                 particle = ParticleBuffer.SetAsTetrahedronParticle(ParticleState.GenerateSphere((int)Enum.ParticleNum.NUM_8K, Vector3.zero, 3));
             }
@@ -116,21 +91,27 @@ namespace ParticlePhysics.Solver
             InitializeBuffer(_particle.num);
         }
 
-        public void SetCollisionObjects(GameObject[] objects)
+        /// <summary>
+        /// Set the collision objects to be used in the simulation.
+        /// </summary>
+        /// <param name="gameObjects">An array of GameObjects representing the collision objects.</param>
+        public void SetCollisionObjects(GameObject[] gameObjects)
         {
-            _objectBuffers = new List<CollisionObjectBuffer>();
+            _objectBuffers = new List<ObjectBuffer>();
 
-            CollisionObjectBuffer data;
-            foreach (GameObject obj in objects)
+            ObjectBuffer data;
+            foreach (GameObject gameObject in gameObjects)
             {
-                data = new CollisionObjectBuffer(
-                    gameObject: obj,
-                    gridSize: new(10, 10, 10),
-                    gridCellSize: gridCellSize);
+                data = new ObjectBuffer(gameObject, _particle.num);
                 _objectBuffers.Add(data);
             }
         }
 
+        /// <summary>
+        /// Set the terrain data to be used in the simulation.
+        /// </summary>
+        /// <param name="terrain">The Terrain object representing the terrain data.</param>
+        /// <param name="gridCenter">The center position of the grid for collision detection.</param>
         public void SetFieldTerrain(Terrain terrain, Vector3 gridCenter)
         {
             _terrainFriction = 0.955f;
@@ -165,8 +146,8 @@ namespace ParticlePhysics.Solver
         {
             // Init Force Bufer
             _particleCollisionForce = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(ParticleCollisionForce)));
-            _objectCollisionForce = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(ObjectCollisionForce)));
-            _terrainCollisionForce = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(TerrainCollisionForce)));
+            _objectCollisionForce = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(ParticleCollisionForce)));
+            _terrainCollisionForce = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(ParticleCollisionForce)));
 
             // Init temp buffer
             _tmpBufferWrite = new GraphicsBuffer(GraphicsBuffer.Target.Structured, objNum, Marshal.SizeOf(typeof(ParticleState)));
@@ -174,7 +155,7 @@ namespace ParticlePhysics.Solver
         }
 
         /// <summary>
-        /// Must be called at the end of execution.
+        /// Method to release the resources used by the SandPhysicsSolver.
         /// </summary>
         public void Release()
         {
@@ -187,6 +168,11 @@ namespace ParticlePhysics.Solver
             _debugger.Release();
         }
 
+        /// <summary>
+        /// Update the particle buffer with collision forces and integrate the particles' positions.
+        /// </summary>
+        /// <param name="particles">The ParticleBuffer to be updated.</param>
+        /// <param name="terrain">The GraphicsBuffer representing the terrain data.</param>
         public void UpdateParticle(ref ParticleBuffer particles, GraphicsBuffer terrain)
         {
             CalculateParticleCollisionForce(ref particles);
@@ -197,8 +183,14 @@ namespace ParticlePhysics.Solver
 
         private void CalculateParticleCollisionForce(ref ParticleBuffer particle)
         {
-            _fieldGS.GridSort(ref particle.status);
+            _gridTF.SetTRS(
+                pos: new Vector3(50, 15, 50) - gridSize / 2,
+                q: Quaternion.identity,
+                s: Vector3.one);
+
+            _fieldGS.GridSort(ref particle.status, _gridTF);
             int kernelID = _shader.FindKernel("ParticleCollisionCS");
+            _shader.SetMatrix("_gridTF", _gridTF);
             _shader.SetBuffer(kernelID, "_ParticleElementBuffer", particle.substance.Elements);
             _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.status);
             _shader.SetBuffer(kernelID, "_GridIndicesBufferRead", _fieldGS.TargetGridIndicesBuffer);
@@ -212,14 +204,14 @@ namespace ParticlePhysics.Solver
 
         private void CalculateObjectCollision(ref ParticleBuffer particle)
         {
-            foreach(var data in _objectBuffers)
+            foreach (var data in _objectBuffers)
             {
                 _objectTF.SetTRS(
-                    data.gameObject.transform.position,
-                    data.gameObject.transform.rotation,
-                    data.gameObject.transform.localScale);
+                    data.RegisteredObject.transform.position,
+                    data.RegisteredObject.transform.rotation,
+                    data.RegisteredObject.transform.localScale);
 
-                data.objectGS.GridSort(ref particle.status, data.gameObject.transform);
+                var hoge = data.GridSort(ref particle.status);
 
                 int kernelID = _shader.FindKernel("ObjectCollisionCS");
 
@@ -228,11 +220,11 @@ namespace ParticlePhysics.Solver
 
                 _shader.SetBuffer(kernelID, "_ParticleElementBuffer", particle.substance.Elements);
                 _shader.SetBuffer(kernelID, "_ParticleBufferRead", particle.status);
-                _shader.SetBuffer(kernelID, "_ParticleGridIndicesBufferRead", data.ParticleGridIndicesBuffer);
+                _shader.SetBuffer(kernelID, "_ParticleGridIndicesBufferRead", hoge);
 
-                _shader.SetBuffer(kernelID, "_ObjectElementBuffer", data.objParticleBuffer.substance.Elements);
-                _shader.SetBuffer(kernelID, "_ObjectParticleBufferRead", data.objParticleBuffer.status);
-                _shader.SetBuffer(kernelID, "_ObjGridIndicesBufferRead", data.ObjectGridIndicesBuffer);
+                _shader.SetBuffer(kernelID, "_ObjectElementBuffer", data.ObjectParticle.substance.Elements);
+                _shader.SetBuffer(kernelID, "_ObjectParticleBufferRead", data.ObjectParticle.status);
+                _shader.SetBuffer(kernelID, "_ObjGridIndicesBufferRead", data.ObjectParticleGridIndicesBuffer);
 
                 //_shader.SetBuffer(kernelID, "_DebugBuffer", _debugger);
                 _shader.GetKernelThreadGroupSizes(kernelID, out var x, out _, out _);
@@ -251,8 +243,8 @@ namespace ParticlePhysics.Solver
             _shader.GetKernelThreadGroupSizes(kernelID, out var x, out _, out _);
             _shader.Dispatch(kernelID, (int)(particleBuffer.count / x), 1, 1);
             (particleBuffer, _tmpBufferWrite) = (_tmpBufferWrite, particleBuffer);
-            var f = new TerrainCollisionForce[particleBuffer.count];
-            System.Array.Fill(f, new TerrainCollisionForce(Vector3.zero, Vector3.zero));
+            var f = new ParticleCollisionForce[particleBuffer.count];
+            System.Array.Fill(f, new ParticleCollisionForce(Vector3.zero, Vector3.zero));
             _terrainCollisionForce.SetData(f);
         }
 

@@ -189,7 +189,7 @@ VisualEffect:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800131441}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 472e4f69050ef234c99428912f8a828f, type: 3}
+  m_Asset: {fileID: 8926484042661614526, guid: e89f25afc5e553f488b945affb39c057, type: 3}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
@@ -395,10 +395,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1436442270}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 183667f55cefd1a41b33f79d302f63eb, type: 3}
+  m_Script: {fileID: 11500000, guid: d45444e7e2f6f2a419d6d53009213cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayCellId: 22
+  highlightCellId: 5
+  _particleNum: 131072
   effect: {fileID: 800131443}
 --- !u!850595691 &1873836718
 LightingSettings:

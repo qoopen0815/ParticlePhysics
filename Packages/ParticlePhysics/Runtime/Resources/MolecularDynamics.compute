@@ -9,7 +9,7 @@
 // Thread x is particle
 // Thread yz is element
 #define PARTICLE_NUM 8  // must be 2^n
-#define MAX_ELEMENT_NUM 10
+#define MAX_ELEMENT_NUM 5
 
 #include "./Include/Particle.cginc"
 #include "./Include/GridSearch.cginc"
@@ -29,13 +29,16 @@ struct CollisionForce
 	float3 force;
 	float3 torque;
 };
+
 RWStructuredBuffer<CollisionForce> _ParticleCollisionForce;
 RWStructuredBuffer<CollisionForce> _ObjectCollisionForce;
 RWStructuredBuffer<CollisionForce> _TerrainCollisionForce;
+
 groupshared CollisionForce sharedBuffer[PARTICLE_NUM][MAX_ELEMENT_NUM][MAX_ELEMENT_NUM];
 
 float3 _Gravity;
 float _TimeStep;
+float4x4 _gridTF;
 float4x4 _ObjectTF;
 StructuredBuffer<uint2> _ParticleGridIndicesBufferRead;
 StructuredBuffer<uint2> _ObjGridIndicesBufferRead;
@@ -122,14 +125,18 @@ void LocalToWorldCS(uint3 dispatchID : SV_DispatchThreadID)
 [numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
 void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : SV_GroupThreadID)
 {
-	sharedBuffer[threadID.x][threadID.y][threadID.z].force = float3(0, 0, 0);
-	sharedBuffer[threadID.x][threadID.y][threadID.z].torque = float3(0, 0, 0);
-	GroupMemoryBarrierWithGroupSync();
-	
 	const uint P_ID = dispatchID.x; // 現在処理しているパーティクルID
 	
-	CollisionForce buf;
-	LOOP_AROUND_NEIGHBOR(_ParticleBufferRead[P_ID].position)
+	sharedBuffer[threadID.x][threadID.y][threadID.z].force = float3(0, 0, 0);
+	sharedBuffer[threadID.x][threadID.y][threadID.z].torque = float3(0, 0, 0);
+	
+	GroupMemoryBarrierWithGroupSync();
+	
+	CollisionForce tmp;
+	int3 G_XYZ = (int3) GridCalculateCell(_ParticleBufferRead[P_ID].position, _gridTF);
+	for (int Z = max(G_XYZ.z - 1, 0); Z <= min(G_XYZ.z + 1, _GridResolution.z - 1); Z++)
+		for (int Y = max(G_XYZ.y - 1, 0); Y <= min(G_XYZ.y + 1, _GridResolution.y - 1); Y++)
+			for (int X = max(G_XYZ.x - 1, 0); X <= min(G_XYZ.x + 1, _GridResolution.x - 1); X++)
 			{
 				if (threadID.y < _ElementNum && threadID.z < _ElementNum)
 				{
@@ -143,10 +150,10 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 						
 						const uint P_elementIndice = threadID.y;
 						const uint N_elementIndice = threadID.z;
-						buf = get_particle_collision_force(_ParticleBufferRead[P_ID], _ParticleElementBuffer[P_elementIndice],
+						tmp = get_particle_collision_force(_ParticleBufferRead[P_ID], _ParticleElementBuffer[P_elementIndice],
 														   _ParticleBufferRead[N_ID], _ParticleElementBuffer[N_elementIndice]);
-						sharedBuffer[threadID.x][threadID.y][threadID.z].force += buf.force;
-						sharedBuffer[threadID.x][threadID.y][threadID.z].torque += buf.torque;
+						sharedBuffer[threadID.x][threadID.y][threadID.z].force += tmp.force;
+						sharedBuffer[threadID.x][threadID.y][threadID.z].torque += tmp.torque;
 					}
 				}
 			}
@@ -155,18 +162,18 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 	
 	if (threadID.y == 0 && threadID.z == 0)
 	{
-		buf.force = float3(0, 0, 0);
-		buf.torque = float3(0, 0, 0);
+		tmp.force = float3(0, 0, 0);
+		tmp.torque = float3(0, 0, 0);
 		
 		for (int y = 0; y < MAX_ELEMENT_NUM; y++)
 		{
 			for (int z = 0; z < MAX_ELEMENT_NUM; z++)
 			{
-				buf.force += sharedBuffer[threadID.x][y][z].force;
-				buf.torque += sharedBuffer[threadID.x][y][z].torque;
+				tmp.force += sharedBuffer[threadID.x][y][z].force;
+				tmp.torque += sharedBuffer[threadID.x][y][z].torque;
 			}
 		}
-		_ParticleCollisionForce[P_ID] = buf;
+		_ParticleCollisionForce[P_ID] = tmp;
 	}
 	
 	GroupMemoryBarrierWithGroupSync();
@@ -176,13 +183,14 @@ void ParticleCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID 
 [numthreads(PARTICLE_NUM, MAX_ELEMENT_NUM, MAX_ELEMENT_NUM)]
 void ObjectCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : SV_GroupThreadID)
 {
-	sharedBuffer[threadID.x][threadID.y][threadID.z].force = float3(0, 0, 0);
-	sharedBuffer[threadID.x][threadID.y][threadID.z].torque = float3(0, 0, 0);
-	GroupMemoryBarrierWithGroupSync();
-	
 	const uint P_ID = dispatchID.x;
 	
-	CollisionForce buf;
+	sharedBuffer[threadID.x][threadID.y][threadID.z].force = float3(0, 0, 0);
+	sharedBuffer[threadID.x][threadID.y][threadID.z].torque = float3(0, 0, 0);
+	
+	GroupMemoryBarrierWithGroupSync();
+	
+	CollisionForce tmp;
 	uint3 G_XYZ = (uint3) GridCalculateCell(_ParticleBufferRead[P_ID].position, _ObjectTF);
 	for (int Z = max(G_XYZ.z - 1, 0); Z <= min(G_XYZ.z + 1, _GridResolution.z - 1); Z++)
 		for (int Y = max(G_XYZ.y - 1, 0); Y <= min(G_XYZ.y + 1, _GridResolution.y - 1); Y++)
@@ -200,11 +208,11 @@ void ObjectCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : 
 						{
 							const uint P_elementIndice = threadID.y;
 							const uint N_elementIndice = threadID.z;
-							buf = get_particle_collision_force(
+							tmp = get_particle_collision_force(
 								_ParticleBufferRead[P_ID], _ParticleElementBuffer[P_elementIndice],
 								_ObjectParticleBufferRead[N_ID], _ObjectElementBuffer[N_elementIndice]);
-							sharedBuffer[threadID.x][threadID.y][threadID.z].force += buf.force;
-							sharedBuffer[threadID.x][threadID.y][threadID.z].torque += buf.torque;
+							sharedBuffer[threadID.x][threadID.y][threadID.z].force += tmp.force;
+							sharedBuffer[threadID.x][threadID.y][threadID.z].torque += tmp.torque;
 						}
 					}
 				}
@@ -214,18 +222,18 @@ void ObjectCollisionCS(uint3 dispatchID : SV_DispatchThreadID, uint3 threadID : 
 	
 	if (threadID.y == 0 && threadID.z == 0)
 	{
-		buf.force = float3(0, 0, 0);
-		buf.torque = float3(0, 0, 0);
+		tmp.force = float3(0, 0, 0);
+		tmp.torque = float3(0, 0, 0);
 		
 		for (int y = 0; y < MAX_ELEMENT_NUM; y++)
 		{
 			for (int z = 0; z < MAX_ELEMENT_NUM; z++)
 			{
-				buf.force += sharedBuffer[threadID.x][y][z].force;
-				buf.torque += sharedBuffer[threadID.x][y][z].torque;
+				tmp.force += sharedBuffer[threadID.x][y][z].force;
+				tmp.torque += sharedBuffer[threadID.x][y][z].torque;
 			}
 		}
-		_ObjectCollisionForce[P_ID] = buf;
+		_ObjectCollisionForce[P_ID] = tmp;
 	}
 	
 	GroupMemoryBarrierWithGroupSync();

@@ -9,7 +9,7 @@ using UnityEditor;
 using MarchingCubesProject;
 
 [RequireComponent(typeof(MeshFilter))]
-public class ParticleCollider : MonoBehaviour
+public class MeshUtils : MonoBehaviour
 {
     public float particleRadius = 0.1f;
     public int maxResolution = 64;

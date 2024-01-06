@@ -25,7 +25,7 @@ public class BufferUtils
         }
     }
 
-    internal static T[] GetData<T>(GraphicsBuffer buffer)
+    public static T[] GetData<T>(GraphicsBuffer buffer)
     {
         var data = new T[buffer.count];
         buffer.GetData(data);

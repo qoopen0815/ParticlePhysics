@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ParticlePhysics.ObjectBuffer" Collapsed="true">
+    <Position X="8" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAABAAAAAAgAQAABAiAAAABAAEAAAABEAAAE=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\Buffer\ObjectBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.ParticleBuffer" Collapsed="true">
+    <Position X="9.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAACABBAQAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\Buffer\ParticleBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.TerrainBuffer" Collapsed="true">
+    <Position X="9.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAABAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\TerrainBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MeshUtils" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABCAAgQCAAAAABgEAAAAAAAAAAMDCAAAAAAAiAACA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\MeshUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BufferUtils" Collapsed="true">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAQAAAAAgAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\Buffer\BufferUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderTextureUtils" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBAIAAAAAACIAAAAAAACAAAAABAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\RenderTextureUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.Substance.CubeSubstance" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\Substance\CubeSubstance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.Substance.ParticleSubstance" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAARGAAAEBAAwAAQAGAAAAAAAAAAAAABABAgARA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\Substance\ParticleSubstance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.Substance.SimpleSubstance" Collapsed="true">
+    <Position X="0.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\Substance\SimpleSubstance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.Substance.TetrahedronSubstance" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\Substance\TetrahedronSubstance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.Solver.SandPhysicsSolver" Collapsed="true">
+    <Position X="8" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAiBKABIACAAEBGSBAEgFCAAAEAAIgAwCREEAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Solver\SandPhysicsSolver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.SortTool.BitonicSort" Collapsed="true">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAQAAAAAAAAgAABIAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\BitonicSort\BitonicSort.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.Utils.GridSearch&lt;T&gt;" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAwAAAAAAAQAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\GridSearch\GridSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlePhysics.Utils.GridSearchBase" Collapsed="true">
+    <Position X="0.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAEDCQAACAAAAAAAAQAAQAAEAEAAAAAAEgAAAJIAAAI=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\GridSearch\GridSearchBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MarchingCubesProject.Marching" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gQAAAgAgAAAAAAgAAAAAAAAEAAAAAAAAAAAAAUAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\Marching\Marching.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MarchingCubesProject.MarchingCubes" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAgQAAAAAAAAAAAAAAAAAAAQACAAAAAABAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\Marching\MarchingCubes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MarchingCubesProject.MarchingTertrahedron" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgSAAAAAAAEIAASAAAAAAAAAAAAABAgAAACAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\Marching\MarchingTertahedron.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MarchingCubesProject.VoxelArray" Collapsed="true">
+    <Position X="11.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAACAAUAGAEAAIAAAAggAAAAAEAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\Marching\VoxelArray.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="ParticlePhysics.ParticleElement" Collapsed="true">
+    <Position X="11.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\ParticleElement.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ParticlePhysics.ParticleState" Collapsed="true">
+    <Position X="8" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAJAAAAAAAAAAAAAAAAIBAAIAAAAQAAEAQAAAAABEA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Particle\ParticleState.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ParticlePhysics.TerrainType" Collapsed="true">
+    <Position X="11.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAgAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\TerrainBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ParticlePhysics.Solver.ParticleCollisionForce" Collapsed="true">
+    <Position X="9.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAQgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Solver\ForceType.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ParticlePhysics.Solver.TerrainCollisionForce" Collapsed="true">
+    <Position X="9.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAQgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Solver\ForceType.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ParticlePhysics.Solver.ObjectCollisionForce" Collapsed="true">
+    <Position X="8" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAQgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Solver\ForceType.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ParticlePhysics.Utils.Uint2" Collapsed="true">
+    <Position X="8" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Utils\GridSearch\GridSearch.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="ParticlePhysics.Enum.ParticleNum" Collapsed="true">
+    <Position X="8" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAABAAEAAAAAAADA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Enum\ParticleNum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ParticlePhysics.Enum.ParticleType" Collapsed="true">
+    <Position X="9.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAgAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Packages\ParticlePhysics\Runtime\Scripts\Enum\ParticleType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Yu Gothic UI" Size="9" />
+</ClassDiagram>
